@@ -1,0 +1,1767 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BrainSpan - 작업기억 확장 트럼프 훈련기</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons & Canvas Confetti -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Pretendard', 'sans-serif'],
+            display: ['Outfit', 'Pretendard', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              900: '#312e81',
+            }
+          },
+          keyframes: {
+            flipIn: {
+              '0%': { transform: 'rotateY(90deg) scale(0.9)', opacity: '0' },
+              '100%': { transform: 'rotateY(0deg) scale(1)', opacity: '1' }
+            },
+            popIn: {
+              '0%': { transform: 'scale(0.85)', opacity: '0' },
+              '100%': { transform: 'scale(1)', opacity: '1' }
+            },
+            feverPulse: {
+              '0%': { boxShadow: '0 0 15px rgba(245, 158, 11, 0.4)' },
+              '100%': { boxShadow: '0 0 35px rgba(245, 158, 11, 0.8), 0 0 50px rgba(239, 68, 68, 0.4)' }
+            }
+          },
+          animation: {
+            flipCard: 'flipIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            pop: 'popIn 0.25s ease-out forwards',
+            fever: 'feverPulse 1.5s infinite alternate ease-in-out'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .card-shadow {
+      box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.12), 0 8px 12px -6px rgba(0, 0, 0, 0.08);
+    }
+    .card-inner-border {
+      border: 1px solid rgba(226, 232, 240, 0.9);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .fever-border {
+      border-color: #f59e0b !important;
+      box-shadow: 0 0 25px rgba(245, 158, 11, 0.35);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans selection:bg-indigo-500 selection:text-white antialiased">
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-2">
+      <!-- Logo & Title -->
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="app.goHome()">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-md shadow-indigo-100">
+          <i data-lucide="layers" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h1 class="font-extrabold text-base sm:text-xl tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent flex items-center gap-1.5">
+            <span>BrainSpan</span>
+            <span class="text-[10px] sm:text-xs px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 font-semibold border border-indigo-200">작업기억 훈련</span>
+          </h1>
+          <p class="text-[10px] sm:text-[11px] text-slate-500 -mt-0.5">역순 트럼프 카드 & 인지 조작 확장 프로토콜</p>
+        </div>
+      </div>
+
+      <!-- Quick Nav & Controls -->
+      <div class="flex items-center space-x-1 sm:space-x-2">
+        <!-- Link to Parent Dashboard -->
+        <a href="index.html" title="부모 인포그래픽 대시보드로 이동" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition flex items-center gap-1">
+          <i data-lucide="book-open" class="w-3.5 h-3.5"></i>
+          <span class="hidden md:inline">부모 가이드</span>
+        </a>
+
+        <!-- Link to 3D Simulator -->
+        <a href="3d_human_brain_synapse_neurodevelopmental_simulator.html" title="3D 뇌 감각 시뮬레이터로 이동" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-cyan-700 bg-cyan-50 hover:bg-cyan-100 border border-cyan-200 transition flex items-center gap-1">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          <span class="hidden md:inline">3D 시뮬레이터</span>
+        </a>
+
+        <!-- Multi-Profile Switcher Button -->
+        <button onclick="app.openProfileModal()" class="px-2.5 py-1.5 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center gap-1.5 transition shadow-sm" title="사용자 프로필 전환 (다인용 기록 분리)">
+          <div class="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center font-black text-[10px]" id="headerAvatarInitial">민</div>
+          <span id="headerProfileName" class="max-w-[70px] truncate">민수</span>
+          <i data-lucide="chevron-down" class="w-3 h-3 text-slate-400"></i>
+        </button>
+
+        <!-- Cognitive Science Info Modal Button -->
+        <button onclick="app.openInfoModal()" class="p-1.5 sm:px-2.5 sm:py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 transition flex items-center space-x-1 border border-slate-200" title="인지과학 원리">
+          <i data-lucide="brain" class="w-4 h-4 text-indigo-600"></i>
+          <span class="hidden sm:inline">원리</span>
+        </button>
+
+        <!-- Sound Toggle -->
+        <button id="soundToggleBtn" onclick="sound.toggle()" class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center text-slate-600 hover:bg-slate-100 transition border border-slate-200" title="효과음 켜기/끄기">
+          <i data-lucide="volume-2" id="soundIcon" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 flex flex-col justify-center">
+
+    <!-- ============================================================ -->
+    <!-- VIEW 1: SETUP & DASHBOARD                                    -->
+    <!-- ============================================================ -->
+    <section id="viewSetup" class="space-y-6">
+
+      <!-- Brain Avatar & Gamification RPG Hub -->
+      <div class="bg-gradient-to-r from-indigo-950 via-indigo-900 to-slate-900 rounded-3xl p-5 sm:p-6 text-white shadow-xl relative overflow-hidden border border-indigo-700/50">
+        <!-- Glow accents -->
+        <div class="absolute -right-10 -top-10 w-40 h-40 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-5 relative z-10">
+          <div class="flex items-center gap-4 text-center sm:text-left">
+            <!-- Brain Avatar Visual -->
+            <div class="relative w-18 h-18 sm:w-20 sm:h-20 rounded-2xl bg-white/10 backdrop-blur border border-white/20 flex items-center justify-center text-4xl shadow-inner group flex-shrink-0 cursor-pointer" onclick="app.openProfileModal()" title="프로필 설정">
+              <span id="avatarEmoji" class="transform group-hover:scale-110 transition duration-300">🌱</span>
+              <div id="avatarBadgeTier" class="absolute -bottom-1 -right-1 px-1.5 py-0.5 rounded-md bg-amber-400 text-slate-950 font-black text-[10px] shadow">Lv.1</div>
+            </div>
+            <div>
+              <div class="flex items-center gap-2 justify-center sm:justify-start">
+                <h3 id="avatarTitle" class="font-extrabold text-base sm:text-lg text-white">생각 새싹 뉴런</h3>
+                <span id="avatarProfileLabel" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-indigo-500/40 text-indigo-200 border border-indigo-400/40 cursor-pointer" onclick="app.openProfileModal()">민수</span>
+              </div>
+              <p id="avatarQuote" class="text-xs text-indigo-200 mt-0.5">"오늘도 전두엽 시냅스를 튼튼하게 깨워볼까?"</p>
+              <!-- XP Bar -->
+              <div class="mt-2.5 flex items-center gap-2 justify-center sm:justify-start">
+                <div class="w-36 sm:w-48 bg-slate-900/80 rounded-full h-2.5 overflow-hidden border border-indigo-400/30">
+                  <div id="avatarXpBar" class="bg-gradient-to-r from-amber-400 to-emerald-400 h-full rounded-full transition-all duration-500 w-[20%]"></div>
+                </div>
+                <span id="avatarXpText" class="text-[11px] font-mono font-bold text-amber-300">20 / 100 XP</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Stats Highlights -->
+          <div class="grid grid-cols-3 gap-2 sm:gap-3 w-full sm:w-auto">
+            <div class="bg-white/10 backdrop-blur rounded-2xl p-2.5 text-center border border-white/10 min-w-[76px]">
+              <span class="text-[10px] text-indigo-200 block">연속 출석</span>
+              <span id="streakDaysVal" class="text-base sm:text-lg font-black text-amber-400">🔥 1일</span>
+            </div>
+            <div class="bg-white/10 backdrop-blur rounded-2xl p-2.5 text-center border border-white/10 min-w-[76px]">
+              <span class="text-[10px] text-indigo-200 block">오늘 완료</span>
+              <span id="todayPillVal" class="text-base sm:text-lg font-black text-emerald-400">💊 0/3</span>
+            </div>
+            <div class="bg-white/10 backdrop-blur rounded-2xl p-2.5 text-center border border-white/10 min-w-[76px]">
+              <span class="text-[10px] text-indigo-200 block">기억 용량</span>
+              <span id="spanCapacityVal" class="text-base sm:text-lg font-black text-sky-400">⚡ 3.5장</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Title & Intro -->
+      <div class="text-center space-y-1 py-1">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          전두엽 배외측 전전두피질(dlPFC) 작업기억 확장 프로토콜
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">발달 연령과 훈련 모드를 선택하세요</h2>
+        <p class="text-xs sm:text-sm text-slate-500 max-w-lg mx-auto">수준에 맞춘 카드 장수, 노출 속도, 3대 인지 조작 규칙(역순·크기순·스트룹 억제)이 적용됩니다.</p>
+      </div>
+
+      <!-- Age Group Badges / Cards Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        <!-- Group 1: Lower Elementary -->
+        <button onclick="app.selectTier('lower')" id="tierBtn-lower" class="tier-card text-left p-4 rounded-2xl border-2 transition-all bg-white hover:shadow-lg border-indigo-600 ring-2 ring-indigo-500/20">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800">1~3학년</span>
+            <span class="text-xs font-medium text-slate-400">초등 저학년</span>
+          </div>
+          <h3 class="font-extrabold text-slate-900 text-base">숫자 기본기</h3>
+          <p class="text-[12px] text-slate-500 mt-1 line-clamp-2">숫자만 사용 (3~5장), 2.5초 노출, 직관적 역순 훈련</p>
+          <div class="mt-3 flex items-center text-[11px] font-semibold text-indigo-600 gap-1">
+            <i data-lucide="zap" class="w-3 h-3"></i> 3~5장 추천
+          </div>
+        </button>
+
+        <!-- Group 2: Upper Elementary -->
+        <button onclick="app.selectTier('upper')" id="tierBtn-upper" class="tier-card text-left p-4 rounded-2xl border-2 transition-all bg-white hover:shadow-lg border-slate-200 hover:border-slate-300">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800">4~6학년</span>
+            <span class="text-xs font-medium text-slate-400">초등 고학년</span>
+          </div>
+          <h3 class="font-extrabold text-slate-900 text-base">숫자 + 색상</h3>
+          <p class="text-[12px] text-slate-500 mt-1 line-clamp-2">빨강/검정 이중 부호화, 4~6장, 2.0초 노출 조작</p>
+          <div class="mt-3 flex items-center text-[11px] font-semibold text-indigo-600 gap-1">
+            <i data-lucide="zap" class="w-3 h-3"></i> 4~6장 추천
+          </div>
+        </button>
+
+        <!-- Group 3: Middle School -->
+        <button onclick="app.selectTier('middle')" id="tierBtn-middle" class="tier-card text-left p-4 rounded-2xl border-2 transition-all bg-white hover:shadow-lg border-slate-200 hover:border-slate-300">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">중학생</span>
+            <span class="text-xs font-medium text-slate-400">중등부</span>
+          </div>
+          <h3 class="font-extrabold text-slate-900 text-base">4대 문양 결합</h3>
+          <p class="text-[12px] text-slate-500 mt-1 line-clamp-2">♠♥♦♣ 4문양 + 숫자 완전 결합, 5~7장, 1.5초 노출</p>
+          <div class="mt-3 flex items-center text-[11px] font-semibold text-indigo-600 gap-1">
+            <i data-lucide="zap" class="w-3 h-3"></i> 5~7장 추천
+          </div>
+        </button>
+
+        <!-- Group 4: High School -->
+        <button onclick="app.selectTier('high')" id="tierBtn-high" class="tier-card text-left p-4 rounded-2xl border-2 transition-all bg-white hover:shadow-lg border-slate-200 hover:border-slate-300">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold px-2 py-0.5 rounded bg-violet-100 text-violet-800">고등학생</span>
+            <span class="text-xs font-medium text-slate-400">고등부</span>
+          </div>
+          <h3 class="font-extrabold text-slate-900 text-base">고속 인지 정렬</h3>
+          <p class="text-[12px] text-slate-500 mt-1 line-clamp-2">문양 포함 6~8장, 1.2초 빠른 플래시 및 고난도 인출</p>
+          <div class="mt-3 flex items-center text-[11px] font-semibold text-indigo-600 gap-1">
+            <i data-lucide="zap" class="w-3 h-3"></i> 6~8장 추천
+          </div>
+        </button>
+
+        <!-- Group 5: Adult -->
+        <button onclick="app.selectTier('adult')" id="tierBtn-adult" class="tier-card text-left p-4 rounded-2xl border-2 transition-all bg-white hover:shadow-lg border-slate-200 hover:border-slate-300">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-800">성인</span>
+            <span class="text-xs font-medium text-slate-400">밀러 한계</span>
+          </div>
+          <h3 class="font-extrabold text-slate-900 text-base">7장 밀러 한계치</h3>
+          <p class="text-[12px] text-slate-500 mt-1 line-clamp-2">밀러의 법칙 7장 한계치 돌파, 1.0초 노출 극대화</p>
+          <div class="mt-3 flex items-center text-[11px] font-semibold text-indigo-600 gap-1">
+            <i data-lucide="zap" class="w-3 h-3"></i> 7~9장 극대화
+          </div>
+        </button>
+      </div>
+
+      <!-- Fine-tuning Parameters & Modes Panel -->
+      <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-2">
+          <div>
+            <h4 class="font-bold text-slate-900 text-lg flex items-center gap-2">
+              <span id="currentTierName" class="text-indigo-600">초등 저학년</span> 맞춤 세부 파라미터
+            </h4>
+            <p id="currentTierDesc" class="text-xs text-slate-500">처음 시작하는 아동을 위해 숫자만 인출하도록 설계되었습니다.</p>
+          </div>
+          
+          <!-- Adaptive Staircase Toggle -->
+          <label class="inline-flex items-center gap-2 cursor-pointer select-none bg-indigo-50 px-3 py-1.5 rounded-xl border border-indigo-200 text-xs font-bold text-indigo-900">
+            <input type="checkbox" id="adaptiveToggle" checked class="w-4 h-4 text-indigo-600 rounded accent-indigo-600">
+            <span>⚡ 1-Up 1-Down 자동 적응 난이도</span>
+          </label>
+        </div>
+
+        <!-- 3 Cognitive Manipulation Modes Selector -->
+        <div class="space-y-2">
+          <label class="font-bold text-slate-800 text-sm flex items-center justify-between">
+            <span>인출 조작 모드 (Cognitive Task)</span>
+            <span class="text-[11px] text-slate-400 font-normal">신경망 자극 목적에 맞게 선택</span>
+          </label>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <!-- Mode 1: Backward Recall -->
+            <button onclick="app.setManipulationMode('backward')" id="modeBtn-backward" class="p-3 rounded-2xl border-2 text-left transition flex items-center gap-3 border-indigo-600 bg-indigo-50/70 text-indigo-950 shadow-sm">
+              <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold flex-shrink-0">
+                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <div class="text-xs font-extrabold">1. 거꾸로 (역순 인출)</div>
+                <div class="text-[10px] text-slate-500 leading-tight mt-0.5">마지막 카드부터 역순 재구성</div>
+              </div>
+            </button>
+
+            <!-- Mode 2: Magnitude Sorting -->
+            <button onclick="app.setManipulationMode('magnitude')" id="modeBtn-magnitude" class="p-3 rounded-2xl border-2 text-left transition flex items-center gap-3 border-slate-200 hover:border-slate-300 bg-white text-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold flex-shrink-0">
+                <i data-lucide="arrow-down-narrow-wide" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <div class="text-xs font-extrabold">2. 크기순 정렬 (오름차순)</div>
+                <div class="text-[10px] text-slate-500 leading-tight mt-0.5">작은 수 ➔ 큰 수 내적 재배열</div>
+              </div>
+            </button>
+
+            <!-- Mode 3: Stroop Interference Control -->
+            <button onclick="app.setManipulationMode('stroop')" id="modeBtn-stroop" class="p-3 rounded-2xl border-2 text-left transition flex items-center gap-3 border-slate-200 hover:border-slate-300 bg-white text-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-rose-500 text-white flex items-center justify-center font-bold flex-shrink-0">
+                <i data-lucide="shield-alert" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <div class="text-xs font-extrabold">3. 스트룹 간섭 억제</div>
+                <div class="text-[10px] text-slate-500 leading-tight mt-0.5">색상 혼란을 이겨내는 억제 통제</div>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2 border-t border-slate-100">
+          <!-- Card Count Slider -->
+          <div class="space-y-2">
+            <div class="flex justify-between items-center text-sm">
+              <label for="cardCountRange" class="font-bold text-slate-700">카드 장수</label>
+              <span id="cardCountVal" class="px-2.5 py-0.5 rounded-lg bg-indigo-50 font-black text-indigo-700 text-sm">3장</span>
+            </div>
+            <input type="range" id="cardCountRange" min="3" max="9" value="3" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+            <div class="flex justify-between text-[11px] text-slate-400">
+              <span>3장 (최소)</span>
+              <span>7장 (밀러 한계치)</span>
+              <span>9장 (초인간)</span>
+            </div>
+          </div>
+
+          <!-- Speed Slider -->
+          <div class="space-y-2">
+            <div class="flex justify-between items-center text-sm">
+              <label for="speedRange" class="font-bold text-slate-700">카드당 노출 시간 (속도)</label>
+              <span id="speedVal" class="px-2.5 py-0.5 rounded-lg bg-indigo-50 font-black text-indigo-700 text-sm">2.5초</span>
+            </div>
+            <input type="range" id="speedRange" min="0.8" max="3.5" step="0.1" value="2.5" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+            <div class="flex justify-between text-[11px] text-slate-400">
+              <span>0.8초 (광속)</span>
+              <span>2.0초 (표준)</span>
+              <span>3.5초 (여유)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mode Specific Notice -->
+        <div id="tierNoticeBox" class="p-3.5 rounded-2xl bg-indigo-50/60 border border-indigo-100 flex items-start space-x-3 text-xs text-indigo-900">
+          <i data-lucide="info" class="w-4 h-4 text-indigo-600 mt-0.5 flex-shrink-0"></i>
+          <span id="tierNoticeText">저학년 모드에서는 카드의 무늬가 생략되고 **숫자만 직관적으로 표기**되어 인지 과부하를 줄입니다.</span>
+        </div>
+
+        <!-- Start CTA & Highlights -->
+        <div class="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="flex items-center gap-4 text-xs text-slate-500">
+            <span class="flex items-center gap-1.5"><i data-lucide="award" class="w-4 h-4 text-amber-500"></i> 오늘 완료: <b id="todayCount" class="text-slate-800 font-bold">0회</b></span>
+            <span class="flex items-center gap-1.5"><i data-lucide="flame" class="w-4 h-4 text-rose-500"></i> 최고 연속 성공: <b id="maxStreak" class="text-slate-800 font-bold">0회</b></span>
+          </div>
+          <button onclick="app.startTraining()" class="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-black text-base rounded-2xl shadow-xl shadow-indigo-200 transition-all transform active:scale-95 flex items-center justify-center gap-2">
+            <i data-lucide="play" class="w-5 h-5 fill-current"></i> 훈련 시작하기
+          </button>
+        </div>
+      </div>
+
+      <!-- 30-Day Attendance Heatmap & 12 Badges Showcase -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- 30-Day Habit Heatmap -->
+        <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-xs uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+              <i data-lucide="calendar" class="w-4 h-4 text-indigo-600"></i> 최근 30일 두뇌 비타민 잔디
+            </h4>
+            <span class="text-[11px] font-mono text-emerald-600 font-bold" id="attendanceRateText">출석률 85%</span>
+          </div>
+          <div id="heatmapGrid" class="grid grid-cols-10 gap-1.5 pt-1">
+            <!-- Populated by JS -->
+          </div>
+          <div class="flex items-center justify-between text-[10px] text-slate-400 pt-1">
+            <span>30일 전</span>
+            <div class="flex items-center gap-1">
+              <span class="w-2.5 h-2.5 rounded bg-slate-100"></span> 0회
+              <span class="w-2.5 h-2.5 rounded bg-emerald-200 ml-1"></span> 1~2회
+              <span class="w-2.5 h-2.5 rounded bg-emerald-500 ml-1"></span> 3회(목표)
+            </div>
+            <span>오늘</span>
+          </div>
+        </div>
+
+        <!-- 12 Achievements Showcase -->
+        <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-xs uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+              <i data-lucide="trophy" class="w-4 h-4 text-amber-500"></i> 수집한 업적 뱃지
+            </h4>
+            <span class="text-[11px] font-mono text-indigo-600 font-bold" id="badgeUnlockCounter">0 / 12 달성</span>
+          </div>
+          <div id="badgesGrid" class="grid grid-cols-4 sm:grid-cols-6 gap-2 pt-1 max-h-28 overflow-y-auto custom-scrollbar">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- VIEW 2: FLASH CARD DISPLAY STAGE                             -->
+    <!-- ============================================================ -->
+    <section id="viewFlash" class="hidden flex flex-col items-center justify-center min-h-[480px] space-y-6">
+      <!-- Progress Bar & Indicator -->
+      <div class="w-full max-w-sm space-y-2">
+        <div class="flex justify-between items-center text-xs font-bold text-slate-500">
+          <span id="flashModeIndicator" class="text-indigo-600 flex items-center gap-1"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> 거꾸로 기억하기</span>
+          <span id="flashCardStep" class="text-indigo-600 font-black">1 / 4</span>
+        </div>
+        <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+          <div id="flashProgressBar" class="bg-indigo-600 h-2 rounded-full transition-all duration-300 w-0"></div>
+        </div>
+      </div>
+
+      <!-- Card Display Stage -->
+      <div class="relative w-64 h-96 sm:w-72 sm:h-[420px] flex items-center justify-center">
+        <!-- Ready Countdown Overlay -->
+        <div id="countdownBox" class="absolute inset-0 flex flex-col items-center justify-center bg-white/90 backdrop-blur rounded-3xl border border-slate-200 z-20 shadow-xl transition">
+          <span class="text-xs font-bold tracking-wider text-slate-400 uppercase mb-2">훈련 준비</span>
+          <div id="countdownNumber" class="text-6xl sm:text-7xl font-black text-indigo-600 animate-pulse">3</div>
+          <p id="countdownTip" class="text-xs font-semibold text-slate-500 mt-3">머릿속으로 순서를 기록하세요</p>
+        </div>
+
+        <!-- The Actual Playing Card Container -->
+        <div id="cardRenderer" class="w-full h-full bg-white rounded-3xl p-5 card-shadow card-inner-border flex flex-col justify-between select-none relative animate-flipCard border-2 border-slate-100">
+          <!-- Top Left Index -->
+          <div class="flex flex-col items-start leading-none">
+            <span id="cardValTop" class="text-3xl sm:text-4xl font-black tracking-tighter text-slate-800">7</span>
+            <span id="cardSuitTop" class="text-2xl mt-1">♠</span>
+          </div>
+
+          <!-- Center Large Symbol -->
+          <div class="flex flex-col items-center justify-center">
+            <span id="cardSuitCenter" class="text-7xl sm:text-8xl transform scale-110">♠</span>
+            <span id="cardValCenter" class="hidden text-7xl font-black text-slate-800 mt-2">7</span>
+          </div>
+
+          <!-- Bottom Right Index (Inverted) -->
+          <div class="flex flex-col items-end leading-none rotate-180">
+            <span id="cardValBottom" class="text-3xl sm:text-4xl font-black tracking-tighter text-slate-800">7</span>
+            <span id="cardSuitBottom" class="text-2xl mt-1">♠</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Tip & Cancel -->
+      <div class="text-center space-y-1">
+        <p id="liveTipText" class="text-xs text-slate-400 font-medium">카드가 나올 때마다 들리는 멜로디 음계를 머릿속으로 느껴보세요.</p>
+        <button onclick="app.cancelTraining()" class="text-xs text-rose-500 hover:underline font-semibold">훈련 중단</button>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- VIEW 3: RECALL & INPUT STAGE                                 -->
+    <!-- ============================================================ -->
+    <section id="viewRecall" class="hidden space-y-6">
+      <!-- Guidance Prompt & Combo Badge -->
+      <div class="text-center space-y-1 relative">
+        <div class="flex items-center justify-center gap-2">
+          <span class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 inline-block">
+            <i data-lucide="repeat" class="w-3 h-3 inline mr-1"></i> 작업기억 인출 단계
+          </span>
+          <span id="recallComboBadge" class="hidden items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-black text-xs shadow-md animate-bounce">
+            🔥 <span id="recallComboNum">2</span> Combo!
+          </span>
+        </div>
+        <h2 id="recallHeaderTitle" class="text-2xl font-black text-slate-900">
+          마지막에 본 카드부터 <span class="text-indigo-600 underline decoration-wavy decoration-indigo-300">거꾸로</span> 입력하세요!
+        </h2>
+        <p id="recallHeaderSubtitle" class="text-xs text-slate-500">아래 키패드를 눌러 기억해낸 카드를 순서대로 채워 넣으세요.</p>
+      </div>
+
+      <!-- User Slots (Current Answer Status) -->
+      <div id="slotsCardWrapper" class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm transition-all duration-300">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold text-slate-600 flex items-center gap-1.5">
+            <i data-lucide="check-square" class="w-4 h-4 text-indigo-600"></i> 나의 인출 답안표
+          </span>
+          <span id="recallCountText" class="text-xs font-bold text-slate-400">0 / 4 장</span>
+        </div>
+
+        <div id="slotsContainer" class="flex gap-2 sm:gap-3 overflow-x-auto pb-2 justify-center min-h-[96px] items-center custom-scrollbar">
+          <!-- Dynamically filled card slot boxes -->
+        </div>
+      </div>
+
+      <!-- Ergonomic Touch/Click Keypad -->
+      <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm space-y-4">
+        <!-- Suit Selector (Visible only when suit mode is active) -->
+        <div id="suitKeypadRow" class="flex justify-center gap-2 sm:gap-4 pb-2 border-b border-slate-100">
+          <button onclick="app.selectInputSuit('♠')" data-suit="♠" class="suit-btn flex-1 py-3 rounded-2xl border-2 border-indigo-600 bg-indigo-50 text-slate-900 font-extrabold text-xl sm:text-2xl transition hover:scale-105 shadow-sm">
+            ♠ <span class="text-xs block font-bold text-slate-600">스페이드</span>
+          </button>
+          <button onclick="app.selectInputSuit('♥')" data-suit="♥" class="suit-btn flex-1 py-3 rounded-2xl border-2 border-slate-200 bg-white text-red-500 font-extrabold text-xl sm:text-2xl transition hover:scale-105">
+            ♥ <span class="text-xs block font-bold text-slate-600">하트</span>
+          </button>
+          <button onclick="app.selectInputSuit('♦')" data-suit="♦" class="suit-btn flex-1 py-3 rounded-2xl border-2 border-slate-200 bg-white text-red-500 font-extrabold text-xl sm:text-2xl transition hover:scale-105">
+            ♦ <span class="text-xs block font-bold text-slate-600">다이아</span>
+          </button>
+          <button onclick="app.selectInputSuit('♣')" data-suit="♣" class="suit-btn flex-1 py-3 rounded-2xl border-2 border-slate-200 bg-white text-slate-900 font-extrabold text-xl sm:text-2xl transition hover:scale-105">
+            ♣ <span class="text-xs block font-bold text-slate-600">클로버</span>
+          </button>
+        </div>
+
+        <!-- Color Selector (For Upper Elementary: Red vs Black) -->
+        <div id="colorKeypadRow" class="hidden justify-center gap-4 pb-2 border-b border-slate-100">
+          <button onclick="app.selectInputColor('red')" id="colorBtn-red" class="flex-1 py-3 rounded-2xl border-2 border-red-500 bg-red-50 text-red-600 font-black text-sm transition">
+            🔴 빨간색 (Red)
+          </button>
+          <button onclick="app.selectInputColor('black')" id="colorBtn-black" class="flex-1 py-3 rounded-2xl border-2 border-slate-800 bg-slate-900 text-white font-black text-sm transition">
+            ⚫ 검은색 (Black)
+          </button>
+        </div>
+
+        <!-- Number/Rank Selector Pad -->
+        <div>
+          <div class="text-[11px] font-bold text-slate-400 mb-2 text-center">숫자 / 알파벳 선택</div>
+          <div class="grid grid-cols-5 sm:grid-cols-7 gap-2" id="rankKeypadGrid">
+            <!-- Ranks: A, 2, 3, 4, 5, 6, 7, 8, 9, 10, J, Q, K -->
+          </div>
+        </div>
+
+        <!-- Bottom Actions (Undo, Reset, Submit) -->
+        <div class="flex items-center justify-between pt-3 border-t border-slate-100 gap-2">
+          <button onclick="app.popSlot()" class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs flex items-center gap-1.5">
+            <i data-lucide="delete" class="w-4 h-4 text-slate-500"></i> 직전 취소
+          </button>
+          <button onclick="app.clearSlots()" class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50 font-medium text-xs">
+            전체 비우기
+          </button>
+          <button onclick="app.submitRecall()" id="submitRecallBtn" disabled class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-200 disabled:text-slate-400 text-white font-black text-xs transition flex items-center gap-1.5 shadow-md shadow-indigo-100">
+            <i data-lucide="check" class="w-4 h-4"></i> 정답 확인
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- VIEW 4: RESULT & ANALYSIS STAGE                              -->
+    <!-- ============================================================ -->
+    <section id="viewResult" class="hidden space-y-6">
+      <!-- Banner with Confetti Trigger -->
+      <div id="resultBanner" class="rounded-3xl p-6 sm:p-8 text-center text-white bg-gradient-to-r from-emerald-600 to-teal-600 shadow-xl space-y-2 relative overflow-hidden">
+        <div id="resultIconWrapper" class="w-16 h-16 rounded-full bg-white/20 backdrop-blur mx-auto flex items-center justify-center text-3xl">
+          🎉
+        </div>
+        <h2 id="resultTitle" class="text-2xl sm:text-3xl font-black tracking-tight">작업기억 인출 완벽 성공!</h2>
+        <p id="resultSubtitle" class="text-emerald-100 text-sm max-w-md mx-auto">전두엽의 정보 재배열 및 억제 통제 회로가 강하게 자극되었습니다.</p>
+        <!-- XP & Combo Reward Badge -->
+        <div id="xpRewardBadge" class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/20 text-amber-300 font-black text-xs mt-2 border border-white/25">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> +35 XP 획득!
+        </div>
+      </div>
+
+      <!-- Target vs Input Comparison Cards -->
+      <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+        <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+          <i data-lucide="git-compare" class="w-4 h-4 text-indigo-600"></i> 제시 순서 vs 인출 답안 비교
+        </h3>
+
+        <div class="space-y-3 text-xs font-semibold">
+          <div>
+            <div class="text-slate-400 mb-1.5 flex justify-between">
+              <span>제시된 카드 (원본 순서)</span>
+              <span class="text-[11px] font-normal">앞에서부터 차례로</span>
+            </div>
+            <div id="resTargetForward" class="flex gap-2 overflow-x-auto pb-2 custom-scrollbar"></div>
+          </div>
+
+          <div>
+            <div class="text-slate-400 mb-1.5 flex justify-between">
+              <span id="expectedLabel">정답 기준 (거꾸로 역순)</span>
+              <span class="text-indigo-600 font-bold">목표 배열</span>
+            </div>
+            <div id="resTargetExpected" class="flex gap-2 overflow-x-auto pb-2 custom-scrollbar"></div>
+          </div>
+
+          <div>
+            <div class="text-slate-400 mb-1.5 flex justify-between">
+              <span>내가 작성한 답안</span>
+              <span id="accuracyBadge" class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">일치율 100%</span>
+            </div>
+            <div id="resUserSubmitted" class="flex gap-2 overflow-x-auto pb-2 custom-scrollbar"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cognitive Metrics Matrix & Working Memory Span -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-center">
+          <span class="text-[11px] font-bold text-slate-400 block mb-1">인출 소요 시간</span>
+          <span id="metricTime" class="text-xl font-black text-slate-800">4.2초</span>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-center">
+          <span class="text-[11px] font-bold text-slate-400 block mb-1">나의 작업기억 용량 (Span)</span>
+          <span id="metricCapacity" class="text-xl font-black text-indigo-600">5.0 Cards</span>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-center">
+          <span class="text-[11px] font-bold text-slate-400 block mb-1">연속 성공 스트릭</span>
+          <span id="metricStreak" class="text-xl font-black text-amber-500">🔥 3회</span>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-center">
+          <span class="text-[11px] font-bold text-slate-400 block mb-1">적응형 추천 조치</span>
+          <span id="metricLoadLevel" class="text-xs font-black text-emerald-600 mt-1 block">난이도 1단계 상향</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row gap-3 pt-2">
+        <button onclick="app.startTraining()" class="flex-1 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-sm rounded-2xl shadow-lg shadow-indigo-100 transition flex items-center justify-center gap-2">
+          <i data-lucide="rotate-cw" class="w-4 h-4"></i> 다음 도전 시작
+        </button>
+        <button onclick="app.shareResult()" class="py-3.5 px-5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm rounded-2xl shadow-lg transition flex items-center justify-center gap-1.5">
+          <i data-lucide="share-2" class="w-4 h-4"></i> 결과 자랑하기
+        </button>
+        <button onclick="app.goHome()" class="px-6 py-3.5 bg-white hover:bg-slate-100 text-slate-700 font-bold text-sm rounded-2xl border border-slate-200 transition">
+          홈으로
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================================ -->
+  <!-- MODAL: MULTIPLE PROFILES MANAGER                             -->
+  <!-- ============================================================ -->
+  <div id="profileModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center space-x-2">
+          <div class="p-2 rounded-xl bg-indigo-50 text-indigo-600">
+            <i data-lucide="users" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-black text-slate-900">사용자 프로필 전환</h3>
+            <p class="text-xs text-slate-500">형제·자매·학급별로 개별 기록을 분리 관리합니다.</p>
+          </div>
+        </div>
+        <button onclick="app.closeProfileModal()" class="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:bg-slate-100">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Profile List -->
+      <div id="profileListContainer" class="space-y-2 max-h-56 overflow-y-auto custom-scrollbar pr-1">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Add New Profile Form -->
+      <div class="pt-2 border-t border-slate-100 space-y-2">
+        <label class="text-xs font-bold text-slate-700 block">새 프로필 추가</label>
+        <div class="flex gap-2">
+          <input type="text" id="newProfileInput" placeholder="이름/별명 (예: 둘째 지우)" maxlength="8" class="flex-1 px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500 outline-none">
+          <button onclick="app.createProfile()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-1">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i> 추가
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- MODAL: COGNITIVE SCIENCE INFO                                -->
+  <!-- ============================================================ -->
+  <div id="infoModal" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center space-x-2">
+          <div class="p-2 rounded-xl bg-indigo-50 text-indigo-600">
+            <i data-lucide="book-open" class="w-5 h-5"></i>
+          </div>
+          <h3 class="text-lg font-black text-slate-900">작업기억 & 역순 훈련의 과학</h3>
+        </div>
+        <button onclick="app.closeInfoModal()" class="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:bg-slate-100">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3.5 text-xs sm:text-sm text-slate-600 leading-relaxed">
+        <div class="p-3 bg-indigo-50/70 rounded-2xl border border-indigo-100">
+          <h4 class="font-bold text-indigo-900 mb-1 flex items-center gap-1.5">
+            <i data-lucide="check-circle" class="w-4 h-4 text-indigo-600"></i> 단순 단기기억 vs 작업기억(Working Memory)
+          </h4>
+          <p class="text-xs text-indigo-800">
+            정방향 암기는 뇌의 **음운 루프(Phonological Loop)**를 통한 단순 반복에 머물기 쉽습니다. 반면 **거꾸로(역순) 인출 및 크기순 정렬**은 정보를 뇌의 임시 메모리에 띄워둔 채 순서를 재배열하는 **중앙 집행 기능(Central Executive)**을 강제로 활성화합니다.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-slate-800 mb-1">1. 밀러의 법칙 ($7 \pm 2$)</h4>
+          <p class="text-xs text-slate-500">인간의 단기 기억 용량 한계는 평균 7개입니다. 아동기는 전두엽 수초화가 진행 중이므로 3~5개부터 시작하여 점진적으로 용량을 넓혀주는 훈련이 가장 효과적입니다.</p>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-slate-800 mb-1">2. 이중 부호화 가설 (Dual-Coding)</h4>
+          <p class="text-xs text-slate-500">숫자(기호)와 무늬(시공간 시각)가 결합된 트럼프 카드는 좌뇌의 언어적 처리와 우뇌의 시공간 처리 영역을 동시에 자극합니다.</p>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-slate-800 mb-1">3. 권장 훈련 가이드</h4>
+          <p class="text-xs text-slate-500">• 1일 10~15분 내외로 진행하여 인지적 피로 누적을 방지하세요.<br>• 카드를 말로 외우지 않고 칠판에 적듯 머릿속에 시각화하면 작업기억 폭이 비약적으로 확장됩니다.</p>
+        </div>
+      </div>
+
+      <button onclick="app.closeInfoModal()" class="w-full py-3 bg-slate-900 text-white rounded-xl font-bold text-xs hover:bg-slate-800 transition">
+        확인했습니다
+      </button>
+    </div>
+  </div>
+
+  <!-- Sound Engine -->
+  <script>
+    class SoundFX {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+      }
+      toggle() {
+        this.enabled = !this.enabled;
+        const icon = document.getElementById('soundIcon');
+        const btn = document.getElementById('soundToggleBtn');
+        if (this.enabled) {
+          icon.setAttribute('data-lucide', 'volume-2');
+          btn.classList.remove('text-slate-300');
+          btn.classList.add('text-slate-600');
+        } else {
+          icon.setAttribute('data-lucide', 'volume-x');
+          btn.classList.add('text-slate-300');
+          btn.classList.remove('text-slate-600');
+        }
+        lucide.createIcons();
+      }
+      playTone(freq, type = 'sine', duration = 0.1, gainVal = 0.15) {
+        if (!this.enabled) return;
+        try {
+          this.init();
+          if (this.ctx.state === 'suspended') {
+            this.ctx.resume();
+          }
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + duration);
+        } catch (e) {}
+      }
+      cardFlip(rank = '7') {
+        // Dual-coding: Musical pitch for each card value
+        const noteMap = {
+          'A': 261.63, '1': 261.63, '2': 293.66, '3': 329.63, '4': 349.23,
+          '5': 392.00, '6': 440.00, '7': 493.88, '8': 523.25, '9': 587.33,
+          '10': 659.25, 'J': 698.46, 'Q': 783.99, 'K': 880.00
+        };
+        const freq = noteMap[rank] || 440;
+        this.playTone(freq, 'triangle', 0.14, 0.22);
+      }
+      beepCountdown(last = false) {
+        this.playTone(last ? 880 : 440, 'sine', 0.15, 0.2);
+      }
+      correct() {
+        if (!this.enabled) return;
+        this.playTone(523.25, 'sine', 0.12, 0.2); // C5
+        setTimeout(() => this.playTone(659.25, 'sine', 0.12, 0.2), 90); // E5
+        setTimeout(() => this.playTone(783.99, 'sine', 0.22, 0.2), 180); // G5
+      }
+      wrong() {
+        if (!this.enabled) return;
+        this.playTone(280, 'sawtooth', 0.2, 0.25);
+        setTimeout(() => this.playTone(220, 'sawtooth', 0.3, 0.25), 120);
+      }
+      feverFanfare() {
+        if (!this.enabled) return;
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, idx) => {
+          setTimeout(() => this.playTone(freq, 'triangle', 0.15, 0.25), idx * 80);
+        });
+      }
+    }
+    const sound = new SoundFX();
+  </script>
+
+  <!-- Game Logic, Profile System & Gamification Engine -->
+  <script>
+    const TIERS = {
+      lower: {
+        id: 'lower',
+        name: '초등 저학년 (1~3학년)',
+        desc: '숫자만 직관적으로 표기하여 불필요한 간섭을 줄이고 역순 개념을 형성합니다.',
+        minCards: 3,
+        maxCards: 5,
+        defaultCards: 3,
+        defaultSpeed: 2.5,
+        suitMode: 'none',
+        ranks: ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+      },
+      upper: {
+        id: 'upper',
+        name: '초등 고학년 (4~6학년)',
+        desc: '숫자와 색상(빨강/검정)의 2중 부호화를 통해 작업기억 버퍼를 확장합니다.',
+        minCards: 4,
+        maxCards: 6,
+        defaultCards: 4,
+        defaultSpeed: 2.0,
+        suitMode: 'color',
+        ranks: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
+      },
+      middle: {
+        id: 'middle',
+        name: '중학생 (1~3학년)',
+        desc: '4가지 트럼프 문양과 숫자를 모두 결합하여 온전한 시공간-음운 통합을 요구합니다.',
+        minCards: 5,
+        maxCards: 7,
+        defaultCards: 5,
+        defaultSpeed: 1.5,
+        suitMode: 'all',
+        ranks: ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
+      },
+      high: {
+        id: 'high',
+        name: '고등학생 (1~3학년)',
+        desc: '고속 플래시와 6~8장 인지 조작으로 정보 억제 및 작업기억 갱신을 극대화합니다.',
+        minCards: 6,
+        maxCards: 8,
+        defaultCards: 6,
+        defaultSpeed: 1.2,
+        suitMode: 'all',
+        ranks: ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
+      },
+      adult: {
+        id: 'adult',
+        name: '성인 (Miller Protocol)',
+        desc: '밀러의 한계치인 7장 역순 인출을 표준으로 전두엽 뇌 신경망을 단련합니다.',
+        minCards: 6,
+        maxCards: 9,
+        defaultCards: 7,
+        defaultSpeed: 1.0,
+        suitMode: 'all',
+        ranks: ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
+      }
+    };
+
+    const BADGES_INFO = [
+      { id: 'first_win', name: '첫 역순 성공', icon: '🌱', desc: '첫 번째 훈련 완벽 성공' },
+      { id: 'streak_3', name: '3연속 콤보', icon: '🔥', desc: '3회 연속 무오류 성공' },
+      { id: 'streak_5', name: '5연속 피버', icon: '⚡', desc: '5회 연속 피버 모드 달성' },
+      { id: 'speed_demon', name: '빛의 속도', icon: '🚀', desc: '카드당 평균 1.5초 이내 인출' },
+      { id: 'magnitude_pro', name: '크기정렬 마스터', icon: '🔢', desc: '크기순 정렬 모드 완벽 성공' },
+      { id: 'stroop_genius', name: '스트룹 억제 천재', icon: '🛡️', desc: '스트룹 간섭 모드 5장 이상 성공' },
+      { id: 'miller_7', name: '밀러의 벽 돌파', icon: '👑', desc: '7장 이상 역순 완벽 인출' },
+      { id: 'master_9', name: '초인간 9장', icon: '🌟', desc: '9장 최고 난이도 성공' },
+      { id: 'vitamin_3', name: '두뇌 비타민 섭취', icon: '💊', desc: '하루 3회 훈련 루틴 달성' },
+      { id: 'habit_3days', name: '3일 연속 출석', icon: '📅', desc: '3일 연속 훈련 습관' },
+      { id: 'habit_7days', name: '7일 연속 잔디', icon: '🌿', desc: '1주일 연속 잔디 심기' },
+      { id: 'avatar_lv3', name: '번개 시냅스', icon: '🧠', desc: '아바타 레벨 3 달성' }
+    ];
+
+    class BrainSpanApp {
+      constructor() {
+        this.selectedTierKey = 'lower';
+        this.manipulationMode = 'backward'; // 'backward' | 'magnitude' | 'stroop'
+        this.currentCards = [];
+        this.expectedCards = [];
+        this.userSlots = [];
+        this.selectedSuit = '♠';
+        this.selectedColor = 'red';
+        this.timerId = null;
+        this.startTime = 0;
+
+        // Adaptive staircase state
+        this.consecutiveSuccesses = 0;
+        this.consecutiveFailures = 0;
+
+        // Profile State
+        this.profiles = [];
+        this.activeProfileId = 'default';
+        this.currentProfile = null;
+
+        this.init();
+      }
+
+      init() {
+        this.loadProfiles();
+        this.bindEvents();
+        this.selectTier('lower');
+        this.setManipulationMode('backward');
+        this.updateProfileUI();
+        this.renderHeatmap();
+        this.renderBadges();
+        lucide.createIcons();
+      }
+
+      /* --------------------------------------------------------------------------
+         PROFILES & PERSISTENCE MANAGEMENT
+         -------------------------------------------------------------------------- */
+      loadProfiles() {
+        try {
+          const raw = localStorage.getItem('brainspan_profiles_v3');
+          if (raw) {
+            this.profiles = JSON.parse(raw);
+          } else {
+            this.profiles = [{
+              id: 'prof_default',
+              name: '민수',
+              level: 1,
+              xp: 20,
+              streak: 0,
+              maxStreak: 0,
+              todayCount: 0,
+              lastActiveDate: new Date().toISOString().split('T')[0],
+              attendanceDates: [new Date().toISOString().split('T')[0]],
+              badges: ['first_win'],
+              spanEstimate: 3.5
+            }];
+          }
+          const savedActive = localStorage.getItem('brainspan_active_id_v3');
+          this.activeProfileId = savedActive || this.profiles[0].id;
+          this.currentProfile = this.profiles.find(p => p.id === this.activeProfileId) || this.profiles[0];
+
+          // Check day change
+          const today = new Date().toISOString().split('T')[0];
+          if (this.currentProfile.lastActiveDate !== today) {
+            this.currentProfile.todayCount = 0;
+            // Check streak
+            const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+            if (this.currentProfile.lastActiveDate !== yesterday) {
+              this.currentProfile.streak = 0;
+            }
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      saveProfiles() {
+        try {
+          localStorage.setItem('brainspan_profiles_v3', JSON.stringify(this.profiles));
+          localStorage.setItem('brainspan_active_id_v3', this.activeProfileId);
+        } catch (e) {}
+      }
+
+      createProfile() {
+        const input = document.getElementById('newProfileInput');
+        const name = input.value.trim();
+        if (!name) return;
+
+        const newP = {
+          id: 'prof_' + Date.now(),
+          name: name,
+          level: 1,
+          xp: 0,
+          streak: 0,
+          maxStreak: 0,
+          todayCount: 0,
+          lastActiveDate: new Date().toISOString().split('T')[0],
+          attendanceDates: [],
+          badges: [],
+          spanEstimate: 3.0
+        };
+
+        this.profiles.push(newP);
+        input.value = '';
+        this.saveProfiles();
+        this.switchProfile(newP.id);
+        this.renderProfileList();
+      }
+
+      switchProfile(id) {
+        this.activeProfileId = id;
+        this.currentProfile = this.profiles.find(p => p.id === id) || this.profiles[0];
+        this.saveProfiles();
+        this.updateProfileUI();
+        this.renderHeatmap();
+        this.renderBadges();
+        this.closeProfileModal();
+      }
+
+      openProfileModal() {
+        this.renderProfileList();
+        document.getElementById('profileModal').classList.remove('hidden');
+        lucide.createIcons();
+      }
+
+      closeProfileModal() {
+        document.getElementById('profileModal').classList.add('hidden');
+      }
+
+      renderProfileList() {
+        const container = document.getElementById('profileListContainer');
+        container.innerHTML = '';
+
+        this.profiles.forEach(p => {
+          const isActive = p.id === this.activeProfileId;
+          const div = document.createElement('div');
+          div.className = `p-3 rounded-2xl border transition flex items-center justify-between cursor-pointer ${isActive ? 'bg-indigo-50 border-indigo-500 shadow-sm' : 'bg-slate-50 hover:bg-slate-100 border-slate-200'}`;
+          div.onclick = () => this.switchProfile(p.id);
+          div.innerHTML = `
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full ${isActive ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-700'} flex items-center justify-center font-black text-xs">
+                ${p.name.charAt(0)}
+              </div>
+              <div>
+                <div class="font-extrabold text-xs text-slate-900 flex items-center gap-1.5">
+                  <span>${p.name}</span>
+                  <span class="text-[10px] px-1.5 py-0.2 rounded bg-indigo-100 text-indigo-700 font-bold">Lv.${p.level}</span>
+                </div>
+                <div class="text-[10px] text-slate-500">기억용량: ${p.spanEstimate.toFixed(1)}장 · 스트릭: ${p.streak}일</div>
+              </div>
+            </div>
+            ${isActive ? '<span class="text-[11px] font-bold text-indigo-600 flex items-center gap-1"><i data-lucide="check" class="w-3.5 h-3.5"></i> 선택됨</span>' : ''}
+          `;
+          container.appendChild(div);
+        });
+      }
+
+      /* --------------------------------------------------------------------------
+         AVATAR & GAMIFICATION UI
+         -------------------------------------------------------------------------- */
+      updateProfileUI() {
+        const p = this.currentProfile;
+        document.getElementById('headerProfileName').innerText = p.name;
+        document.getElementById('headerAvatarInitial').innerText = p.name.charAt(0);
+        document.getElementById('avatarProfileLabel').innerText = p.name;
+
+        // Level details
+        const levelTitles = [
+          '잠자는 뉴런',
+          '생각 새싹 뉴런',
+          '호기심 시냅스',
+          '번개 시냅스',
+          '슈퍼 전두엽',
+          '두뇌 마스터'
+        ];
+        const levelEmojis = ['🌱', '🌿', '⚡', '🧠', '👑', '🌌'];
+        const title = levelTitles[p.level - 1] || '두뇌 마스터';
+        const emoji = levelEmojis[p.level - 1] || '🧠';
+
+        document.getElementById('avatarTitle').innerText = title;
+        document.getElementById('avatarEmoji').innerText = emoji;
+        document.getElementById('avatarBadgeTier').innerText = `Lv.${p.level}`;
+
+        // XP Math (Each level requires level * 100 XP)
+        const currentReq = p.level * 100;
+        const percent = Math.min(100, Math.round((p.xp / currentReq) * 100));
+        document.getElementById('avatarXpBar').style.width = `${percent}%`;
+        document.getElementById('avatarXpText').innerText = `${p.xp} / ${currentReq} XP`;
+
+        // Stats
+        document.getElementById('streakDaysVal').innerText = `🔥 ${p.streak}일`;
+        document.getElementById('todayPillVal').innerText = `💊 ${p.todayCount}/3`;
+        document.getElementById('spanCapacityVal').innerText = `⚡ ${p.spanEstimate.toFixed(1)}장`;
+
+        document.getElementById('todayCount').innerText = `${p.todayCount}회`;
+        document.getElementById('maxStreak').innerText = `${p.maxStreak}회`;
+      }
+
+      renderHeatmap() {
+        const grid = document.getElementById('heatmapGrid');
+        grid.innerHTML = '';
+        const p = this.currentProfile;
+
+        // Generate past 30 days
+        const dates = [];
+        for (let i = 29; i >= 0; i--) {
+          const d = new Date(Date.now() - i * 86400000).toISOString().split('T')[0];
+          dates.push(d);
+        }
+
+        let attendedCount = 0;
+        dates.forEach(d => {
+          const isAttended = p.attendanceDates && p.attendanceDates.includes(d);
+          if (isAttended) attendedCount++;
+
+          const cell = document.createElement('div');
+          cell.className = `w-full aspect-square rounded-md transition-all ${isAttended ? 'bg-emerald-500 shadow-sm' : 'bg-slate-100'}`;
+          cell.title = `${d}: ${isAttended ? '훈련 완료' : '미완료'}`;
+          grid.appendChild(cell);
+        });
+
+        const rate = Math.round((attendedCount / 30) * 100);
+        document.getElementById('attendanceRateText').innerText = `출석률 ${rate}%`;
+      }
+
+      renderBadges() {
+        const grid = document.getElementById('badgesGrid');
+        grid.innerHTML = '';
+        const p = this.currentProfile;
+
+        let unlockedCount = 0;
+        BADGES_INFO.forEach(b => {
+          const isUnlocked = p.badges && p.badges.includes(b.id);
+          if (isUnlocked) unlockedCount++;
+
+          const div = document.createElement('div');
+          div.className = `p-2 rounded-xl border text-center transition ${isUnlocked ? 'bg-amber-50/70 border-amber-300 shadow-sm' : 'bg-slate-50 border-slate-200 opacity-40 grayscale'}`;
+          div.title = `${b.name} : ${b.desc}`;
+          div.innerHTML = `
+            <span class="text-xl block">${b.icon}</span>
+            <span class="text-[9px] font-bold text-slate-700 block truncate mt-0.5">${b.name}</span>
+          `;
+          grid.appendChild(div);
+        });
+
+        document.getElementById('badgeUnlockCounter').innerText = `${unlockedCount} / ${BADGES_INFO.length} 달성`;
+      }
+
+      unlockBadge(badgeId) {
+        const p = this.currentProfile;
+        if (!p.badges) p.badges = [];
+        if (!p.badges.includes(badgeId)) {
+          p.badges.push(badgeId);
+          this.saveProfiles();
+          this.renderBadges();
+        }
+      }
+
+      /* --------------------------------------------------------------------------
+         TRAINING & MANIPULATION ENGINE
+         -------------------------------------------------------------------------- */
+      bindEvents() {
+        const countRange = document.getElementById('cardCountRange');
+        countRange.addEventListener('input', (e) => {
+          document.getElementById('cardCountVal').innerText = `${e.target.value}장`;
+        });
+
+        const speedRange = document.getElementById('speedRange');
+        speedRange.addEventListener('input', (e) => {
+          document.getElementById('speedVal').innerText = `${parseFloat(e.target.value).toFixed(1)}초`;
+        });
+      }
+
+      selectTier(tierKey) {
+        this.selectedTierKey = tierKey;
+        const config = TIERS[tierKey];
+
+        Object.keys(TIERS).forEach(key => {
+          const btn = document.getElementById(`tierBtn-${key}`);
+          if (key === tierKey) {
+            btn.className = 'tier-card text-left p-4 rounded-2xl border-2 transition-all bg-white shadow-md border-indigo-600 ring-2 ring-indigo-500/20';
+          } else {
+            btn.className = 'tier-card text-left p-4 rounded-2xl border-2 transition-all bg-white hover:shadow-sm border-slate-200 hover:border-slate-300';
+          }
+        });
+
+        document.getElementById('currentTierName').innerText = config.name.split(' ')[0];
+        document.getElementById('currentTierDesc').innerText = config.desc;
+        document.getElementById('tierNoticeText').innerText = config.desc;
+
+        const countRange = document.getElementById('cardCountRange');
+        countRange.min = config.minCards;
+        countRange.max = config.maxCards;
+        countRange.value = config.defaultCards;
+        document.getElementById('cardCountVal').innerText = `${config.defaultCards}장`;
+
+        const speedRange = document.getElementById('speedRange');
+        speedRange.value = config.defaultSpeed;
+        document.getElementById('speedVal').innerText = `${config.defaultSpeed.toFixed(1)}초`;
+      }
+
+      setManipulationMode(mode) {
+        this.manipulationMode = mode;
+        ['backward', 'magnitude', 'stroop'].forEach(m => {
+          const btn = document.getElementById(`modeBtn-${m}`);
+          if (m === mode) {
+            btn.className = 'p-3 rounded-2xl border-2 text-left transition flex items-center gap-3 border-indigo-600 bg-indigo-50/70 text-indigo-950 shadow-sm';
+          } else {
+            btn.className = 'p-3 rounded-2xl border-2 text-left transition flex items-center gap-3 border-slate-200 hover:border-slate-300 bg-white text-slate-800';
+          }
+        });
+        lucide.createIcons();
+      }
+
+      getRankValue(rank) {
+        const valMap = {
+          'A': 1, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5,
+          '6': 6, '7': 7, '8': 8, '9': 9, '10': 10,
+          'J': 11, 'Q': 12, 'K': 13
+        };
+        return valMap[rank] || 0;
+      }
+
+      generateCards(count, suitMode, ranks) {
+        const suits = ['♠', '♥', '♦', '♣'];
+        const cards = [];
+
+        for (let i = 0; i < count; i++) {
+          const rank = ranks[Math.floor(Math.random() * ranks.length)];
+          let suit = '♠';
+          let color = 'black';
+
+          if (suitMode === 'none') {
+            suit = '';
+            color = 'black';
+          } else if (suitMode === 'color') {
+            color = Math.random() > 0.5 ? 'red' : 'black';
+            suit = color === 'red' ? '♥' : '♠';
+          } else {
+            suit = suits[Math.floor(Math.random() * suits.length)];
+            color = (suit === '♥' || suit === '♦') ? 'red' : 'black';
+          }
+
+          // Stroop mode interference injection: Conflicting colors!
+          if (this.manipulationMode === 'stroop') {
+            const isConflicted = Math.random() > 0.4;
+            if (isConflicted) {
+              color = color === 'red' ? 'black' : 'red'; // reverse visual color!
+            }
+          }
+
+          cards.push({ rank, suit, color });
+        }
+        return cards;
+      }
+
+      startTraining() {
+        const config = TIERS[this.selectedTierKey];
+        const cardCount = parseInt(document.getElementById('cardCountRange').value, 10);
+        const speed = parseFloat(document.getElementById('speedRange').value);
+
+        this.currentCards = this.generateCards(cardCount, config.suitMode, config.ranks);
+
+        // Expected Sequence Calculation based on manipulation mode
+        if (this.manipulationMode === 'backward' || this.manipulationMode === 'stroop') {
+          this.expectedCards = [...this.currentCards].reverse();
+        } else if (this.manipulationMode === 'magnitude') {
+          // Magnitude Sorting: Ascending order
+          this.expectedCards = [...this.currentCards].sort((a, b) => {
+            const va = this.getRankValue(a.rank);
+            const vb = this.getRankValue(b.rank);
+            return va - vb;
+          });
+        }
+
+        // Switch Views
+        this.showView('viewFlash');
+
+        // Execute Countdown Phase
+        this.runCountdown(() => {
+          this.runCardFlash(speed);
+        });
+      }
+
+      runCountdown(onComplete) {
+        const countdownBox = document.getElementById('countdownBox');
+        const numElem = document.getElementById('countdownNumber');
+        const tipElem = document.getElementById('countdownTip');
+        countdownBox.classList.remove('hidden');
+
+        if (this.manipulationMode === 'magnitude') {
+          tipElem.innerText = '작은 수부터 차례대로 정렬할 준비를 하세요!';
+        } else if (this.manipulationMode === 'stroop') {
+          tipElem.innerText = '색상 방해를 무시하고 카드를 기억하세요!';
+        } else {
+          tipElem.innerText = '머릿속으로 순서를 반대로 기록하세요';
+        }
+
+        let count = 3;
+        numElem.innerText = count;
+        sound.beepCountdown(false);
+
+        const intId = setInterval(() => {
+          count--;
+          if (count > 0) {
+            numElem.innerText = count;
+            sound.beepCountdown(false);
+          } else if (count === 0) {
+            numElem.innerText = 'START!';
+            sound.beepCountdown(true);
+          } else {
+            clearInterval(intId);
+            countdownBox.classList.add('hidden');
+            onComplete();
+          }
+        }, 800);
+      }
+
+      runCardFlash(speed) {
+        let index = 0;
+        const total = this.currentCards.length;
+        const durationMs = speed * 1000;
+        const progressBar = document.getElementById('flashProgressBar');
+        const stepElem = document.getElementById('flashCardStep');
+
+        const renderSingleCard = (card) => {
+          sound.cardFlip(card.rank); // Dual-coding musical scale
+          stepElem.innerText = `${index + 1} / ${total}`;
+          progressBar.style.width = `${((index + 1) / total) * 100}%`;
+
+          const renderer = document.getElementById('cardRenderer');
+          renderer.classList.remove('animate-flipCard');
+          void renderer.offsetWidth;
+          renderer.classList.add('animate-flipCard');
+
+          const isRed = card.color === 'red';
+          const colorClass = isRed ? 'text-red-500' : 'text-slate-800';
+
+          const topSuit = document.getElementById('cardSuitTop');
+          const botSuit = document.getElementById('cardSuitBottom');
+          const centerSuit = document.getElementById('cardSuitCenter');
+          const centerVal = document.getElementById('cardValCenter');
+          const topVal = document.getElementById('cardValTop');
+          const botVal = document.getElementById('cardValBottom');
+
+          topVal.innerText = card.rank;
+          botVal.innerText = card.rank;
+          topVal.className = `text-3xl sm:text-4xl font-black tracking-tighter ${colorClass}`;
+          botVal.className = `text-3xl sm:text-4xl font-black tracking-tighter ${colorClass}`;
+
+          if (card.suit === '') {
+            topSuit.innerText = '';
+            botSuit.innerText = '';
+            centerSuit.classList.add('hidden');
+            centerVal.classList.remove('hidden');
+            centerVal.innerText = card.rank;
+            centerVal.className = `text-7xl sm:text-8xl font-black ${colorClass}`;
+          } else if (TIERS[this.selectedTierKey].suitMode === 'color') {
+            topSuit.innerText = card.color === 'red' ? '●' : '●';
+            topSuit.className = `text-2xl mt-1 ${colorClass}`;
+            botSuit.innerText = card.color === 'red' ? '●' : '●';
+            botSuit.className = `text-2xl mt-1 ${colorClass}`;
+            centerSuit.classList.add('hidden');
+            centerVal.classList.remove('hidden');
+            centerVal.innerText = card.rank;
+            centerVal.className = `text-7xl sm:text-8xl font-black ${colorClass}`;
+          } else {
+            topSuit.innerText = card.suit;
+            topSuit.className = `text-2xl mt-1 ${colorClass}`;
+            botSuit.innerText = card.suit;
+            botSuit.className = `text-2xl mt-1 ${colorClass}`;
+            centerSuit.classList.remove('hidden');
+            centerVal.classList.add('hidden');
+            centerSuit.innerText = card.suit;
+            centerSuit.className = `text-7xl sm:text-8xl transform scale-110 ${colorClass}`;
+          }
+        };
+
+        renderSingleCard(this.currentCards[index]);
+
+        this.timerId = setInterval(() => {
+          index++;
+          if (index < total) {
+            renderSingleCard(this.currentCards[index]);
+          } else {
+            clearInterval(this.timerId);
+            setTimeout(() => {
+              this.prepareRecallPhase();
+            }, 600);
+          }
+        }, durationMs);
+      }
+
+      cancelTraining() {
+        if (this.timerId) clearInterval(this.timerId);
+        this.showView('viewSetup');
+      }
+
+      prepareRecallPhase() {
+        this.userSlots = [];
+        this.startTime = performance.now();
+        const config = TIERS[this.selectedTierKey];
+
+        // Guidance Headers based on mode
+        const headerTitle = document.getElementById('recallHeaderTitle');
+        const headerSub = document.getElementById('recallHeaderSubtitle');
+        const comboBadge = document.getElementById('recallComboBadge');
+        const cardWrapper = document.getElementById('slotsCardWrapper');
+
+        if (this.currentProfile.streak >= 2) {
+          comboBadge.classList.remove('hidden');
+          comboBadge.classList.add('inline-flex');
+          document.getElementById('recallComboNum').innerText = this.currentProfile.streak;
+          if (this.currentProfile.streak >= 4) {
+            cardWrapper.classList.add('fever-border');
+            sound.feverFanfare();
+          }
+        } else {
+          comboBadge.classList.add('hidden');
+          cardWrapper.classList.remove('fever-border');
+        }
+
+        if (this.manipulationMode === 'magnitude') {
+          headerTitle.innerHTML = '가장 <span class="text-emerald-600 underline decoration-wavy decoration-emerald-300">작은 수부터 큰 수 순서로</span> 입력하세요!';
+          headerSub.innerText = '본 카드들의 크기를 머릿속에서 오름차순으로 재배열하여 입력합니다.';
+        } else if (this.manipulationMode === 'stroop') {
+          headerTitle.innerHTML = '색상 방해를 무시하고 <span class="text-rose-600 underline decoration-wavy decoration-rose-300">거꾸로</span> 입력하세요!';
+          headerSub.innerText = '빨강/검정 색상이 바뀌어 있어도 원래의 진짜 카드를 역순으로 복원합니다.';
+        } else {
+          headerTitle.innerHTML = '마지막 카드부터 <span class="text-indigo-600 underline decoration-wavy decoration-indigo-300">거꾸로</span> 입력하세요!';
+          headerSub.innerText = '방금 본 순서의 정반대(역순)로 첫 번째 카드를 채우세요.';
+        }
+
+        // Keypad Rows
+        const suitRow = document.getElementById('suitKeypadRow');
+        const colorRow = document.getElementById('colorKeypadRow');
+
+        if (config.suitMode === 'none') {
+          suitRow.classList.add('hidden');
+          colorRow.classList.add('hidden');
+        } else if (config.suitMode === 'color') {
+          suitRow.classList.add('hidden');
+          colorRow.classList.remove('hidden');
+          colorRow.classList.add('flex');
+          this.selectInputColor('red');
+        } else {
+          suitRow.classList.remove('hidden');
+          colorRow.classList.add('hidden');
+          this.selectInputSuit('♠');
+        }
+
+        // Keypad Ranks
+        const rankGrid = document.getElementById('rankKeypadGrid');
+        rankGrid.innerHTML = '';
+        config.ranks.forEach(rank => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'py-3 sm:py-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-400 font-extrabold text-base sm:text-lg text-slate-800 transition active:scale-95 shadow-sm';
+          btn.innerText = rank;
+          btn.onclick = () => this.pushSlot(rank);
+          rankGrid.appendChild(btn);
+        });
+
+        this.renderSlots();
+        this.showView('viewRecall');
+      }
+
+      selectInputSuit(suit) {
+        this.selectedSuit = suit;
+        document.querySelectorAll('.suit-btn').forEach(btn => {
+          if (btn.getAttribute('data-suit') === suit) {
+            btn.classList.add('border-indigo-600', 'bg-indigo-50', 'ring-2', 'ring-indigo-400/30');
+            btn.classList.remove('border-slate-200', 'bg-white');
+          } else {
+            btn.classList.remove('border-indigo-600', 'bg-indigo-50', 'ring-2', 'ring-indigo-400/30');
+            btn.classList.add('border-slate-200', 'bg-white');
+          }
+        });
+      }
+
+      selectInputColor(color) {
+        this.selectedColor = color;
+        const rBtn = document.getElementById('colorBtn-red');
+        const bBtn = document.getElementById('colorBtn-black');
+        if (color === 'red') {
+          rBtn.classList.add('ring-2', 'ring-red-400');
+          bBtn.classList.remove('ring-2', 'ring-slate-400');
+        } else {
+          bBtn.classList.add('ring-2', 'ring-slate-400');
+          rBtn.classList.remove('ring-2', 'ring-red-400');
+        }
+      }
+
+      pushSlot(rank) {
+        const config = TIERS[this.selectedTierKey];
+        if (this.userSlots.length >= this.currentCards.length) return;
+
+        let suit = '';
+        let color = 'black';
+
+        if (config.suitMode === 'none') {
+          suit = '';
+          color = 'black';
+        } else if (config.suitMode === 'color') {
+          color = this.selectedColor;
+          suit = color === 'red' ? '♥' : '♠';
+        } else {
+          suit = this.selectedSuit;
+          color = (suit === '♥' || suit === '♦') ? 'red' : 'black';
+        }
+
+        this.userSlots.push({ rank, suit, color });
+        sound.playTone(620, 'sine', 0.05, 0.15);
+        this.renderSlots();
+      }
+
+      popSlot() {
+        if (this.userSlots.length > 0) {
+          this.userSlots.pop();
+          sound.playTone(350, 'sine', 0.05, 0.1);
+          this.renderSlots();
+        }
+      }
+
+      clearSlots() {
+        this.userSlots = [];
+        this.renderSlots();
+      }
+
+      renderSlots() {
+        const container = document.getElementById('slotsContainer');
+        container.innerHTML = '';
+        const total = this.currentCards.length;
+
+        document.getElementById('recallCountText').innerText = `${this.userSlots.length} / ${total} 장`;
+        const submitBtn = document.getElementById('submitRecallBtn');
+        submitBtn.disabled = this.userSlots.length !== total;
+
+        for (let i = 0; i < total; i++) {
+          const filled = this.userSlots[i];
+          const slot = document.createElement('div');
+
+          if (filled) {
+            const isRed = filled.color === 'red';
+            const colorClass = isRed ? 'text-red-500' : 'text-slate-900';
+            slot.className = 'w-16 h-22 sm:w-20 sm:h-28 rounded-2xl bg-white border-2 border-indigo-500 shadow-md p-1.5 flex flex-col justify-between items-center transition-all animate-pop flex-shrink-0';
+            slot.innerHTML = `
+              <div class="text-[10px] font-bold text-slate-400">#${i + 1}</div>
+              <div class="flex items-center gap-1 ${colorClass}">
+                <span class="text-sm sm:text-base font-black">${filled.suit}</span>
+                <span class="text-base sm:text-xl font-black">${filled.rank}</span>
+              </div>
+              <div class="text-[9px] text-slate-400 font-semibold">${filled.color === 'red' ? '빨강' : '검정'}</div>
+            `;
+          } else {
+            const isNext = i === this.userSlots.length;
+            slot.className = `w-16 h-22 sm:w-20 sm:h-28 rounded-2xl border-2 border-dashed ${isNext ? 'border-indigo-400 bg-indigo-50/40 animate-pulse' : 'border-slate-200 bg-slate-50/50'} flex flex-col justify-center items-center text-slate-400 text-xs font-bold flex-shrink-0`;
+            slot.innerHTML = `<span class="text-xs">#${i + 1}</span><span class="text-[10px] mt-1 font-medium">대기</span>`;
+          }
+          container.appendChild(slot);
+        }
+      }
+
+      submitRecall() {
+        const recallDuration = ((performance.now() - this.startTime) / 1000).toFixed(1);
+        const total = this.expectedCards.length;
+        let correctCount = 0;
+
+        for (let i = 0; i < total; i++) {
+          const exp = this.expectedCards[i];
+          const act = this.userSlots[i];
+          const rankMatch = exp.rank === act.rank;
+          const suitMatch = (TIERS[this.selectedTierKey].suitMode === 'none') ? true :
+                            (TIERS[this.selectedTierKey].suitMode === 'color') ? (exp.color === act.color) : (exp.suit === act.suit);
+
+          if (rankMatch && suitMatch) {
+            correctCount++;
+          }
+        }
+
+        const isFullCorrect = correctCount === total;
+        const p = this.currentProfile;
+
+        // Sound & XP Calculation
+        let xpGained = 15;
+        if (isFullCorrect) {
+          sound.correct();
+          p.streak++;
+          if (p.streak > p.maxStreak) p.maxStreak = p.streak;
+
+          // Confetti celebration
+          try {
+            if (window.confetti) {
+              window.confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
+            }
+          } catch (e) {}
+
+          // XP Bonus
+          xpGained = 20 + (total * 5) + (p.streak * 5);
+          this.consecutiveSuccesses++;
+          this.consecutiveFailures = 0;
+
+          // Badges check
+          this.unlockBadge('first_win');
+          if (p.streak >= 3) this.unlockBadge('streak_3');
+          if (p.streak >= 5) this.unlockBadge('streak_5');
+          if (parseFloat(recallDuration) < total * 1.5) this.unlockBadge('speed_demon');
+          if (total >= 7) this.unlockBadge('miller_7');
+          if (total >= 9) this.unlockBadge('master_9');
+          if (this.manipulationMode === 'magnitude') this.unlockBadge('magnitude_pro');
+          if (this.manipulationMode === 'stroop' && total >= 5) this.unlockBadge('stroop_genius');
+        } else {
+          sound.wrong();
+          p.streak = 0;
+          this.consecutiveFailures++;
+          this.consecutiveSuccesses = 0;
+        }
+
+        // Daily Vitamin check
+        p.todayCount++;
+        const todayStr = new Date().toISOString().split('T')[0];
+        p.lastActiveDate = todayStr;
+        if (!p.attendanceDates) p.attendanceDates = [];
+        if (!p.attendanceDates.includes(todayStr)) {
+          p.attendanceDates.push(todayStr);
+        }
+        if (p.todayCount >= 3) this.unlockBadge('vitamin_3');
+        if (p.attendanceDates.length >= 3) this.unlockBadge('habit_3days');
+        if (p.attendanceDates.length >= 7) this.unlockBadge('habit_7days');
+
+        // Working Memory Span Estimate update (Moving average)
+        const currentTrialSpan = isFullCorrect ? total : Math.max(2.5, total - 1);
+        p.spanEstimate = (p.spanEstimate * 0.7) + (currentTrialSpan * 0.3);
+
+        // XP Leveling
+        p.xp += xpGained;
+        const currentReq = p.level * 100;
+        if (p.xp >= currentReq) {
+          p.level++;
+          p.xp -= currentReq;
+          if (p.level >= 3) this.unlockBadge('avatar_lv3');
+        }
+
+        this.saveProfiles();
+        this.updateProfileUI();
+        this.renderHeatmap();
+        this.renderBadges();
+
+        // Show Result
+        this.showResultView(isFullCorrect, correctCount, total, recallDuration, xpGained);
+      }
+
+      showResultView(isFullCorrect, correctCount, total, recallDuration, xpGained) {
+        this.showView('viewResult');
+
+        const banner = document.getElementById('resultBanner');
+        const iconWrap = document.getElementById('resultIconWrapper');
+        const title = document.getElementById('resultTitle');
+        const subtitle = document.getElementById('resultSubtitle');
+        const accuracyBadge = document.getElementById('accuracyBadge');
+        const xpBadge = document.getElementById('xpRewardBadge');
+
+        const percent = Math.round((correctCount / total) * 100);
+        accuracyBadge.innerText = `정확도 ${percent}% (${correctCount}/${total})`;
+        xpBadge.innerHTML = `<i data-lucide="sparkles" class="w-3.5 h-3.5 inline"></i> +${xpGained} XP 획득!`;
+
+        if (isFullCorrect) {
+          banner.className = 'rounded-3xl p-6 sm:p-8 text-center text-white bg-gradient-to-r from-emerald-600 to-teal-600 shadow-xl space-y-2 relative overflow-hidden';
+          iconWrap.innerText = '🧠';
+          title.innerText = '작업기억 인출 완벽 성공!';
+          subtitle.innerText = '머릿속에 임시 저장된 정보를 오류 없이 재구성했습니다.';
+          accuracyBadge.className = 'px-2.5 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 font-bold';
+        } else {
+          banner.className = 'rounded-3xl p-6 sm:p-8 text-center text-white bg-gradient-to-r from-slate-800 to-indigo-950 shadow-xl space-y-2 relative overflow-hidden';
+          iconWrap.innerText = '⚡';
+          title.innerText = '아쉽지만 뇌는 확실히 깨어났습니다!';
+          subtitle.innerText = '작업기억은 한계 부하에 부딪힐 때 신경가소성이 가장 활발하게 작동합니다.';
+          accuracyBadge.className = 'px-2.5 py-0.5 rounded-lg bg-rose-100 text-rose-800 font-bold';
+        }
+
+        // Comparison Cards
+        const renderCardBadge = (card) => {
+          const isRed = card.color === 'red';
+          const colorClass = isRed ? 'text-red-600' : 'text-slate-800';
+          return `
+            <div class="px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 flex items-center gap-1 flex-shrink-0 ${colorClass}">
+              <span class="font-bold text-xs">${card.suit}</span>
+              <span class="font-black text-sm">${card.rank}</span>
+            </div>
+          `;
+        };
+
+        document.getElementById('resTargetForward').innerHTML = this.currentCards.map(renderCardBadge).join('');
+        
+        let expectedLabelText = '정답 기준 (거꾸로 역순)';
+        if (this.manipulationMode === 'magnitude') expectedLabelText = '정답 기준 (크기순 오름차순)';
+        document.getElementById('expectedLabel').innerText = expectedLabelText;
+        document.getElementById('resTargetExpected').innerHTML = this.expectedCards.map(renderCardBadge).join('');
+
+        document.getElementById('resUserSubmitted').innerHTML = this.userSlots.map((act, i) => {
+          const exp = this.expectedCards[i];
+          const rankMatch = exp.rank === act.rank;
+          const suitMatch = (TIERS[this.selectedTierKey].suitMode === 'none') ? true :
+                            (TIERS[this.selectedTierKey].suitMode === 'color') ? (exp.color === act.color) : (exp.suit === act.suit);
+          const isMatch = rankMatch && suitMatch;
+          const isRed = act.color === 'red';
+          const colorClass = isRed ? 'text-red-600' : 'text-slate-800';
+
+          return `
+            <div class="px-2.5 py-1.5 rounded-xl border-2 ${isMatch ? 'border-emerald-500 bg-emerald-50/40' : 'border-rose-400 bg-rose-50/40'} flex items-center gap-1 flex-shrink-0 ${colorClass}">
+              <span class="font-bold text-xs">${act.suit}</span>
+              <span class="font-black text-sm">${act.rank}</span>
+              <span class="text-[10px] ml-1">${isMatch ? '✓' : '✗'}</span>
+            </div>
+          `;
+        }).join('');
+
+        // Metrics
+        document.getElementById('metricTime').innerText = `${recallDuration}초`;
+        document.getElementById('metricCapacity').innerText = `${this.currentProfile.spanEstimate.toFixed(1)}장`;
+        document.getElementById('metricStreak').innerText = `🔥 ${this.currentProfile.streak}회`;
+
+        // Adaptive Step Guidance
+        const isAdaptive = document.getElementById('adaptiveToggle').checked;
+        let recommendation = '적정 자극';
+        if (isAdaptive) {
+          const countRange = document.getElementById('cardCountRange');
+          const currentCount = parseInt(countRange.value, 10);
+          const config = TIERS[this.selectedTierKey];
+
+          if (this.consecutiveSuccesses >= 2 && currentCount < config.maxCards) {
+            countRange.value = currentCount + 1;
+            document.getElementById('cardCountVal').innerText = `${currentCount + 1}장`;
+            recommendation = '🔥 2연속 성공! 난이도 +1장 상향';
+            this.consecutiveSuccesses = 0;
+          } else if (this.consecutiveFailures >= 1 && currentCount > config.minCards) {
+            countRange.value = currentCount - 1;
+            document.getElementById('cardCountVal').innerText = `${currentCount - 1}장`;
+            recommendation = '💡 안정 적응 위해 1장 완화';
+          }
+        }
+        document.getElementById('metricLoadLevel').innerText = recommendation;
+        lucide.createIcons();
+      }
+
+      shareResult() {
+        const p = this.currentProfile;
+        const text = `[BrainSpan 작업기억 훈련]\n👤 ${p.name} (Lv.${p.level})\n⚡ 작업기억 용량: ${p.spanEstimate.toFixed(1)}장\n🔥 연속 성공: ${p.streak}회\n함께 두뇌 훈련에 도전해보세요! 🧠`;
+        if (navigator.share) {
+          navigator.share({ title: 'BrainSpan 작업기억 훈련', text }).catch(() => {});
+        } else if (navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(() => {
+            alert('훈련 결과가 클립보드에 복사되었습니다! 카카오톡에 붙여넣어 공유하세요.');
+          });
+        } else {
+          alert(text);
+        }
+      }
+
+      showView(viewId) {
+        ['viewSetup', 'viewFlash', 'viewRecall', 'viewResult'].forEach(id => {
+          document.getElementById(id).classList.add('hidden');
+        });
+        document.getElementById(viewId).classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        lucide.createIcons();
+      }
+
+      goHome() {
+        if (this.timerId) clearInterval(this.timerId);
+        this.showView('viewSetup');
+      }
+
+      openInfoModal() {
+        document.getElementById('infoModal').classList.remove('hidden');
+      }
+
+      closeInfoModal() {
+        document.getElementById('infoModal').classList.add('hidden');
+      }
+    }
+
+    let app;
+    window.addEventListener('DOMContentLoaded', () => {
+      app = new BrainSpanApp();
+    });
+  </script>
+</body>
+</html>
