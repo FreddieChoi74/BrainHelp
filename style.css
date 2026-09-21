@@ -1,0 +1,1413 @@
+/* ============================================================ */
+/* [전역 디자인 시스템 & CSS 변수]                              */
+/* ============================================================ */
+:root {
+  /* 파스텔 톤 메인 컬러 팔레트 */
+  --primary-green: #2f855a;
+  --primary-green-light: #48bb78;
+  --primary-green-bg: #f0fff4;
+  --primary-green-border: #9ae6b4;
+
+  --primary-blue: #2b6cb0;
+  --primary-blue-light: #4299e1;
+  --primary-blue-bg: #ebf8ff;
+  --primary-blue-border: #bee3f8;
+
+  --primary-amber: #b7791f;
+  --primary-amber-light: #ecc94b;
+  --primary-amber-bg: #fefcbf;
+  --primary-amber-border: #fef08a;
+
+  --primary-purple: #6b46c1;
+  --primary-purple-light: #9f7aea;
+  --primary-purple-bg: #faf5ff;
+  --primary-purple-border: #e9d8fd;
+
+  /* 신경 과부하 경보 레드 */
+  --alert-red: #e53e3e;
+  --alert-red-light: #feb2b2;
+  --alert-red-bg: #fff5f5;
+  --alert-red-border: #fed7d7;
+  --alert-red-dark: #9b2c2c;
+
+  /* 중립색 (배경 및 텍스트) */
+  --bg-gradient: linear-gradient(135deg, #f7fafc 0%, #edf2f7 50%, #f0fff4 100%);
+  --card-bg: rgba(255, 255, 255, 0.94);
+  --card-border: rgba(226, 232, 240, 0.85);
+  --text-main: #1a202c;
+  --text-muted: #4a5568;
+  --text-sub: #718096;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 12px 30px rgba(47, 133, 90, 0.12);
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+
+  --transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 기본 리셋 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg-gradient);
+  color: var(--text-main);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  padding-bottom: 60px;
+}
+
+/* ============================================================ */
+/* [상단 헤더 네비게이션 & 컨트롤]                              */
+/* ============================================================ */
+.top-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--card-border);
+  box-shadow: var(--shadow-sm);
+  padding: 12px 24px;
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  font-size: 28px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--primary-green);
+  letter-spacing: -0.02em;
+}
+
+.logo-subtitle {
+  font-size: 0.75rem;
+  font-family: 'Outfit', sans-serif;
+  color: var(--text-sub);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.view-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: #edf2f7;
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.view-btn:hover {
+  background: #e2e8f0;
+  color: var(--text-main);
+}
+
+.view-btn.active {
+  background: var(--primary-green);
+  color: #fff;
+  border-color: var(--primary-green);
+  box-shadow: 0 2px 8px rgba(47, 133, 90, 0.3);
+}
+
+.view-btn.action-btn {
+  background: #feebc8;
+  color: #744210;
+}
+
+.view-btn.action-btn:hover {
+  background: #fbd38d;
+}
+
+/* ============================================================ */
+/* [메인 레이아웃 래퍼]                                        */
+/* ============================================================ */
+.main-wrapper {
+  max-width: 1140px;
+  margin: 32px auto 0;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* 개별 섹션 카드 공통 */
+.section-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 36px 32px;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  transition: var(--transition);
+}
+
+.section-card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.section-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary-green);
+  background: var(--primary-green-bg);
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--primary-green-border);
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: #2d3748;
+  letter-spacing: -0.03em;
+  margin-bottom: 8px;
+}
+
+.section-subtitle {
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
+
+/* ============================================================ */
+/* [SECTION 1: 인트로 & 핵심 인식 전환]                        */
+/* ============================================================ */
+.intro-section {
+  text-align: center;
+  background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(240,255,244,0.4) 100%);
+}
+
+.main-headline {
+  font-size: 2.1rem;
+  font-weight: 800;
+  line-height: 1.35;
+  color: #1a202c;
+  letter-spacing: -0.04em;
+  margin: 12px 0 18px;
+}
+
+.highlight-text {
+  color: #e53e3e;
+  position: relative;
+  display: inline-block;
+}
+
+.highlight-text::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background: rgba(229, 62, 62, 0.15);
+  border-radius: 4px;
+  z-index: -1;
+}
+
+.intro-description {
+  font-size: 1.05rem;
+  color: #4a5568;
+  max-width: 780px;
+  margin: 0 auto 36px;
+  line-height: 1.75;
+}
+
+/* 뇌 스캔 비교 컨테이너 */
+.brain-compare-container {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.brain-card {
+  border-radius: var(--radius-md);
+  padding: 24px;
+  text-align: left;
+  position: relative;
+  transition: var(--transition);
+}
+
+.brain-card.overload-brain {
+  background: #fff8f8;
+  border: 2px dashed #feb2b2;
+}
+
+.brain-card.calm-brain {
+  background: #f0fff4;
+  border: 2px solid #9ae6b4;
+}
+
+.brain-status-badge {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  margin-bottom: 16px;
+}
+
+.brain-status-badge.alert {
+  background: #fff5f5;
+  color: #c53030;
+  border: 1px solid #fed7d7;
+}
+
+.brain-status-badge.calm {
+  background: #e6fffa;
+  color: #234e52;
+  border: 1px solid #b2f5ea;
+}
+
+.brain-svg-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 12px 0 18px;
+}
+
+.brain-svg {
+  width: 180px;
+  height: 140px;
+  overflow: visible;
+}
+
+.pulsing-node {
+  animation: pulseAlarm 1.2s infinite ease-in-out;
+}
+
+@keyframes pulseAlarm {
+  0% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.3); opacity: 1; filter: drop-shadow(0 0 6px #e53e3e); }
+  100% { transform: scale(1); opacity: 0.9; }
+}
+
+.spark-line {
+  animation: sparkDash 1.5s infinite linear;
+}
+
+@keyframes sparkDash {
+  to { stroke-dashoffset: -20; }
+}
+
+/* 배터리 인디케이터 */
+.battery-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.battery-shell {
+  width: 54px;
+  height: 20px;
+  border: 2px solid #718096;
+  border-radius: 4px;
+  padding: 2px;
+  position: relative;
+  background: #fff;
+}
+
+.battery-shell::after {
+  content: '';
+  position: absolute;
+  right: -5px;
+  top: 5px;
+  width: 3px;
+  height: 8px;
+  background: #718096;
+  border-radius: 0 2px 2px 0;
+}
+
+.battery-bar {
+  height: 100%;
+  border-radius: 2px;
+}
+
+.battery-bar.low-bar {
+  background: #e53e3e;
+  animation: blinkLow 1.5s infinite;
+}
+
+@keyframes blinkLow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.battery-bar.good-bar {
+  background: #38a169;
+}
+
+.battery-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.brain-details h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.brain-details ul {
+  list-style: none;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.brain-details li {
+  margin-bottom: 6px;
+  position: relative;
+  padding-left: 14px;
+}
+
+.brain-details li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--text-sub);
+}
+
+.vs-divider {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #a0aec0;
+  background: #edf2f7;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #fff;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============================================================ */
+/* [SECTION 2: 5가지 생물학적 어려움 원인 카드]                 */
+/* ============================================================ */
+.cause-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+
+.cause-card {
+  background: #fff;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition);
+  position: relative;
+}
+
+.cause-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary-green-light);
+  box-shadow: var(--shadow-hover);
+}
+
+.card-num-badge {
+  align-self: flex-start;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #718096;
+  background: #edf2f7;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.cause-icon-box {
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.mini-diagram-svg {
+  width: 72px;
+  height: 72px;
+}
+
+.cause-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #2d3748;
+  margin-bottom: 8px;
+  line-height: 1.35;
+}
+
+.cause-tagline {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #c53030;
+  background: #fff5f5;
+  padding: 6px 8px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  line-height: 1.4;
+  flex-grow: 0;
+}
+
+.cause-detail-box {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  flex-grow: 1;
+}
+
+/* ============================================================ */
+/* [SECTION 3: 부모의 신호 해석 디코더 표]                     */
+/* ============================================================ */
+.decoder-instruction {
+  font-size: 0.9rem;
+  color: #2b6cb0;
+  background: #ebf8ff;
+  border-left: 4px solid #3182ce;
+  padding: 10px 16px;
+  border-radius: 0 8px 8px 0;
+  margin-bottom: 18px;
+}
+
+.decoder-table-grid {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: #fff;
+}
+
+.decoder-row {
+  display: grid;
+  grid-template-columns: 220px 1fr 120px 1.2fr;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #edf2f7;
+  transition: var(--transition);
+  gap: 16px;
+}
+
+.decoder-row:last-child {
+  border-bottom: none;
+}
+
+.decoder-row.header-row {
+  background: #f7fafc;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.decoder-row.item-row {
+  cursor: pointer;
+}
+
+.decoder-row.item-row:hover {
+  background: #f0fff4;
+}
+
+.decoder-row.item-row.selected {
+  background: #feebc8;
+  border-left: 5px solid #d69e2e;
+}
+
+.col-action {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.action-icon {
+  font-size: 1.6rem;
+}
+
+.col-action strong {
+  display: block;
+  font-size: 0.95rem;
+  color: #2d3748;
+}
+
+.col-action .sub-act {
+  font-size: 0.75rem;
+  color: var(--text-sub);
+}
+
+.status-pill {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  margin-bottom: 4px;
+}
+
+.status-pill.red {
+  background: #fed7d7;
+  color: #9b2c2c;
+}
+
+.status-pill.yellow {
+  background: #fefcbf;
+  color: #744210;
+}
+
+.status-pill.blue {
+  background: #bee3f8;
+  color: #2b6cb0;
+}
+
+.status-pill.green {
+  background: #c6f6d5;
+  color: #22543d;
+}
+
+.col-brain p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.badge-cause {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: #edf2f7;
+  color: #4a5568;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+}
+
+.col-quick-sol {
+  font-size: 0.85rem;
+  color: #2d3748;
+  background: #f7fafc;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border-left: 3px solid var(--primary-green-light);
+}
+
+/* ============================================================ */
+/* [SECTION 4: 실생활 개입 5대 전략]                           */
+/* ============================================================ */
+.strategy-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.strategy-card {
+  background: #fff;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  transition: var(--transition);
+}
+
+.strategy-card:hover {
+  box-shadow: var(--shadow-hover);
+  border-color: var(--primary-green-border);
+}
+
+.strategy-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #2b6cb0;
+  background: #ebf8ff;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  margin-bottom: 14px;
+}
+
+.strategy-content-wrap {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.strategy-graphic {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.strategy-svg {
+  width: 120px;
+  height: 100px;
+}
+
+.strategy-text h3 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #2d3748;
+  margin-bottom: 8px;
+}
+
+.strategy-desc {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  line-height: 1.6;
+}
+
+.practical-box {
+  background: #f7fafc;
+  border: 1px solid #edf2f7;
+  border-radius: 8px;
+  padding: 14px 18px;
+}
+
+.script-bubble ul, .check-guide-list {
+  list-style: none;
+  font-size: 0.88rem;
+  color: #2d3748;
+}
+
+.script-bubble li, .check-guide-list li {
+  margin-bottom: 6px;
+  position: relative;
+  padding-left: 18px;
+}
+
+.script-bubble li::before, .check-guide-list li::before {
+  content: '👉';
+  position: absolute;
+  left: 0;
+  font-size: 0.8rem;
+}
+
+.bubble-title {
+  display: block;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--primary-green);
+  margin-bottom: 8px;
+}
+
+/* 생리적 긴 호흡 페이서 위젯 */
+.breath-pacer-widget {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.pacer-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #e6fffa 0%, #b2f5ea 100%);
+  border: 3px solid #38a169;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px;
+  transition: transform 0.5s ease-in-out;
+  box-shadow: 0 0 15px rgba(56, 161, 105, 0.2);
+}
+
+.pacer-circle.inhale1 {
+  transform: scale(1.2);
+  background: #c6f6d5;
+}
+
+.pacer-circle.inhale2 {
+  transform: scale(1.35);
+  background: #9ae6b4;
+  box-shadow: 0 0 25px rgba(56, 161, 105, 0.4);
+}
+
+.pacer-circle.exhale {
+  transform: scale(0.9);
+  background: #e6fffa;
+}
+
+.pacer-text {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #22543d;
+  line-height: 1.25;
+}
+
+.pacer-btn {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #fff;
+  background: #38a169;
+  border: none;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.pacer-btn:hover {
+  background: #2f855a;
+}
+
+.step-guide {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.step-item {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 0.8rem;
+  color: #2d3748;
+}
+
+.step-item span {
+  display: block;
+  font-weight: 800;
+  color: #38a169;
+  font-size: 0.75rem;
+}
+
+.battery-rule-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.rule-item {
+  background: #fff;
+  border: 1px solid #edf2f7;
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+.rule-time {
+  display: block;
+  font-weight: 800;
+  font-size: 0.88rem;
+  color: #b7791f;
+  margin-bottom: 4px;
+}
+
+.rule-txt {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.ladder-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ladder-step {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #fff;
+  border: 1px solid #edf2f7;
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+.step-num {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #6b46c1;
+  background: #faf5ff;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid #e9d8fd;
+  white-space: nowrap;
+}
+
+.step-body {
+  font-size: 0.85rem;
+  color: #2d3748;
+}
+
+/* ============================================================ */
+/* [SECTION 5: 호르몬 & 운동 · 영양제 · 식단 프로토콜]         */
+/* ============================================================ */
+.hormone-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.hormone-tab-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 14px;
+  background: #fff;
+  border: 2px solid #e2e8f0;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.hormone-tab-btn:hover {
+  background: #f7fafc;
+  border-color: #cbd5e0;
+}
+
+.hormone-tab-btn.active {
+  background: #f0fff4;
+  border-color: var(--primary-green);
+  color: var(--primary-green);
+  box-shadow: 0 4px 12px rgba(47, 133, 90, 0.15);
+}
+
+.tab-emoji {
+  font-size: 1.25rem;
+}
+
+.hormone-panel {
+  display: none;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.hormone-panel.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.panel-header {
+  margin-bottom: 20px;
+}
+
+.panel-badge {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 800;
+  padding: 4px 14px;
+  border-radius: var(--radius-full);
+  margin-bottom: 8px;
+}
+
+.panel-badge.green { background: #c6f6d5; color: #22543d; }
+.panel-badge.yellow { background: #fefcbf; color: #744210; }
+.panel-badge.blue { background: #bee3f8; color: #2a4365; }
+.panel-badge.purple { background: #e9d8fd; color: #44337a; }
+
+.panel-intro {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.trio-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.trio-card {
+  background: #fff;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 18px 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.trio-head {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #2d3748;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.trio-icon {
+  font-size: 1.2rem;
+}
+
+.trio-card ul {
+  list-style: none;
+  font-size: 0.83rem;
+  color: var(--text-muted);
+}
+
+.trio-card li {
+  margin-bottom: 10px;
+  line-height: 1.55;
+  position: relative;
+  padding-left: 14px;
+}
+
+.trio-card li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--primary-green);
+  font-weight: 800;
+}
+
+.trio-card strong {
+  color: #2d3748;
+}
+
+/* ============================================================ */
+/* [SECTION 6: 마지막 체크리스트 & 위로 카드]                  */
+/* ============================================================ */
+.checklist-box {
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-md);
+  padding: 24px;
+  margin-bottom: 28px;
+}
+
+.checklist-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #2d3748;
+  margin-bottom: 18px;
+}
+
+.check-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: #fff;
+  border: 1px solid #edf2f7;
+  border-radius: 8px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.check-item:hover {
+  border-color: var(--primary-green-border);
+  background: #f0fff4;
+}
+
+.custom-chk {
+  display: none;
+}
+
+.chk-box-visual {
+  width: 22px;
+  height: 22px;
+  border: 2px solid #cbd5e0;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+  transition: var(--transition);
+}
+
+.custom-chk:checked + .chk-box-visual {
+  background: var(--primary-green);
+  border-color: var(--primary-green);
+}
+
+.custom-chk:checked + .chk-box-visual::after {
+  content: '✓';
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.chk-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.chk-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 4px;
+}
+
+.chk-desc {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.checklist-footer {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.progress-bar-wrap {
+  flex-grow: 1;
+  max-width: 400px;
+}
+
+.progress-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.progress-track {
+  width: 100%;
+  height: 10px;
+  background: #e2e8f0;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #48bb78 0%, #38a169 100%);
+  border-radius: var(--radius-full);
+  transition: width 0.4s ease;
+}
+
+.print-callout-btn {
+  background: var(--primary-green);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--radius-full);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(47, 133, 90, 0.25);
+  transition: var(--transition);
+}
+
+.print-callout-btn:hover {
+  background: #276749;
+  transform: translateY(-2px);
+}
+
+.warm-encouragement-card {
+  background: linear-gradient(135deg, #feebc8 0%, #fefcbf 100%);
+  border: 1px solid #fbd38d;
+  border-radius: var(--radius-md);
+  padding: 28px 32px;
+  text-align: center;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+}
+
+.quote-mark {
+  font-family: Georgia, serif;
+  font-size: 3rem;
+  color: #dd6b20;
+  line-height: 1;
+  margin-bottom: -10px;
+  opacity: 0.4;
+}
+
+.quote-body {
+  font-size: 1.05rem;
+  color: #744210;
+  line-height: 1.8;
+  margin-bottom: 12px;
+}
+
+.quote-author {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #975a16;
+}
+
+/* ============================================================ */
+/* [푸터]                                                       */
+/* ============================================================ */
+.site-footer {
+  margin-top: 60px;
+  padding: 30px 20px;
+  background: #edf2f7;
+  border-top: 1px solid #e2e8f0;
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--text-sub);
+}
+
+.footer-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.footer-copy {
+  margin-top: 8px;
+  font-size: 0.75rem;
+}
+
+/* ============================================================ */
+/* [카드뉴스 슬라이드 모드 전용 스타일]                         */
+/* ============================================================ */
+.slide-nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 12px 20px;
+  background: #fff;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 12px;
+}
+
+.slide-ctrl-btn {
+  background: #edf2f7;
+  border: 1px solid #cbd5e0;
+  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.slide-ctrl-btn:hover {
+  background: #e2e8f0;
+  color: var(--text-main);
+}
+
+.slide-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.slide-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #cbd5e0;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.slide-dot.active {
+  background: var(--primary-green);
+  transform: scale(1.3);
+}
+
+.slide-counter {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-sub);
+}
+
+/* 슬라이드 모드 활성화 시 */
+body.mode-slides .section-card {
+  display: none;
+}
+
+body.mode-slides .section-card.active-slide {
+  display: block;
+  animation: slideFadeIn 0.35s ease-out;
+}
+
+@keyframes slideFadeIn {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ============================================================ */
+/* [미디어 쿼리: 반응형 최적화]                                 */
+/* ============================================================ */
+@media (max-width: 1024px) {
+  .cause-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .trio-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .pc-only {
+    display: none;
+  }
+
+  .main-headline {
+    font-size: 1.6rem;
+  }
+
+  .brain-compare-container {
+    grid-template-columns: 1fr;
+  }
+
+  .vs-divider {
+    margin: -10px auto;
+  }
+
+  .cause-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .decoder-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .decoder-row.header-row {
+    display: none;
+  }
+
+  .strategy-content-wrap {
+    grid-template-columns: 1fr;
+  }
+
+  .step-guide {
+    grid-template-columns: 1fr;
+  }
+
+  .battery-rule-card {
+    grid-template-columns: 1fr;
+  }
+
+  .hormone-tabs {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .view-controls {
+    width: 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+  }
+}
+
+/* ============================================================ */
+/* [인쇄 전용 A4 치트시트 스타일 (@media print)]                */
+/* ============================================================ */
+@media print {
+  body {
+    background: #fff !important;
+    color: #000 !important;
+    padding: 0 !important;
+  }
+
+  .top-nav, .view-controls, .slide-nav-bar, .pacer-btn, .checklist-footer button, .site-footer {
+    display: none !important;
+  }
+
+  .main-wrapper {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 16px !important;
+  }
+
+  .section-card {
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    padding: 16px !important;
+    page-break-inside: avoid;
+  }
+
+  .main-headline {
+    font-size: 1.4rem !important;
+  }
+
+  .cause-grid {
+    grid-template-columns: repeat(5, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .hormone-panel {
+    display: block !important;
+    page-break-inside: avoid;
+    margin-bottom: 12px;
+  }
+
+  .hormone-tabs {
+    display: none !important;
+  }
+
+  .trio-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+  }
+}

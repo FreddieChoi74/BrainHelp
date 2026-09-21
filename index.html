@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>우리 아이 뇌의 사회성 인포그래픽 - 신경학적 관점과 실생활 개입 전략</title>
+  <meta name="description" content="ASD, ADHD, 사회불안을 겪는 성장기 자녀의 뇌 과학적 원인과 5대 실생활 개입 전략, 신경호르몬(운동·영양·식단) 프로토콜 인포그래픽 대시보드" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- 상단 내비게이션 및 컨트롤 바 -->
+  <header class="top-nav">
+    <div class="nav-container">
+      <div class="logo-area">
+        <span class="logo-icon">🧠</span>
+        <div class="logo-text">
+          <span class="logo-title">사회성 뇌과학 가이드</span>
+          <span class="logo-subtitle">Neuro-Social Brain Dashboard</span>
+        </div>
+      </div>
+
+      <!-- 뷰 모드 스위처 -->
+      <div class="view-controls">
+        <button id="btn-view-dashboard" class="view-btn active" title="전체 대시보드 형태">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          <span>통합 대시보드</span>
+        </button>
+        <button id="btn-view-slides" class="view-btn" title="카드뉴스 슬라이드 형태">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+          <span>카드뉴스 슬라이드</span>
+        </button>
+        <button id="btn-print-cheatsheet" class="view-btn action-btn" title="냉장고 부착용 A4 인쇄/PDF 저장">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+          <span>치트시트 인쇄</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 메인 컨테이너 -->
+  <main class="main-wrapper" id="main-content">
+
+    <!-- 슬라이드 인디케이터 (슬라이드 모드일 때만 표시) -->
+    <div class="slide-nav-bar" id="slide-nav-bar" style="display: none;">
+      <button class="slide-ctrl-btn" id="prev-slide-btn">◀ 이전 카드</button>
+      <div class="slide-dots" id="slide-dots"></div>
+      <span class="slide-counter" id="slide-counter">1 / 6</span>
+      <button class="slide-ctrl-btn" id="next-slide-btn">다음 카드 ▶</button>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- [SECTION 1: 인트로 & 핵심 인식 전환] -->
+    <!-- ============================================================ -->
+    <section class="section-card intro-section" id="section-1" data-slide="1">
+      <div class="section-badge">SECTION 01 • 핵심 인식 전환</div>
+      <h1 class="main-headline">
+        우리 아이 사회성, 의지가 아니라<br />
+        <span class="highlight-text">"뇌의 배터리"</span> 문제입니다
+      </h1>
+      
+      <p class="intro-description">
+        사회적 상호작용은 뇌에서 가장 많은 신경 에너지를 소모하는 <strong>초고비용 작업(High-Cost Computation)</strong>입니다.<br class="pc-only" />
+        아이가 친구들과 어울리지 못하거나 떼를 쓰는 것은 고집이나 반항이 아니라, <strong>뇌의 에너지가 '방전(Shutdown)'</strong>되었기 때문입니다.
+      </p>
+
+      <!-- 뇌 스캔 비교 시각화 (붉은색 과부하 VS 초록색 안정) -->
+      <div class="brain-compare-container">
+        <!-- 좌측: 과부하 뇌 -->
+        <div class="brain-card overload-brain">
+          <div class="brain-status-badge alert">⚠️ 신경 과부하 (에너지 방전 상태)</div>
+          <div class="brain-svg-wrap">
+            <svg class="brain-svg" viewBox="0 0 200 160">
+              <defs>
+                <radialGradient id="overloadGlow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#FF4D4D" stop-opacity="0.9" />
+                  <stop offset="70%" stop-color="#FF2A2A" stop-opacity="0.3" />
+                  <stop offset="100%" stop-color="#FF2A2A" stop-opacity="0" />
+                </radialGradient>
+                <filter id="glowEffect">
+                  <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                  <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+              </defs>
+              <!-- 뇌 외곽선 실루엣 -->
+              <path d="M50,80 C30,70 30,40 60,30 C75,15 115,10 135,25 C165,20 180,50 170,80 C185,100 175,135 145,140 C125,145 110,135 95,140 C70,145 45,130 50,105 Z" fill="#FFEAEA" stroke="#E53E3E" stroke-width="3.5" />
+              <!-- 과부하 발열 영역 -->
+              <circle cx="90" cy="65" r="35" fill="url(#overloadGlow)" />
+              <!-- 불규칙 스파크 회로 -->
+              <path d="M60,60 L80,45 L100,70 L120,40 L140,75 L155,95" fill="none" stroke="#E53E3E" stroke-width="2.5" stroke-dasharray="4,3" class="spark-line" />
+              <circle cx="115" cy="85" r="8" fill="#E53E3E" filter="url(#glowEffect)" class="pulsing-node" />
+              <text x="115" y="108" text-anchor="middle" fill="#C53030" font-size="10" font-weight="700">편도체 비상 경보</text>
+              <path d="M75,90 Q90,110 110,100" stroke="#E53E3E" stroke-width="2" />
+            </svg>
+            <!-- 배터리 10% 방전 아이콘 -->
+            <div class="battery-status low">
+              <div class="battery-shell">
+                <div class="battery-bar low-bar" style="width: 15%;"></div>
+              </div>
+              <span class="battery-label">뇌 배터리 15% (방전 임박)</span>
+            </div>
+          </div>
+          <div class="brain-details">
+            <h4>🔴 지원 없는 상태</h4>
+            <ul>
+              <li><strong>전두엽 에너지 고갈</strong>: 이성적 대화 및 충동 조절 불가능</li>
+              <li><strong>자율신경계 과열</strong>: 극심한 불안, 식은땀, 말문 막힘</li>
+              <li><strong>겉모습</strong>: 멍때림, 갑작스런 분노, 눈 피하기, 도망</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="vs-divider">
+          <span>VS</span>
+        </div>
+
+        <!-- 우측: 지원받아 안정된 뇌 -->
+        <div class="brain-card calm-brain">
+          <div class="brain-status-badge calm">🌱 안정 및 충전 (환경적 지지 상태)</div>
+          <div class="brain-svg-wrap">
+            <svg class="brain-svg" viewBox="0 0 200 160">
+              <defs>
+                <radialGradient id="calmGlow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#48BB78" stop-opacity="0.8" />
+                  <stop offset="70%" stop-color="#38A169" stop-opacity="0.25" />
+                  <stop offset="100%" stop-color="#38A169" stop-opacity="0" />
+                </radialGradient>
+              </defs>
+              <path d="M50,80 C30,70 30,40 60,30 C75,15 115,10 135,25 C165,20 180,50 170,80 C185,100 175,135 145,140 C125,145 110,135 95,140 C70,145 45,130 50,105 Z" fill="#F0FFF4" stroke="#38A169" stroke-width="3.5" />
+              <!-- 안정된 신경망 -->
+              <circle cx="100" cy="70" r="32" fill="url(#calmGlow)" />
+              <path d="M60,65 Q85,45 110,65 T150,75" fill="none" stroke="#38A169" stroke-width="2.5" />
+              <circle cx="75" cy="55" r="5" fill="#38A169" />
+              <circle cx="110" cy="65" r="6" fill="#3182CE" />
+              <circle cx="140" cy="78" r="5" fill="#38A169" />
+              <text x="100" y="112" text-anchor="middle" fill="#276749" font-size="10" font-weight="700">전두엽 회로 안정화</text>
+            </svg>
+            <!-- 배터리 85% 충전 아이콘 -->
+            <div class="battery-status good">
+              <div class="battery-shell">
+                <div class="battery-bar good-bar" style="width: 85%;"></div>
+              </div>
+              <span class="battery-label">뇌 배터리 85% (안정적 상호작용 가능)</span>
+            </div>
+          </div>
+          <div class="brain-details">
+            <h4>🟢 맞춤 지원 상태</h4>
+            <ul>
+              <li><strong>충분한 뇌 휴식</strong>: 감각 자극 차단 및 사전 스크립트 확보</li>
+              <li><strong>편도체 진정</strong>: 안전하다는 신경계 신호(심박 안정) 접수</li>
+              <li><strong>상호작용 가능</strong>: 작은 성공 경험 누적과 신경 가소성 촉진</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- [SECTION 2: 원인 시각화 - 5가지 생물학적 어려움] -->
+    <!-- ============================================================ -->
+    <section class="section-card" id="section-2" data-slide="2">
+      <div class="section-badge">SECTION 02 • 원인 시각화</div>
+      <h2 class="section-title">왜 힘들까요? 아이를 괴롭히는 5가지 생물학적 원인</h2>
+      <p class="section-subtitle">눈에 보이지 않는 신경계 속에서 실시간으로 일어나는 5가지 병목 현상입니다.</p>
+
+      <div class="cause-grid">
+        <!-- 원인 1: 인지 과부하 -->
+        <div class="cause-card" data-cause="1">
+          <div class="card-num-badge">원인 01</div>
+          <div class="cause-icon-box">
+            <!-- CPU 과부하 SVG -->
+            <svg viewBox="0 0 100 100" class="mini-diagram-svg">
+              <rect x="25" y="25" width="50" height="50" rx="8" fill="#FFF5F5" stroke="#E53E3E" stroke-width="3" />
+              <line x1="35" y1="15" x2="35" y2="25" stroke="#E53E3E" stroke-width="2" />
+              <line x1="50" y1="15" x2="50" y2="25" stroke="#E53E3E" stroke-width="2" />
+              <line x1="65" y1="15" x2="65" y2="25" stroke="#E53E3E" stroke-width="2" />
+              <line x1="35" y1="75" x2="35" y2="85" stroke="#E53E3E" stroke-width="2" />
+              <line x1="50" y1="75" x2="50" y2="85" stroke="#E53E3E" stroke-width="2" />
+              <line x1="65" y1="75" x2="65" y2="85" stroke="#E53E3E" stroke-width="2" />
+              <!-- CPU 내부 -->
+              <text x="50" y="47" text-anchor="middle" font-size="11" font-weight="700" fill="#E53E3E">CPU 100%</text>
+              <rect x="32" y="55" width="36" height="6" rx="3" fill="#FED7D7" />
+              <rect x="32" y="55" width="34" height="6" rx="3" fill="#E53E3E" />
+            </svg>
+          </div>
+          <h3 class="cause-title">인지 과부하 (마음 읽기)</h3>
+          <p class="cause-tagline">"마음 읽기 과부하: 상대의 의도를 실시간으로 계산하느라 뇌 회로가 멈춰요."</p>
+          <div class="cause-detail-box">
+            <p>상대의 <strong>눈빛, 미세한 입꼬리, 억양, 숨은 비유</strong>를 무의식적으로 느끼지 못하고, 고성능 연산 장치처럼 하나하나 암호 해독하듯 분석하다가 전두엽이 과열됩니다.</p>
+          </div>
+        </div>
+
+        <!-- 원인 2: 불안 경보 -->
+        <div class="cause-card" data-cause="2">
+          <div class="card-num-badge">원인 02</div>
+          <div class="cause-icon-box">
+            <!-- 편도체 경보 & ECG SVG -->
+            <svg viewBox="0 0 100 100" class="mini-diagram-svg">
+              <polygon points="50,15 88,80 12,80" fill="#FFF5F5" stroke="#E53E3E" stroke-width="3" />
+              <text x="50" y="60" text-anchor="middle" font-size="28" font-weight="800" fill="#E53E3E">!</text>
+              <path d="M25,68 L40,68 L45,55 L52,78 L60,62 L75,68" fill="none" stroke="#C53030" stroke-width="2.5" stroke-linecap="round" />
+            </svg>
+          </div>
+          <h3 class="cause-title">불안 경보 (비상벨 오작동)</h3>
+          <p class="cause-tagline">"비상벨 오작동: 낯선 상황을 '위협'으로 착각해 몸이 얼어붙거나 짜증을 내요."</p>
+          <div class="cause-detail-box">
+            <p>뇌의 감정 경보 장치인 <strong>편도체(Amygdala)</strong>가 과민 반응하여 사소한 질문이나 시선에도 <strong>'투쟁-도피-얼어붙음(Fight-Flight-Freeze)'</strong> 생존 모드가 켜집니다.</p>
+          </div>
+        </div>
+
+        <!-- 원인 3: 감각 폭발 -->
+        <div class="cause-card" data-cause="3">
+          <div class="card-num-badge">원인 03</div>
+          <div class="cause-icon-box">
+            <!-- 감각 필터링 실패 깔때기 SVG -->
+            <svg viewBox="0 0 100 100" class="mini-diagram-svg">
+              <!-- 깔때기 -->
+              <path d="M20,25 L80,25 L58,55 L58,80 L42,80 L42,55 Z" fill="#EBF8FF" stroke="#3182CE" stroke-width="2.5" />
+              <!-- 여과 없이 넘치는 자극 화살표들 -->
+              <path d="M25,12 L35,28" stroke="#E53E3E" stroke-width="2.5" marker-end="url(#arrow)" />
+              <path d="M50,8 L50,28" stroke="#DD6B20" stroke-width="2.5" />
+              <path d="M75,12 L65,28" stroke="#E53E3E" stroke-width="2.5" />
+              <!-- 필터 터짐 경고 -->
+              <circle cx="50" cy="45" r="10" fill="#FEB2B2" stroke="#E53E3E" stroke-width="1.5" />
+              <text x="50" y="49" text-anchor="middle" font-size="9" font-weight="700" fill="#9B2C2C">폭발</text>
+            </svg>
+          </div>
+          <h3 class="cause-title">감각 폭발 (필터링 실패)</h3>
+          <p class="cause-tagline">"감각 필터링 실패: 말소리와 주변 소음이 분리되지 않아 머릿속이 시끄러워요."</p>
+          <div class="cause-detail-box">
+            <p>시상(Thalamus)의 감각 필터가 약해 <strong>형광등 깜빡임, 친구들의 웅성거림, 의자 끄는 소리, 옷깃의 감촉</strong>이 대화 소리와 동일한 크기로 쏟아져 들어옵니다.</p>
+          </div>
+        </div>
+
+        <!-- 원인 4: 신경 피로 -->
+        <div class="cause-card" data-cause="4">
+          <div class="card-num-badge">원인 04</div>
+          <div class="cause-icon-box">
+            <!-- 도파민/배터리 게이지 SVG -->
+            <svg viewBox="0 0 100 100" class="mini-diagram-svg">
+              <rect x="25" y="25" width="50" height="55" rx="6" fill="#FEFCBF" stroke="#D69E2E" stroke-width="3" />
+              <rect x="40" y="17" width="20" height="8" rx="2" fill="#D69E2E" />
+              <!-- 게이지 바닥 -->
+              <rect x="30" y="60" width="40" height="15" fill="#E53E3E" rx="3" />
+              <text x="50" y="50" text-anchor="middle" font-size="10" font-weight="800" fill="#744210">Dopamine</text>
+              <text x="50" y="72" text-anchor="middle" font-size="10" font-weight="800" fill="#FFF">LOW</text>
+            </svg>
+          </div>
+          <h3 class="cause-title">신경 피로 (도파민 부족)</h3>
+          <p class="cause-tagline">"사회적 도파민 부족: 자극에 민감해 적은 대화에도 배터리가 빨리 방전돼요."</p>
+          <div class="cause-detail-box">
+            <p>일반 아이들은 대화 속에서 자연스러운 도파민(보상)을 얻지만, 신경발달적 차이가 있는 아이는 <strong>보상 회로가 활성화되지 않고 피로물질만 빠르게 누적</strong>됩니다.</p>
+          </div>
+        </div>
+
+        <!-- 원인 5: 인지 계산 -->
+        <div class="cause-card" data-cause="5">
+          <div class="card-num-badge">원인 05</div>
+          <div class="cause-icon-box">
+            <!-- 알고리즘 순서도 SVG -->
+            <svg viewBox="0 0 100 100" class="mini-diagram-svg">
+              <circle cx="30" cy="30" r="10" fill="#E2E8F0" stroke="#718096" stroke-width="2" />
+              <line x1="40" y1="30" x2="60" y2="30" stroke="#718096" stroke-width="2" />
+              <rect x="60" y="20" width="25" height="20" rx="3" fill="#EBF8FF" stroke="#3182CE" stroke-width="2" />
+              <line x1="72" y1="40" x2="72" y2="60" stroke="#718096" stroke-width="2" />
+              <polygon points="72,60 85,75 72,90 59,75" fill="#FEFCBF" stroke="#D69E2E" stroke-width="2" />
+              <text x="50" y="97" text-anchor="middle" font-size="9" font-weight="700" fill="#4A5568">공식 풀이 중</text>
+            </svg>
+          </div>
+          <h3 class="cause-title">직관 대신 인지 계산</h3>
+          <p class="cause-tagline">"직관 대신 계산: 눈치를 자연스럽게 체득하는 게 아니라 공식을 풀듯 계산해야 해요."</p>
+          <div class="cause-detail-box">
+            <p>타인의 감정을 자동으로 감지하는 <strong>거울신경세포(Mirror Neuron)</strong> 체계 대신, "A상황엔 B라고 답해야 함"이라는 순서도 공식을 머릿속으로 일일이 대입합니다.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- [SECTION 3: 부모의 이해 - 자녀의 구조신호 디코더] -->
+    <!-- ============================================================ -->
+    <section class="section-card" id="section-3" data-slide="3">
+      <div class="section-badge">SECTION 03 • 부모의 해석법</div>
+      <h2 class="section-title">아이가 보내는 구조 신호(SOS) 번역기</h2>
+      <p class="section-subtitle">
+        "아이가 겉으로 보이는 문제 행동은 나쁜 버릇이 아니라 <strong>뇌의 과부하를 알리는 비명</strong>입니다."
+      </p>
+
+      <div class="decoder-container">
+        <div class="decoder-instruction">
+          👉 아이의 겉모습 행동을 클릭하면, <strong>뇌 속 진짜 상태</strong>와 <strong>즉각 처방</strong>을 확인할 수 있습니다.
+        </div>
+
+        <div class="decoder-table-grid">
+          <!-- 헤더 -->
+          <div class="decoder-row header-row">
+            <div class="col-action">겉으로 보이는 행동 (표면)</div>
+            <div class="col-brain">아이 뇌 속의 진짜 상태 (신경학적 본질)</div>
+            <div class="col-cause-link">연결된 뇌 원인</div>
+            <div class="col-quick-sol">부모의 1차 반응 수칙</div>
+          </div>
+
+          <!-- 행 1: 멍때림 -->
+          <div class="decoder-row item-row" data-decoder="freeze">
+            <div class="col-action">
+              <span class="action-icon">😶‍🌫️</span>
+              <div>
+                <strong>초점 없이 멍때림</strong>
+                <span class="sub-act">질문해도 반응이 없거나 딴청</span>
+              </div>
+            </div>
+            <div class="col-brain">
+              <span class="status-pill red">감각 셧다운 (Overload)</span>
+              <p>더 이상 들어오는 정보를 처리할 수 없어 스스로 회로 전원을 내린 상태</p>
+            </div>
+            <div class="col-cause-link">
+              <span class="badge-cause">원인 1 · 3</span>
+            </div>
+            <div class="col-quick-sol">
+              <strong>질문 멈추기:</strong> 재촉하지 말고 30초간 말없이 조용한 환경을 만들어주세요.
+            </div>
+          </div>
+
+          <!-- 행 2: 짜증 / 떼쓰기 -->
+          <div class="decoder-row item-row" data-decoder="fight">
+            <div class="col-action">
+              <span class="action-icon">💥</span>
+              <div>
+                <strong>갑작스런 짜증 · 떼쓰기</strong>
+                <span class="sub-act">별것 아닌 일에 소리 지르거나 화냄</span>
+              </div>
+            </div>
+            <div class="col-brain">
+              <span class="status-pill red">편도체 비상 (투쟁 Fight)</span>
+              <p>상황을 '맹수 앞'처럼 극심한 위협으로 느껴 생존 공격성이 발현된 상태</p>
+            </div>
+            <div class="col-cause-link">
+              <span class="badge-cause">원인 2</span>
+            </div>
+            <div class="col-quick-sol">
+              <strong>훈육 금지:</strong> "괜찮아, 위험하지 않아" 낮은 톤으로 안심시키고 심박을 낮춰주세요.
+            </div>
+          </div>
+
+          <!-- 행 3: 함구 (말문 막힘) -->
+          <div class="decoder-row item-row" data-decoder="mute">
+            <div class="col-action">
+              <span class="action-icon">🤐</span>
+              <div>
+                <strong>말문 막힘 (선택적 함구)</strong>
+                <span class="sub-act">입을 꾹 다물고 고개만 숙임</span>
+              </div>
+            </div>
+            <div class="col-brain">
+              <span class="status-pill yellow">전두엽 마비 (Freeze)</span>
+              <p>대답 공식을 계산하다가 뇌 메모리가 멈추어 발화(브로카 영역)가 일시 잠김</p>
+            </div>
+            <div class="col-cause-link">
+              <span class="badge-cause">원인 1 · 5</span>
+            </div>
+            <div class="col-quick-sol">
+              <strong>객관식 전환:</strong> 주관식 질문 대신 "O / X"나 손짓으로 선택하게 해주세요.
+            </div>
+          </div>
+
+          <!-- 행 4: 도망침 / 구석 숨기 -->
+          <div class="decoder-row item-row" data-decoder="flight">
+            <div class="col-action">
+              <span class="action-icon">🏃‍♂️</span>
+              <div>
+                <strong>자리 이탈 / 구석 숨기</strong>
+                <span class="sub-act">모임 장소를 벗어나거나 화장실로 피신</span>
+              </div>
+            </div>
+            <div class="col-brain">
+              <span class="status-pill blue">감각 도피 (Flight)</span>
+              <p>시끄러운 소음과 시각적 자극으로부터 뇌를 살리기 위한 본능적 탈출</p>
+            </div>
+            <div class="col-cause-link">
+              <span class="badge-cause">원인 3 · 4</span>
+            </div>
+            <div class="col-quick-sol">
+              <strong>피난처 인정:</strong> 강제로 끌어오지 말고 "5분 쉬고 오자"라며 안전지대를 허용하세요.
+            </div>
+          </div>
+
+          <!-- 행 5: 눈 피하기 -->
+          <div class="decoder-row item-row" data-decoder="eye">
+            <div class="col-action">
+              <span class="action-icon">👀</span>
+              <div>
+                <strong>시선 회피 (눈 피하기)</strong>
+                <span class="sub-act">대화할 때 바닥이나 엉뚱한 곳을 봄</span>
+              </div>
+            </div>
+            <div class="col-brain">
+              <span class="status-pill green">대역폭 절약 (Bandwidth)</span>
+              <p>사람 얼굴 정보가 너무 많은 데이터를 차지하여 음성 처리를 위해 시각을 차단함</p>
+            </div>
+            <div class="col-cause-link">
+              <span class="badge-cause">원인 1 · 5</span>
+            </div>
+            <div class="col-quick-sol">
+              <strong>시선 강요 금지:</strong> "눈 봐!" 하지 마시고, 귀로 잘 듣고 있음을 인정해주세요.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- [SECTION 4: 실생활 개입 방법 - 5가지 전략] -->
+    <!-- ============================================================ -->
+    <section class="section-card" id="section-4" data-slide="4">
+      <div class="section-badge">SECTION 04 • 실생활 개입 솔루션</div>
+      <h2 class="section-title">뇌 회로를 보호하는 5가지 맞춤 개입 전략</h2>
+      <p class="section-subtitle">앞서 살펴본 5대 원인과 1:1로 정밀하게 매칭되는 과학적 실천 가이드입니다.</p>
+
+      <div class="strategy-list">
+        <!-- 전략 1 (원인 1 대응): 스몰토크 스크립트 -->
+        <div class="strategy-card">
+          <div class="strategy-badge">전략 01 • 원인 1(인지 과부하) 대응</div>
+          <div class="strategy-content-wrap">
+            <div class="strategy-graphic">
+              <!-- 대화 스크립트 카드 SVG -->
+              <svg viewBox="0 0 120 100" class="strategy-svg">
+                <rect x="20" y="15" width="80" height="70" rx="8" fill="#F0FFF4" stroke="#38A169" stroke-width="3" />
+                <line x1="32" y1="32" x2="88" y2="32" stroke="#38A169" stroke-width="3" stroke-linecap="round" />
+                <line x1="32" y1="46" x2="75" y2="46" stroke="#48BB78" stroke-width="2.5" stroke-linecap="round" />
+                <line x1="32" y1="60" x2="80" y2="60" stroke="#48BB78" stroke-width="2.5" stroke-linecap="round" />
+                <circle cx="95" cy="20" r="14" fill="#38A169" />
+                <text x="95" y="24" text-anchor="middle" font-size="12" fill="#FFF" font-weight="700">SCRIPT</text>
+              </svg>
+            </div>
+            <div class="strategy-text">
+              <h3>미리 준비하기: 뇌 계산 부담을 낮추는 대화 공식 스크립트</h3>
+              <p class="strategy-desc">
+                <strong>뇌의 부담을 줄이는 스크립트:</strong> 상황별로 바로 꺼내 쓸 수 있는 대화 공식 1~2개를 미리 집에서 연습해 뇌의 실시간 연산 부하를 드라마틱하게 줄여주세요.
+              </p>
+              <div class="practical-box">
+                <div class="script-bubble">
+                  <span class="bubble-title">💡 추천 치트키 대화 공식:</span>
+                  <ul>
+                    <li><strong>안부 묻기:</strong> "요즘 재미있는 게임이나 만화 있어?" (답하기 쉬운 주제)</li>
+                    <li><strong>칭찬 건네기:</strong> "그 필통/옷 멋지다! 어디서 샀어?" (구체적 사물 중심)</li>
+                    <li><strong>대화 탈출 공식:</strong> "나 화장실 좀 다녀올게!" (자연스러운 휴식권 확보)</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 전략 2 (원인 2 대응): 생리적 긴 호흡 페이서 -->
+        <div class="strategy-card">
+          <div class="strategy-badge">전략 02 • 원인 2(불안 경보) 대응</div>
+          <div class="strategy-content-wrap">
+            <div class="strategy-graphic">
+              <!-- 호흡 인터랙티브 위젯 -->
+              <div class="breath-pacer-widget">
+                <div class="pacer-circle" id="pacer-circle">
+                  <span class="pacer-text" id="pacer-text">두 번 들이마시기</span>
+                </div>
+                <button id="pacer-toggle-btn" class="pacer-btn">호흡 가이드 시작</button>
+              </div>
+            </div>
+            <div class="strategy-text">
+              <h3>안전한 신호: 편도체를 진정시키는 '생리적 긴 호흡(Physiological Sigh)'</h3>
+              <p class="strategy-desc">
+                <strong>편도체를 안정시키는 생체 피드백:</strong> 신경과학에서 입증된 가장 빠른 자율신경계 안정법입니다. <strong>코로 숨을 깊게 들이마시고 끝에서 한 번 더 들이마신 후, 입으로 길게 내뱉는 호흡</strong>을 2~3회만 해도 뇌에 '위험 상황 종료' 신호가 전달됩니다.
+              </p>
+              <div class="practical-box">
+                <div class="step-guide">
+                  <div class="step-item"><span>1단계</span> 코로 깊게 숨 들이마시기 (들숨 1)</div>
+                  <div class="step-item"><span>2단계</span> 끝에서 짧게 쏙 더 들이마시기 (들숨 2)</div>
+                  <div class="step-item"><span>3단계</span> 입으로 가늘고 길~게 후- 내쉬기 (날숨 6초)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 전략 3 (원인 3 대응): 환경 설계 -->
+        <div class="strategy-card">
+          <div class="strategy-badge">전략 03 • 원인 3(감각 폭발) 대응</div>
+          <div class="strategy-content-wrap">
+            <div class="strategy-graphic">
+              <!-- 소음 차단 이어플러그 & 쉼터 SVG -->
+              <svg viewBox="0 0 120 100" class="strategy-svg">
+                <!-- 헤드폰/이어플러그 -->
+                <path d="M30,55 A30,30 0 0,1 90,55" fill="none" stroke="#3182CE" stroke-width="6" stroke-linecap="round" />
+                <rect x="22" y="50" width="16" height="26" rx="6" fill="#3182CE" />
+                <rect x="82" y="50" width="16" height="26" rx="6" fill="#3182CE" />
+                <path d="M12,40 Q5,55 12,70" stroke="#CBD5E0" stroke-width="2" stroke-dasharray="2,2" />
+                <path d="M108,40 Q115,55 108,70" stroke="#CBD5E0" stroke-width="2" stroke-dasharray="2,2" />
+                <text x="60" y="92" text-anchor="middle" font-size="11" font-weight="700" fill="#2B6CB0">소음 -20dB 감소</text>
+              </svg>
+            </div>
+            <div class="strategy-text">
+              <h3>환경 설계: 감각 자극 차단 및 저자극 안전 구역 조성</h3>
+              <p class="strategy-desc">
+                <strong>감각 자극 차단:</strong> 시끄럽거나 산만한 환경을 피하고, 뇌가 과부하되기 전에 신체적 보호 장비를 착용하게 해주세요.
+              </p>
+              <div class="practical-box">
+                <ul class="check-guide-list">
+                  <li><strong>어쿠스틱 이어플러그(예: Loop) / 노이즈캔슬링:</strong> 말소리는 들리되 주변 잡음을 -15~20dB 깎아 전두엽 피로를 크게 줄입니다.</li>
+                  <li><strong>가장자리/벽 쪽 좌석 선점:</strong> 식당이나 교실에서 뒤가 벽으로 막힌 자리에 앉으면 편도체의 경계 반응이 50% 이상 감소합니다.</li>
+                  <li><strong>선글라스 / 챙 모자:</strong> 형광등 플리커(깜빡임)와 시각 자극에 민감한 아이를 보호합니다.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 전략 4 (원인 4 대응): 뇌 배터리 시간 관리 -->
+        <div class="strategy-card">
+          <div class="strategy-badge">전략 04 • 원인 4(신경 피로) 대응</div>
+          <div class="strategy-content-wrap">
+            <div class="strategy-graphic">
+              <!-- 타이머 & 1:30시간 SVG -->
+              <svg viewBox="0 0 120 100" class="strategy-svg">
+                <circle cx="60" cy="50" r="35" fill="#FEFCBF" stroke="#D69E2E" stroke-width="4" />
+                <line x1="60" y1="50" x2="60" y2="28" stroke="#B7791F" stroke-width="3" stroke-linecap="round" />
+                <line x1="60" y1="50" x2="78" y2="50" stroke="#B7791F" stroke-width="3" stroke-linecap="round" />
+                <rect x="55" y="8" width="10" height="7" fill="#D69E2E" rx="2" />
+                <text x="60" y="70" text-anchor="middle" font-size="12" font-weight="800" fill="#744210">90분 컷!</text>
+              </svg>
+            </div>
+            <div class="strategy-text">
+              <h3>시간 관리: 뇌 배터리 방전 전 복귀하는 '사전 약속 타임아웃'</h3>
+              <p class="strategy-desc">
+                <strong>뇌 배터리 보존:</strong> 모임 참여 시간을 미리 정해두고 방전되기 전에 휴식 시간으로 복귀하세요. 에너지가 0이 된 후의 귀가는 며칠간의 번아웃을 유발합니다.
+              </p>
+              <div class="practical-box">
+                <div class="battery-rule-card">
+                  <div class="rule-item">
+                    <span class="rule-time">⏱️ 60~90분 한도</span>
+                    <span class="rule-txt">아이의 뇌 배터리 한계 시간을 부모가 미리 인지하고 약속하기</span>
+                  </div>
+                  <div class="rule-item">
+                    <span class="rule-time">🔋 20% 남았을 때 퇴장</span>
+                    <span class="rule-txt">"더 놀고 싶다"고 할 때 기분 좋게 퇴장해야 다음 모임에 대한 긍정 기억 형성</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 전략 5 (원인 5 대응): 점진적 성공 사다리 -->
+        <div class="strategy-card">
+          <div class="strategy-badge">전략 05 • 원인 5(인지 계산) 대응</div>
+          <div class="strategy-content-wrap">
+            <div class="strategy-graphic">
+              <!-- 사다리 SVG -->
+              <svg viewBox="0 0 120 100" class="strategy-svg">
+                <!-- 사다리 세로 기둥 -->
+                <line x1="30" y1="10" x2="30" y2="90" stroke="#805AD5" stroke-width="4" stroke-linecap="round" />
+                <line x1="90" y1="10" x2="90" y2="90" stroke="#805AD5" stroke-width="4" stroke-linecap="round" />
+                <!-- 발판들 -->
+                <line x1="30" y1="75" x2="90" y2="75" stroke="#9F7AEA" stroke-width="3" />
+                <line x1="30" y1="50" x2="90" y2="50" stroke="#9F7AEA" stroke-width="3" />
+                <line x1="30" y1="25" x2="90" y2="25" stroke="#9F7AEA" stroke-width="3" />
+                <!-- 배지 아이콘 -->
+                <circle cx="60" cy="75" r="9" fill="#D6BCFA" />
+                <text x="60" y="78" text-anchor="middle" font-size="8" font-weight="700">1단</text>
+                <circle cx="60" cy="50" r="9" fill="#B794F4" />
+                <text x="60" y="53" text-anchor="middle" font-size="8" font-weight="700">2단</text>
+                <circle cx="60" cy="25" r="9" fill="#805AD5" />
+                <text x="60" y="28" text-anchor="middle" font-size="8" font-weight="700" fill="#FFF">성공</text>
+              </svg>
+            </div>
+            <div class="strategy-text">
+              <h3>점진적 성공: 신경망을 재배선하는 '점진적 노출 사다리'</h3>
+              <p class="strategy-desc">
+                <strong>신경망을 재배선하는 점진 노출:</strong> 위험도가 낮은 가벼운 상호작용부터 성공 경험을 쌓아 뇌 회로를 점진적으로 강화하세요. 거울신경세포 대신 대뇌피질에 '안전한 사회적 경험' 데이터를 축적해 주는 과정입니다.
+              </p>
+              <div class="practical-box">
+                <div class="ladder-steps">
+                  <div class="ladder-step">
+                    <span class="step-num">Step 1</span>
+                    <div class="step-body"><strong>눈 마주치며 목례:</strong> 편의점 직원이나 경비원 아저씨에게 "안녕하세요" 한마디 건네기</div>
+                  </div>
+                  <div class="ladder-step">
+                    <span class="step-num">Step 2</span>
+                    <div class="step-body"><strong>1:1 짧은 대화:</strong> 좋아하는 장난감/관심사를 가진 친구 1명과 20분간 블록 조립</div>
+                  </div>
+                  <div class="ladder-step">
+                    <span class="step-num">Step 3</span>
+                    <div class="step-body"><strong>역할이 있는 소그룹:</strong> 보드게임에서 은행원 역할, 레고 조립에서 부품 찾아주기 등 명확한 미션 수행</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- [SECTION 5: 뇌 신경호르몬 최적화 프로토콜 (운동 · 영양 · 식단)] -->
+    <!-- ============================================================ -->
+    <section class="section-card hormone-section" id="section-5" data-slide="5">
+      <div class="section-badge">SECTION 05 • 신경호르몬 생물학 기초 체력</div>
+      <h2 class="section-title">뇌 호르몬 & 대사 최적화: 운동 · 영양제 · 식단</h2>
+      <p class="section-subtitle">
+        사회성을 발휘하려면 뇌 속 신경전달물질과 호르몬의 생화학적 균형이 필수적입니다.<br class="pc-only" />
+        아이의 신경계를 안정시키고 활력을 주는 <strong>4대 핵심 호르몬 솔루션</strong>을 확인하세요.
+      </p>
+
+      <!-- 호르몬 탭 메뉴 -->
+      <div class="hormone-tabs">
+        <button class="hormone-tab-btn active" data-tab="gaba">
+          <span class="tab-emoji">🛡️</span>
+          <span class="tab-title">GABA (진정 브레이크)</span>
+        </button>
+        <button class="hormone-tab-btn" data-tab="dopamine">
+          <span class="tab-emoji">⚡</span>
+          <span class="tab-title">도파민 (동기 & 보상)</span>
+        </button>
+        <button class="hormone-tab-btn" data-tab="serotonin">
+          <span class="tab-emoji">☀️</span>
+          <span class="tab-title">세로토닌 (정서 & 장-뇌)</span>
+        </button>
+        <button class="hormone-tab-btn" data-tab="oxytocin">
+          <span class="tab-emoji">🫂</span>
+          <span class="tab-title">옥시토신 & 코르티솔</span>
+        </button>
+      </div>
+
+      <!-- 탭 1: GABA -->
+      <div class="hormone-panel active" id="panel-gaba">
+        <div class="panel-header">
+          <div class="panel-badge green">GABA : 뇌의 과열을 끄는 천연 소화기</div>
+          <p class="panel-intro">
+            GABA는 과열된 뇌 신경세포의 흥분을 가라앉히는 가장 강력한 억제성 신경전달물질입니다. 감각 예민성과 사회적 불안, 틱, 돌발 충동을 완화하는 핵심 브레이크입니다.
+          </p>
+        </div>
+        <div class="trio-grid">
+          <div class="trio-card">
+            <div class="trio-head"><span class="trio-icon">💊</span> 영양제 가이드</div>
+            <ul>
+              <li><strong>마그네슘 글리시네이트 / L-트레온산:</strong> 뇌혈관장벽(BBB)을 통과해 중추신경계를 직접 진정시키고 긴장을 풀어줍니다.</li>
+              <li><strong>L-테아닌 (L-Theanine):</strong> 녹차 유래 아미노산으로 졸음 없이 뇌의 알파파를 유도하여 불안 완화에 도움을 줍니다.</li>
+              <li><strong>비타민 B6 (P-5-P 활성형):</strong> 뇌에서 글루타메이트가 GABA로 전환되는 필수 조효소입니다.</li>
+            </ul>
+          </div>
+          <div class="trio-card">
+            <div class="trio-head"><span class="trio-icon">🥗</span> 식단 수칙</div>
+            <ul>
+              <li><strong>전통 발효식품:</strong> 김치, 된장, 천연 요거트 등 발효 과정에서 GABA 생성을 돕는 유익균 증식.</li>
+              <li><strong>정제당 & 인공감미료 제한:</strong> 급격한 혈당 스파이크는 글루타메이트(흥분성 물질)를 과다 유발해 뇌를 불안하게 만듭니다.</li>
+              <li><strong>현미, 콩류, 시금치:</strong> 천연 마그네슘과 미네랄이 풍부한 식재료 섭취.</li>
+            </ul>
+          </div>
+          <div class="trio-card">
+            <div class="trio-head"><span class="trio-icon">🏃</span> 추천 운동</div>
+            <ul>
+              <li><strong>고유수용감각(Proprioception) 자극 운동:</strong> 벽 밀기, 무거운 물건 운반 놀이, 곰 걸음/게 걸음 놀이.</li>
+              <li><strong>딥 프레셔 (Deep Pressure):</strong> 체중을 실어 관절과 근육에 묵직한 압력을 주면 자율신경계 부교감 회로가 즉각 활성화됩니다.</li>
+              <li><strong>느린 횡격막 스트레칭:</strong> 늑골을 부드럽게 이완시키는 스트레칭.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 탭 2: 도파민 -->
+      <div class="hormone-panel" id="panel-dopamine">
+        <div class="panel-header">
+          <div class="panel-badge yellow">도파민 (Dopamine) : 대화에 흥미를 느끼게 하는 추진제</div>
+          <p class="panel-intro">
+            도파민은 새로운 자극에 주의를 기울이고 상호작용에서 보람과 즐거움을 느끼게 합니다. 결핍되면 대화에 쉽게 지루해하고 산만해지며 에너지가 급속도로 소진됩니다.
+          </p>
+        </div>
+        <div class="trio-grid">
+          <div class="trio-card">
+            <div class="trio-head"><span class="trio-icon">💊</span> 영양제 가이드</div>
+            <ul>
+              <li><strong>고함량 오메가-3 (EPA/DHA):</strong> 뇌 신경세포막의 유동성을 높여 도파민 수용체의 민감도를 대폭 개선합니다.</li>
+              <li><strong>아연 (Zinc) & 철분:</strong> 도파민 합성 효소의 핵심 원료로 주의 집중력과 실행 기능에 관여합니다.</li>
+              <li><strong>메틸화 비타민 B군 (활성 엽산):</strong> 도파민 대사 경로를 청소하고 안정적 합성을 돕습니다.</li>
+            </ul>
+          </div>
+          <div class="trio-card">
+            <div class="trio-head"><span class="trio-icon">🍳</span> 식단 수칙</div>
+            <ul>
+              <li><strong>L-티로신(Tyrosine) 풍부 단백질:</strong> 달걀, 닭가슴살, 소고기 살코기, 치즈, 두부 등 단백질 식단.</li>
+              <li><strong>아침 고단백 식사:</strong> 탄수화물 위주의 아침(시리얼/빵) 대신 단백질 중심 식단으로 오전 집중력 도파민 유지.</li>
+              <li><strong>바나나와 아보카도:</strong> 천연 도파민 전구체와 항산화 물질이 풍부.</li>
+            </ul>
+          </div>
+          <div class="trio-card">
+            <div class="trio-head"><span class="trio-icon">🧗</span> 추천 운동</div>
+            <ul>
+              <li><strong>단기 미션형 유산소 & 저항 운동:</strong> 실내 암벽등반(볼더링), 트램펄린(점핑), 장애물 달리기.</li>
+              <li><strong>성취감 피드백 운동:</strong> "3단계 클리어!"처럼 즉각적인 결과와 성취 보상이 눈에 보이는 스포츠.</li>
+              <li><strong>균형 감각 훈련:</strong> 밸런스 보드, 킥보드 타기 등 전정기관을 자극하는 활동.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 탭 3: 세로토닌 -->
+      <div class="hormone-panel" id="panel-serotonin">
+        <div class="panel-header">
+          <div class="panel-badge blue">세로토닌 (Serotonin) : 정서 안정과 충동 조절의 닻</div>
+          <p class="panel-intro">
+            세로토닌은 감정의 급격한 기복을 막고 안정감을 유지하게 해줍니다. 놀랍게도 인체 세로토닌의 약 90%는 '장(Gut)'에서 생성되므로 장-뇌 축(Gut-Brain Axis) 관리가 핵심입니다.
+          </p>
+        </div>
+        <div class="trio-grid">
+          <div class="trio-card">
+            <div class="trio-head"><span class="trio-icon">💊</span> 영양제 가이드</div>
+            <ul>
+              <li><strong>사이코바이오틱스(장-뇌 유산균):</strong> 락토바실러스, 비피도박테리움 등 장내 세로토닌 합성 균주.</li>
+              <li><strong>비타민 D3:</strong> 뇌 속 트립토판이 세로토닌으로 전환되는 효소를 활성화시키는 핵심 필수 영양소.</li>
+              <li><strong>마그네슘 & 비타민 C:</strong> 산화 스트레스로부터 뇌 신경전달물질 세포를 보호합니다.</li>
+            </ul>
+          </div>
+          <div class="trio-card">
+            <div class="trio-head"><span class="trio-icon">🥣</span> 식단 수칙</div>
+            <ul>
+              <li><strong>L-트립토판 풍부 식품:</strong> 귀리(오트밀), 호박씨, 호두, 계란, 그릭 요거트.</li>
+              <li><strong>복합 탄수화물 동반 섭취:</strong> 약간의 통곡물 복합 탄수화물이 인슐린을 분비시켜 트립토판의 뇌 진입을 촉진합니다.</li>
+              <li><strong>프리바이오틱스(식이섬유):</strong> 사과, 바나나, 양배추 등으로 유익균의 먹이를 풍부하게 공급.</li>
+            </ul>
+          </div>
+          <div class="trio-card">
+            <div class="trio-head"><span class="trio-icon">🚲</span> 추천 운동</div>
+            <ul>
+              <li><strong>오전 햇볕 쬐며 리듬 운동:</strong> 아침 등교길 15~20분간 햇볕을 받으며 일정한 박자로 걷기.</li>
+              <li><strong>자전거 타기 / 줄넘기:</strong> 일정하고 반복적인 박자의 리듬성 유산소 운동이 뇌간 척수 봉선핵(Raphe Nuclei)을 자극합니다.</li>
+              <li><strong>자연 숲길 산책:</strong> 초록색 시각 자극과 피톤치드가 전두엽 스트레스를 정화합니다.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 탭 4: 옥시토신 & 코르티솔 -->
+      <div class="hormone-panel" id="panel-oxytocin">
+        <div class="panel-header">
+          <div class="panel-badge purple">옥시토신(안전감) 촉진 & 코르티솔(만성 스트레스) 완화</div>
+          <p class="panel-intro">
+            사회적 유대감의 핵심인 옥시토신이 분비되면, 만성 스트레스 호르몬인 코르티솔이 억제되고 타인의 접근을 '안전한 신호'로 인식하게 됩니다.
+          </p>
+        </div>
+        <div class="trio-grid">
+          <div class="trio-card">
+            <div class="trio-head"><span class="trio-icon">🛌</span> 수면 & 환경 조절</div>
+            <ul>
+              <li><strong>가중 담요 (Weighted Blanket):</strong> 체중의 약 10% 무게를 지닌 담요로 덮어주면 신경계가 안정되어 깊은 서파 수면에 진입합니다.</li>
+              <li><strong>취침 1시간 전 암전 및 블루라이트 차단:</strong> 멜라토닌 분비를 유도하여 글림프 시스템(Glymphatic System)의 뇌 독소 청소를 돕습니다.</li>
+              <li><strong>따뜻한 온수 샤워 / 반신욕:</strong> 심부 체온을 이완시켜 코르티솔 급강하 유도.</li>
+            </ul>
+          </div>
+          <div class="trio-card">
+            <div class="trio-head"><span class="trio-icon">🥛</span> 식단 수칙</div>
+            <ul>
+              <li><strong>따뜻한 카모마일 / 루이보스 티:</strong> 카페인과 각성 물질을 완전히 배제하고 신경계를 진정.</li>
+              <li><strong>야식 및 단순당 배제:</strong> 밤 시간 혈당 요동은 수면 중 코르티솔 분비를 촉진해 악몽이나 야경증의 원인이 됩니다.</li>
+              <li><strong>마그네슘 보충 나이트 간식:</strong> 소량의 아몬드나 호두 3~4알.</li>
+            </ul>
+          </div>
+          <div class="trio-card">
+            <div class="trio-head"><span class="trio-icon">🧸</span> 신체 접촉 & 유대 놀이</div>
+            <ul>
+              <li><strong>베어 허그(Bear Hug, 묵직한 포옹):</strong> 가벼운 스킨십보다 단단하고 안정적인 20초간의 긴 포옹이 옥시토신 분비를 폭발시킵니다.</li>
+              <li><strong>등 마사지 & 발바닥 롤링:</strong> 부드럽고 일정한 압력으로 감각 과민성을 낮추고 유대감을 회복합니다.</li>
+              <li><strong>반려동물 쓰다듬기 / 인형 안기:</strong> 비언어적 애착 대상을 통한 안도감 확보.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- [SECTION 6: 부모를 위한 마지막 체크리스트] -->
+    <!-- ============================================================ -->
+    <section class="section-card checklist-section" id="section-6" data-slide="6">
+      <div class="section-badge">SECTION 06 • 부모를 위한 생물학적 시간표</div>
+      <h2 class="section-title">아이의 사회성, 조급함 대신 '생물학적 시간표'를 믿어주세요</h2>
+      <p class="section-subtitle">
+        나무의 뿌리가 자라는 데 계절이 필요하듯, 아이의 신경망(Neural Circuit)도 <strong>충분한 휴식과 일관된 지지</strong>를 먹고 서서히 재배선됩니다.
+      </p>
+
+      <!-- 일일 3대 생체 기초 체력 & 실천 체크리스트 -->
+      <div class="checklist-box">
+        <h3 class="checklist-title">📋 우리 집 매일 사회성 뇌 배터리 관리표</h3>
+        
+        <div class="check-group">
+          <!-- 항목 1 -->
+          <label class="check-item">
+            <input type="checkbox" id="chk-sunlight" class="custom-chk" />
+            <div class="chk-box-visual"></div>
+            <div class="chk-text">
+              <span class="chk-title">☀️ 1. 오전 20분 햇볕 쬐기 (세로토닌 & 비타민 D 충전)</span>
+              <span class="chk-desc">생체 시계를 리셋하여 밤 수면 멜라토닌 분비와 낮 정서 안정을 보장합니다.</span>
+            </div>
+          </label>
+
+          <!-- 항목 2 -->
+          <label class="check-item">
+            <input type="checkbox" id="chk-sleep" class="custom-chk" />
+            <div class="chk-box-visual"></div>
+            <div class="chk-text">
+              <span class="chk-title">🌙 2. 9시간 이상의 규칙적인 수면 (글림프 시스템 청소)</span>
+              <span class="chk-desc">수면 중 뇌척수액이 뇌를 세척하여 낮 동안 쌓인 신경 피로 물질을 청소합니다.</span>
+            </div>
+          </label>
+
+          <!-- 항목 3 -->
+          <label class="check-item">
+            <input type="checkbox" id="chk-breakfast" class="custom-chk" />
+            <div class="chk-box-visual"></div>
+            <div class="chk-text">
+              <span class="chk-title">🍳 3. 아침 단백질 식단 & 당류 제한 (혈당 롤러코스터 방지)</span>
+              <span class="chk-desc">달걀, 두부, 살코기로 안정적인 도파민 원료를 공급하고 뇌 과열을 막습니다.</span>
+            </div>
+          </label>
+
+          <!-- 항목 4 -->
+          <label class="check-item">
+            <input type="checkbox" id="chk-hug" class="custom-chk" />
+            <div class="chk-box-visual"></div>
+            <div class="chk-text">
+              <span class="chk-title">🫂 4. 귀가 후 무조건적인 '안전기지' 포옹 (옥시토신 분비)</span>
+              <span class="chk-desc">"오늘 누구랑 놀았어?" 캐묻지 않고, "수고 많았어, 집이 최고지?"라며 편도체를 꺼주세요.</span>
+            </div>
+          </label>
+
+          <!-- 항목 5 -->
+          <label class="check-item">
+            <input type="checkbox" id="chk-limit" class="custom-chk" />
+            <div class="chk-box-visual"></div>
+            <div class="chk-text">
+              <span class="chk-title">🔋 5. 사회적 모임 '골든 타임' 준수 (방전 전 철수)</span>
+              <span class="chk-desc">아이의 뇌 배터리가 20% 남았을 때 기분 좋게 퇴장하여 긍정적 기억을 심어줍니다.</span>
+            </div>
+          </label>
+        </div>
+
+        <div class="checklist-footer">
+          <div class="progress-bar-wrap">
+            <div class="progress-text">오늘의 뇌 보호 달성률: <strong id="progress-percent">0%</strong></div>
+            <div class="progress-track">
+              <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
+            </div>
+          </div>
+          <button id="save-print-btn" class="print-callout-btn">
+            🖨️ 냉장고 부착용 한 장 치트시트 출력하기
+          </button>
+        </div>
+      </div>
+
+      <!-- 부모를 위한 따뜻한 위로 캘리그래피 카드 -->
+      <div class="warm-encouragement-card">
+        <div class="quote-mark">“</div>
+        <p class="quote-body">
+          부모님의 잘못이 아니며, 아이의 게으름이 아닙니다.<br />
+          아이는 매일 자신의 뇌 속에서 거대한 파도와 싸우며 최선을 다해 세상을 배우고 있습니다.<br />
+          <strong>부모가 아이의 든든한 '외부 보조 뇌'가 되어줄 때, 아이의 회로는 반드시 성장합니다.</strong>
+        </p>
+        <div class="quote-author">- 신경발달의학 및 소아신경학 전문가 연구진 -</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 푸터 -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <p>💡 본 자료는 ASD, ADHD, 사회불안을 겪는 아동·청소년 부모님 및 치료사를 위한 신경과학 기반 오픈 교육 인포그래픽입니다.</p>
+      <p class="footer-copy">Designed with Care for Neurodivergent Families © 2026. 과학적 근거: 하버드 의대 신경생물학, 앤드류 후버만 랩 생체 프로토콜 기반.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

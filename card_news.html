@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>카카오톡 카드뉴스 템플릿 (1080x1350)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;800;900&family=Outfit:wght@600;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Pretendard', sans-serif;
+      background: #718096;
+      color: #1a202c;
+      line-height: 1.5;
+    }
+
+    /* 각 카드는 1080 x 1350 고정 크기 (4:5 비율, 카카오톡 최적화) */
+    .card-page {
+      width: 1080px;
+      height: 1350px;
+      padding: 60px;
+      background: #ffffff;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      margin: 40px auto;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+
+    /* 상단 헤더 공통 */
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #edf2f7;
+      padding-bottom: 20px;
+    }
+    .brand-tag {
+      font-size: 22px;
+      font-weight: 800;
+      color: #2f855a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .page-indicator {
+      font-family: 'Outfit', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: #718096;
+      background: #edf2f7;
+      padding: 6px 18px;
+      border-radius: 9999px;
+    }
+
+    /* 하단 푸터 공통 */
+    .card-footer {
+      border-top: 2px solid #edf2f7;
+      padding-top: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 19px;
+      color: #a0aec0;
+      font-weight: 600;
+    }
+
+    /* 본문 영역 */
+    .card-body {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 24px 0;
+    }
+
+    .badge-label {
+      align-self: flex-start;
+      font-size: 20px;
+      font-weight: 800;
+      padding: 6px 18px;
+      border-radius: 9999px;
+      margin-bottom: 16px;
+    }
+    .badge-green { background: #f0fff4; color: #2f855a; border: 1.5px solid #9ae6b4; }
+    .badge-red { background: #fff5f5; color: #c53030; border: 1.5px solid #feb2b2; }
+    .badge-blue { background: #ebf8ff; color: #2b6cb0; border: 1.5px solid #bee3f8; }
+    .badge-amber { background: #fefcbf; color: #744210; border: 1.5px solid #fef08a; }
+
+    .main-title {
+      font-size: 46px;
+      font-weight: 900;
+      line-height: 1.3;
+      letter-spacing: -0.03em;
+      margin-bottom: 14px;
+      color: #1a202c;
+    }
+    .main-title .highlight {
+      color: #e53e3e;
+      position: relative;
+    }
+    .subtitle {
+      font-size: 24px;
+      color: #4a5568;
+      line-height: 1.55;
+      margin-bottom: 28px;
+    }
+
+    /* =================================================== */
+    /* CARD 1 전용 스타일 (표지 & 비포/애프터 비교) */
+    /* =================================================== */
+    .c1-compare-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      margin-top: 10px;
+    }
+    .c1-item {
+      border-radius: 20px;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .c1-item.overload {
+      background: #fff8f8;
+      border: 3px solid #feb2b2;
+    }
+    .c1-item.calm {
+      background: #f0fff4;
+      border: 3px solid #9ae6b4;
+    }
+    .c1-item h3 {
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+    .c1-item.overload h3 { color: #c53030; }
+    .c1-item.calm h3 { color: #276749; }
+    .c1-svg {
+      width: 220px;
+      height: 160px;
+      margin: 10px 0;
+    }
+    .c1-battery {
+      font-size: 20px;
+      font-weight: 800;
+      padding: 6px 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    .c1-battery.low { background: #fed7d7; color: #9b2c2c; }
+    .c1-battery.high { background: #c6f6d5; color: #22543d; }
+    .c1-bullets {
+      text-align: left;
+      font-size: 19px;
+      color: #4a5568;
+      line-height: 1.55;
+      list-style: none;
+    }
+    .c1-bullets li {
+      margin-bottom: 6px;
+      position: relative;
+      padding-left: 16px;
+    }
+    .c1-bullets li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: #718096;
+      font-weight: 800;
+    }
+
+    /* =================================================== */
+    /* CARD 2 전용 스타일 (5가지 원인) */
+    /* =================================================== */
+    .cause-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .cause-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background: #f7fafc;
+      border: 2px solid #edf2f7;
+      border-radius: 16px;
+      padding: 16px 20px;
+    }
+    .c2-icon {
+      font-size: 40px;
+      width: 70px;
+      height: 70px;
+      background: #fff;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      flex-shrink: 0;
+    }
+    .c2-info h4 {
+      font-size: 23px;
+      font-weight: 800;
+      color: #2d3748;
+      margin-bottom: 4px;
+    }
+    .c2-info .c2-tagline {
+      font-size: 19px;
+      font-weight: 700;
+      color: #e53e3e;
+      margin-bottom: 4px;
+    }
+    .c2-info p {
+      font-size: 17px;
+      color: #718096;
+    }
+
+    /* =================================================== */
+    /* CARD 3 전용 스타일 (SOS 디코더) */
+    /* =================================================== */
+    .decoder-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .decoder-item {
+      display: grid;
+      grid-template-columns: 295px 1fr 1fr;
+      align-items: center;
+      background: #fff;
+      border: 2px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 14px 20px;
+      gap: 16px;
+    }
+    .dec-behavior {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .dec-emoji { font-size: 36px; }
+    .dec-b-title { font-size: 22px; font-weight: 800; color: #2d3748; }
+    .dec-b-sub { font-size: 16px; color: #718096; }
+    .dec-brain {
+      background: #fff5f5;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border-left: 4px solid #e53e3e;
+    }
+    .dec-brain-pill { font-size: 17px; font-weight: 800; color: #c53030; }
+    .dec-brain-desc { font-size: 16px; color: #4a5568; margin-top: 2px; }
+    .dec-rx {
+      background: #f0fff4;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border-left: 4px solid #38a169;
+    }
+    .dec-rx-title { font-size: 17px; font-weight: 800; color: #276749; }
+    .dec-rx-desc { font-size: 16px; color: #2d3748; margin-top: 2px; }
+
+    /* =================================================== */
+    /* CARD 4 전용 스타일 (5대 실생활 개입 솔루션) */
+    /* =================================================== */
+    .strategy-grid-c4 {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .strat-row {
+      display: flex;
+      gap: 18px;
+      background: #f7fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 16px 20px;
+    }
+    .strat-num {
+      width: 48px;
+      height: 48px;
+      background: #2f855a;
+      color: #fff;
+      font-size: 22px;
+      font-weight: 800;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .strat-body h4 {
+      font-size: 22px;
+      font-weight: 800;
+      color: #2d3748;
+      margin-bottom: 4px;
+    }
+    .strat-body p {
+      font-size: 18px;
+      color: #4a5568;
+      line-height: 1.45;
+    }
+    .strat-tip {
+      font-size: 16px;
+      font-weight: 600;
+      color: #2b6cb0;
+      margin-top: 4px;
+    }
+
+    /* =================================================== */
+    /* CARD 5 전용 스타일 (호르몬 & 운동/영양/식단) */
+    /* =================================================== */
+    .hormone-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    .h-card {
+      background: #f7fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 20px;
+    }
+    .h-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      border-bottom: 2px solid #edf2f7;
+    }
+    .h-icon { font-size: 28px; }
+    .h-title { font-size: 22px; font-weight: 800; color: #2d3748; }
+    .h-list {
+      list-style: none;
+      font-size: 17px;
+      color: #4a5568;
+      line-height: 1.5;
+    }
+    .h-list li {
+      margin-bottom: 8px;
+      position: relative;
+      padding-left: 16px;
+    }
+    .h-list li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: #2f855a;
+      font-weight: 800;
+    }
+    .h-list strong { color: #1a202c; }
+
+    /* =================================================== */
+    /* CARD 6 전용 스타일 (실천 체크리스트 & 위로) */
+    /* =================================================== */
+    .c6-box {
+      background: #f7fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 26px;
+    }
+    .c6-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .c6-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: #fff;
+      padding: 14px 18px;
+      border-radius: 12px;
+      border: 1px solid #edf2f7;
+    }
+    .c6-chk {
+      width: 28px;
+      height: 28px;
+      background: #2f855a;
+      color: #fff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .c6-txt h5 { font-size: 20px; font-weight: 800; color: #2d3748; }
+    .c6-txt p { font-size: 16px; color: #718096; }
+
+    .warm-quote {
+      background: linear-gradient(135deg, #feebc8 0%, #fefcbf 100%);
+      border: 2px solid #fbd38d;
+      border-radius: 20px;
+      padding: 32px 36px;
+      text-align: center;
+    }
+    .warm-quote p {
+      font-size: 23px;
+      font-weight: 700;
+      color: #744210;
+      line-height: 1.65;
+    }
+    .warm-quote .author {
+      font-size: 18px;
+      font-weight: 600;
+      color: #975a16;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================ -->
+  <!-- CARD 1: 인트로 및 핵심 인식 전환 (표지) -->
+  <!-- ============================================================ -->
+  <div class="card-page" id="card-1">
+    <div class="card-header">
+      <div class="brand-tag">🧠 사회성 뇌과학 부모 가이드</div>
+      <div class="page-indicator">01 / 06</div>
+    </div>
+
+    <div class="card-body">
+      <div class="badge-label badge-red">SECTION 01 • 핵심 인식 전환</div>
+      <h1 class="main-headline main-title">
+        우리 아이 사회성,<br />
+        의지가 아니라 <span class="highlight">"뇌의 배터리"</span> 문제입니다
+      </h1>
+      <p class="subtitle">
+        사회적 상호작용은 뇌에서 가장 많은 에너지를 쓰는 <strong>'초고비용 작업'</strong>입니다.<br/>
+        아이가 친구와 어울리지 못하는 것은 <strong>뇌가 방전(Shutdown)</strong>되었기 때문입니다.
+      </p>
+
+      <div class="c1-compare-box">
+        <!-- 좌측: 과부하 뇌 -->
+        <div class="c1-item overload">
+          <h3>⚠️ 신경 과부하 상태</h3>
+          <!-- 뇌 SVG -->
+          <svg viewBox="0 0 200 160" class="c1-svg">
+            <path d="M50,80 C30,70 30,40 60,30 C75,15 115,10 135,25 C165,20 180,50 170,80 C185,100 175,135 145,140 C125,145 110,135 95,140 C70,145 45,130 50,105 Z" fill="#FFEAEA" stroke="#E53E3E" stroke-width="4" />
+            <circle cx="90" cy="65" r="32" fill="#FF4D4D" opacity="0.6" />
+            <circle cx="115" cy="85" r="9" fill="#E53E3E" />
+            <text x="115" y="112" text-anchor="middle" fill="#C53030" font-size="12" font-weight="800">편도체 비상 경보</text>
+          </svg>
+          <div class="c1-battery low">🔋 배터리 15% (방전 임박)</div>
+          <ul class="c1-bullets">
+            <li>전두엽 에너지 고갈 (이성적 대화 불가)</li>
+            <li>맹수 앞처럼 교감신경계 과열</li>
+            <li>겉모습: 멍때림, 눈 피함, 갑작스런 분노</li>
+          </ul>
+        </div>
+
+        <!-- 우측: 맞춤 지원 안정 뇌 -->
+        <div class="c1-item calm">
+          <h3>🌱 환경적 지지 상태</h3>
+          <svg viewBox="0 0 200 160" class="c1-svg">
+            <path d="M50,80 C30,70 30,40 60,30 C75,15 115,10 135,25 C165,20 180,50 170,80 C185,100 175,135 145,140 C125,145 110,135 95,140 C70,145 45,130 50,105 Z" fill="#F0FFF4" stroke="#38A169" stroke-width="4" />
+            <circle cx="100" cy="70" r="32" fill="#48BB78" opacity="0.4" />
+            <circle cx="75" cy="55" r="6" fill="#38A169" />
+            <circle cx="110" cy="65" r="7" fill="#3182CE" />
+            <text x="100" y="112" text-anchor="middle" fill="#276749" font-size="12" font-weight="800">신경망 안정화</text>
+          </svg>
+          <div class="c1-battery high">🔋 배터리 85% (상호작용 가능)</div>
+          <ul class="c1-bullets">
+            <li>감각 차단 및 사전 스크립트로 뇌 휴식</li>
+            <li>안전하다는 생체 신호(심박 안정) 접수</li>
+            <li>작은 성공 경험 누적과 신경 가소성 촉진</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer">
+      <span>소아신경학 & 신경생물학 기반 부모 지침서</span>
+      <span>다음 장으로 넘겨보세요 👉</span>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- CARD 2: 5가지 생물학적 원인 -->
+  <!-- ============================================================ -->
+  <div class="card-page" id="card-2">
+    <div class="card-header">
+      <div class="brand-tag">🧠 사회성 뇌과학 부모 가이드</div>
+      <div class="page-indicator">02 / 06</div>
+    </div>
+
+    <div class="card-body">
+      <div class="badge-label badge-red">SECTION 02 • 원인 시각화</div>
+      <h2 class="main-title">아이를 멈추게 하는 5가지 신경학적 병목</h2>
+      <p class="subtitle">아이의 머릿속에서는 지금 이 5가지 회로 과부하가 실시간으로 일어나고 있습니다.</p>
+
+      <div class="cause-stack">
+        <!-- 1. 인지 과부하 -->
+        <div class="cause-row">
+          <div class="c2-icon">💻</div>
+          <div class="c2-info">
+            <h4>1. 인지 과부하 (마음 읽기)</h4>
+            <div class="c2-tagline">"상대의 의도를 실시간 계산하느라 CPU 버퍼링이 걸려요"</div>
+            <p>상대의 표정, 억양, 숨은 비유를 무의식으로 읽지 못하고 공식을 풀듯 연산하다 과열됩니다.</p>
+          </div>
+        </div>
+
+        <!-- 2. 불안 경보 -->
+        <div class="cause-row">
+          <div class="c2-icon">🚨</div>
+          <div class="c2-info">
+            <h4>2. 불안 경보 (편도체 비상벨 오작동)</h4>
+            <div class="c2-tagline">"낯선 상황을 '위협'으로 착각해 몸이 얼어붙거나 공격해요"</div>
+            <p>편도체가 과민 반응하여 '투쟁-도피-얼어붙음(Fight-Flight-Freeze)' 생존 모드가 켜집니다.</p>
+          </div>
+        </div>
+
+        <!-- 3. 감각 폭발 -->
+        <div class="cause-row">
+          <div class="c2-icon">🌪️</div>
+          <div class="c2-info">
+            <h4>3. 감각 폭발 (필터링 실패)</h4>
+            <div class="c2-tagline">"말소리와 주변 소음이 분리되지 않아 머릿속이 시끄러워요"</div>
+            <p>시상의 감각 필터가 약해 웅성거림, 형광등 깜빡임, 옷깃 감촉이 여과 없이 쏟아집니다.</p>
+          </div>
+        </div>
+
+        <!-- 4. 신경 피로 -->
+        <div class="cause-row">
+          <div class="c2-icon">🪫</div>
+          <div class="c2-info">
+            <h4>4. 신경 피로 (도파민 부족)</h4>
+            <div class="c2-tagline">"사회적 보상 회로가 약해 적은 대화에도 배터리가 급방전돼요"</div>
+            <p>상호작용에서 도파민(즐거움)이 충분히 나오지 않고 피로물질만 빠르게 누적됩니다.</p>
+          </div>
+        </div>
+
+        <!-- 5. 인지 계산 -->
+        <div class="cause-row">
+          <div class="c2-icon">🔄</div>
+          <div class="c2-info">
+            <h4>5. 직관 대신 인지 계산</h4>
+            <div class="c2-tagline">"거울신경세포 대신 복잡한 순서도 알고리즘을 돌려요"</div>
+            <p>눈치를 자연스럽게 체득하지 못해 "A상황엔 B라고 답해야 함" 공식을 대입합니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer">
+      <span>소아신경학 & 신경생물학 기반 부모 지침서</span>
+      <span>다음 장: 아이의 구조 신호 번역기 👉</span>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- CARD 3: 부모의 해석법 (SOS 번역기) -->
+  <!-- ============================================================ -->
+  <div class="card-page" id="card-3">
+    <div class="card-header">
+      <div class="brand-tag">🧠 사회성 뇌과학 부모 가이드</div>
+      <div class="page-indicator">03 / 06</div>
+    </div>
+
+    <div class="card-body">
+      <div class="badge-label badge-blue">SECTION 03 • 부모의 해석법</div>
+      <h2 class="main-title">아이의 문제 행동 = "뇌의 SOS 구조 신호"</h2>
+      <p class="subtitle">겉모습 행동 뒤에 숨겨진 아이 뇌의 진짜 상태와 즉각 처방입니다.</p>
+
+      <div class="decoder-grid">
+        <!-- 1. 멍때림 -->
+        <div class="decoder-item">
+          <div class="dec-behavior">
+            <span class="dec-emoji">😶‍🌫️</span>
+            <div>
+              <div class="dec-b-title">멍때림 / 딴청</div>
+              <div class="dec-b-sub">질문해도 반응 없음</div>
+            </div>
+          </div>
+          <div class="dec-brain">
+            <div class="dec-brain-pill">감각 셧다운 (Overload)</div>
+            <div class="dec-brain-desc">정보 과부하로 스스로 전원을 내림</div>
+          </div>
+          <div class="dec-rx">
+            <div class="dec-rx-title">질문 멈추기</div>
+            <div class="dec-rx-desc">재촉하지 말고 30초간 침묵 허용</div>
+          </div>
+        </div>
+
+        <!-- 2. 짜증/떼쓰기 -->
+        <div class="decoder-item">
+          <div class="dec-behavior">
+            <span class="dec-emoji">💥</span>
+            <div>
+              <div class="dec-b-title">갑작스런 분노/떼쓰기</div>
+              <div class="dec-b-sub">별것 아닌 일에 폭발</div>
+            </div>
+          </div>
+          <div class="dec-brain">
+            <div class="dec-brain-pill">편도체 비상 (Fight)</div>
+            <div class="dec-brain-desc">맹수 앞처럼 극심한 위협을 느낌</div>
+          </div>
+          <div class="dec-rx">
+            <div class="dec-rx-title">훈육 금지</div>
+            <div class="dec-rx-desc">낮은 톤으로 "위험하지 않아" 안심</div>
+          </div>
+        </div>
+
+        <!-- 3. 함구 -->
+        <div class="decoder-item">
+          <div class="dec-behavior">
+            <span class="dec-emoji">🤐</span>
+            <div>
+              <div class="dec-b-title">말문 막힘 (함구)</div>
+              <div class="dec-b-sub">입을 꾹 닫고 고개 숙임</div>
+            </div>
+          </div>
+          <div class="dec-brain">
+            <div class="dec-brain-pill">전두엽 마비 (Freeze)</div>
+            <div class="dec-brain-desc">공식 계산 과열로 발화 영역 잠김</div>
+          </div>
+          <div class="dec-rx">
+            <div class="dec-rx-title">객관식 전환</div>
+            <div class="dec-rx-desc">주관식 대신 "O/X" 손짓 선택 유도</div>
+          </div>
+        </div>
+
+        <!-- 4. 도망침 -->
+        <div class="decoder-item">
+          <div class="dec-behavior">
+            <span class="dec-emoji">🏃‍♂️</span>
+            <div>
+              <div class="dec-b-title">자리 이탈 / 도망</div>
+              <div class="dec-b-sub">구석이나 화장실로 피신</div>
+            </div>
+          </div>
+          <div class="dec-brain">
+            <div class="dec-brain-pill">감각 도피 (Flight)</div>
+            <div class="dec-brain-desc">소음 자극에서 뇌를 살리려는 본능</div>
+          </div>
+          <div class="dec-rx">
+            <div class="dec-rx-title">피난처 인정</div>
+            <div class="dec-rx-desc">"5분 쉬고 오자" 안전지대 허용</div>
+          </div>
+        </div>
+
+        <!-- 5. 눈 피하기 -->
+        <div class="decoder-item">
+          <div class="dec-behavior">
+            <span class="dec-emoji">👀</span>
+            <div>
+              <div class="dec-b-title">시선 회피 (눈 피함)</div>
+              <div class="dec-b-sub">바닥이나 딴 곳을 봄</div>
+            </div>
+          </div>
+          <div class="dec-brain">
+            <div class="dec-brain-pill">대역폭 절약 (Bandwidth)</div>
+            <div class="dec-brain-desc">얼굴 정보가 커서 귀 청각에 집중함</div>
+          </div>
+          <div class="dec-rx">
+            <div class="dec-rx-title">시선 강요 금지</div>
+            <div class="dec-rx-desc">"눈 봐!" 하지 말고 귀로 들음을 인정</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer">
+      <span>소아신경학 & 신경생물학 기반 부모 지침서</span>
+      <span>다음 장: 5대 실생활 개입 솔루션 👉</span>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- CARD 4: 실생활 개입 5대 솔루션 -->
+  <!-- ============================================================ -->
+  <div class="card-page" id="card-4">
+    <div class="card-header">
+      <div class="brand-tag">🧠 사회성 뇌과학 부모 가이드</div>
+      <div class="page-indicator">04 / 06</div>
+    </div>
+
+    <div class="card-body">
+      <div class="badge-label badge-green">SECTION 04 • 실생활 솔루션</div>
+      <h2 class="main-title">뇌 회로를 보호하는 5가지 맞춤 실천법</h2>
+      <p class="subtitle">5가지 생물학적 원인을 정확하게 해결하는 1:1 과학적 처방입니다.</p>
+
+      <div class="strategy-grid-c4">
+        <!-- 1 -->
+        <div class="strat-row">
+          <div class="strat-num">01</div>
+          <div class="strat-body">
+            <h4>스몰토크 대화 공식 스크립트 (원인 1 대응)</h4>
+            <p>상황별로 바로 꺼내 쓸 공식 1~2개를 미리 연습해 뇌의 실시간 계산 부담을 줄입니다.</p>
+            <div class="strat-tip">💡 추천 공식: "요즘 재미있는 게임 있어?", "그 옷/신발 멋지다!"</div>
+          </div>
+        </div>
+
+        <!-- 2 -->
+        <div class="strat-row">
+          <div class="strat-num">02</div>
+          <div class="strat-body">
+            <h4>생리적 긴 호흡 (Physiological Sigh) (원인 2 대응)</h4>
+            <p>코로 깊게 숨 들이마시고 끝에서 한 번 더 채운 뒤, 입으로 길게 후- 내뱉기 (2~3회 반복).</p>
+            <div class="strat-tip">💡 심박수를 즉각 안정시키고 편도체 비상벨을 꺼주는 생체 해킹법</div>
+          </div>
+        </div>
+
+        <!-- 3 -->
+        <div class="strat-row">
+          <div class="strat-num">03</div>
+          <div class="strat-body">
+            <h4>감각 자극 차단 & 벽 쪽 좌석 (원인 3 대응)</h4>
+            <p>어쿠스틱 이어플러그(-20dB 소음 감소) 활용 및 뒤가 벽으로 막힌 자리에 앉히기.</p>
+            <div class="strat-tip">💡 뒤를 방어할 필요가 없어 편도체의 긴장도가 50% 이상 감소합니다.</div>
+          </div>
+        </div>
+
+        <!-- 4 -->
+        <div class="strat-row">
+          <div class="strat-num">04</div>
+          <div class="strat-body">
+            <h4>90분 골든룰 & 방전 전 퇴장 (원인 4 대응)</h4>
+            <p>배터리가 0%가 된 후의 귀가는 며칠간 번아웃을 유발합니다. 20% 남았을 때 기분 좋게 철수!</p>
+            <div class="strat-tip">💡 "더 놀고 싶다"고 할 때 퇴장해야 다음 모임에 긍정 기억이 남습니다.</div>
+          </div>
+        </div>
+
+        <!-- 5 -->
+        <div class="strat-row">
+          <div class="strat-num">05</div>
+          <div class="strat-body">
+            <h4>점진적 성공 사다리 (원인 5 대응)</h4>
+            <p>1단계(눈인사) ➔ 2단계(1:1 관심사 20분 놀이) ➔ 3단계(명확한 역할이 있는 소그룹).</p>
+            <div class="strat-tip">💡 신경망을 점진적으로 재배선하는 안전한 성공 경험 축적법</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer">
+      <span>소아신경학 & 신경생물학 기반 부모 지침서</span>
+      <span>다음 장: 운동 · 영양제 · 식단 프로토콜 👉</span>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- CARD 5: 호르몬 최적화 프로토콜 (운동 · 영양 · 식단) -->
+  <!-- ============================================================ -->
+  <div class="card-page" id="card-5">
+    <div class="card-header">
+      <div class="brand-tag">🧠 사회성 뇌과학 부모 가이드</div>
+      <div class="page-indicator">05 / 06</div>
+    </div>
+
+    <div class="card-body">
+      <div class="badge-label badge-amber">SECTION 05 • 신경호르몬 프로토콜</div>
+      <h2 class="main-title">뇌 호르몬 기초 체력: 운동 · 영양 · 식단</h2>
+      <p class="subtitle">신경계가 균형을 이루어야 뇌가 사회적 여유를 가질 수 있습니다.</p>
+
+      <div class="hormone-2x2">
+        <!-- GABA -->
+        <div class="h-card">
+          <div class="h-head">
+            <span class="h-icon">🛡️</span>
+            <div class="h-title">GABA (진정 브레이크)</div>
+          </div>
+          <ul class="h-list">
+            <li><strong>영양제:</strong> 마그네슘(글리시네이트), L-테아닌, 활성 비타민 B6</li>
+            <li><strong>식단:</strong> 발효식품(김치/된장/요거트), 정제당 제한</li>
+            <li><strong>운동:</strong> 고유수용감각 자극(벽 밀기, 곰 걸음, 딥 프레셔)</li>
+          </ul>
+        </div>
+
+        <!-- 도파민 -->
+        <div class="h-card">
+          <div class="h-head">
+            <span class="h-icon">⚡</span>
+            <div class="h-title">도파민 (동기 & 보상)</div>
+          </div>
+          <ul class="h-list">
+            <li><strong>영양제:</strong> 오메가-3(EPA/DHA), 아연, 활성 엽산</li>
+            <li><strong>식단:</strong> L-티로신(달걀, 살코기, 두부), 아침 고단백 식사</li>
+            <li><strong>운동:</strong> 볼더링(암벽등반), 트램펄린 점핑, 미션형 운동</li>
+          </ul>
+        </div>
+
+        <!-- 세로토닌 -->
+        <div class="h-card">
+          <div class="h-head">
+            <span class="h-icon">☀️</span>
+            <div class="h-title">세로토닌 (정서 & 장-뇌)</div>
+          </div>
+          <ul class="h-list">
+            <li><strong>영양제:</strong> 장-뇌 유산균(사이코바이오틱스), 비타민 D3</li>
+            <li><strong>식단:</strong> 트립토판(귀리, 견과류, 바나나), 풍부한 식이섬유</li>
+            <li><strong>운동:</strong> 오전 햇볕 쬐며 일정한 박자로 걷기 / 자전거 타기</li>
+          </ul>
+        </div>
+
+        <!-- 옥시토신/코르티솔 -->
+        <div class="h-card">
+          <div class="h-head">
+            <span class="h-icon">🫂</span>
+            <div class="h-title">옥시토신 & 코르티솔</div>
+          </div>
+          <ul class="h-list">
+            <li><strong>환경:</strong> 가중 담요(체중 10%), 취침 전 블루라이트 차단</li>
+            <li><strong>스킨십:</strong> 20초간 단단한 베어 허그(Bear Hug), 등 마사지</li>
+            <li><strong>식단:</strong> 수면 전 따뜻한 루이보스 티, 혈당 스파이크 방지</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer">
+      <span>소아신경학 & 신경생물학 기반 부모 지침서</span>
+      <span>다음 장: 부모를 위한 생물학적 시간표 👉</span>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- CARD 6: 매일 실천표 & 따뜻한 위로 -->
+  <!-- ============================================================ -->
+  <div class="card-page" id="card-6">
+    <div class="card-header">
+      <div class="brand-tag">🧠 사회성 뇌과학 부모 가이드</div>
+      <div class="page-indicator">06 / 06</div>
+    </div>
+
+    <div class="card-body">
+      <div class="badge-label badge-green">SECTION 06 • 생물학적 시간표</div>
+      <h2 class="main-title">조급함 대신 '생물학적 시간표'를 믿어주세요</h2>
+      <p class="subtitle">아이의 신경망(Neural Circuit)은 충분한 휴식과 일관된 지지 속에서 성장합니다.</p>
+
+      <div class="c6-box">
+        <ul class="c6-list">
+          <li class="c6-item">
+            <div class="c6-chk">✓</div>
+            <div class="c6-txt">
+              <h5>1. 오전 20분 햇볕 쬐기</h5>
+              <p>세로토닌 충전 및 밤 수면 멜라토닌 리셋</p>
+            </div>
+          </li>
+          <li class="c6-item">
+            <div class="c6-chk">✓</div>
+            <div class="c6-txt">
+              <h5>2. 9시간 이상의 규칙적 수면</h5>
+              <p>글림프 시스템(Glymphatic)을 통한 뇌 피로 독소 청소</p>
+            </div>
+          </li>
+          <li class="c6-item">
+            <div class="c6-chk">✓</div>
+            <div class="c6-txt">
+              <h5>3. 아침 단백질 식단 & 정제당 제한</h5>
+              <p>혈당 롤러코스터를 막고 안정적인 도파민 원료 공급</p>
+            </div>
+          </li>
+          <li class="c6-item">
+            <div class="c6-chk">✓</div>
+            <div class="c6-txt">
+              <h5>4. 귀가 후 무조건적인 '안전기지' 포옹</h5>
+              <p>캐묻지 않고 "오늘 수고했어!" 편도체를 꺼주는 옥시토신 분비</p>
+            </div>
+          </li>
+          <li class="c6-item">
+            <div class="c6-chk">✓</div>
+            <div class="c6-txt">
+              <h5>5. 모임 90분 골든룰 (방전 전 철수)</h5>
+              <p>뇌 배터리가 20% 남았을 때 기분 좋게 귀가하기</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="warm-quote">
+        <p>
+          "부모님의 잘못이 아니며, 아이의 게으름이 아닙니다.<br/>
+          아이는 매일 자신의 뇌 속에서 거대한 파도와 싸우며 최선을 다하고 있습니다.<br/>
+          <strong>부모가 든든한 '외부 보조 뇌'가 되어줄 때, 아이의 회로는 반드시 성장합니다.</strong>"
+        </p>
+        <div class="author">- 소아신경학 및 신경생물학 전문가 연구진 -</div>
+      </div>
+    </div>
+
+    <div class="card-footer">
+      <span>소아신경학 & 신경생물학 기반 부모 지침서</span>
+      <span>가족 및 학부모 모임에 자유롭게 공유하세요 💚</span>
+    </div>
+  </div>
+
+</body>
+</html>
