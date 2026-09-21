@@ -1153,6 +1153,126 @@ body {
 }
 
 /* ============================================================ */
+/* [SPECIAL SECTION: 지친 부모님을 위한 3대 황금 수칙 스타일]    */
+/* ============================================================ */
+.golden-rules-section {
+  background: linear-gradient(180deg, #ffffff 0%, #fffaf0 100%);
+  border: 2px solid #fbd38d;
+}
+
+.golden-rules-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 26px;
+}
+
+.golden-rule-card {
+  background: #ffffff;
+  border: 2px solid #feebc8;
+  border-radius: var(--radius-md);
+  padding: 22px 20px;
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+
+.golden-rule-card:hover {
+  transform: translateY(-4px);
+  border-color: #dd6b20;
+  box-shadow: 0 10px 25px rgba(221, 107, 32, 0.12);
+}
+
+.gr-badge {
+  align-self: flex-start;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #c05621;
+  background: #feebc8;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  margin-bottom: 12px;
+}
+
+.gr-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.gr-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.gr-head h4 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #2d3748;
+  line-height: 1.35;
+}
+
+.gr-desc {
+  font-size: 0.88rem;
+  color: #4a5568;
+  line-height: 1.6;
+  margin-bottom: 14px;
+  flex-grow: 1;
+}
+
+.gr-action-box {
+  background: #fffaf0;
+  border: 1px solid #fbd38d;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 0.84rem;
+  color: #744210;
+  line-height: 1.55;
+}
+
+.parent-core-banner {
+  background: linear-gradient(135deg, #dd6b20 0%, #c05621 100%);
+  border-radius: var(--radius-md);
+  padding: 24px 30px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 8px 24px rgba(221, 107, 32, 0.25);
+}
+
+.banner-heart {
+  font-size: 3rem;
+  flex-shrink: 0;
+}
+
+.banner-text h3 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+  line-height: 1.4;
+  color: #ffffff;
+}
+
+.banner-text p {
+  font-size: 0.92rem;
+  opacity: 0.95;
+  line-height: 1.55;
+}
+
+@media (max-width: 900px) {
+  .golden-rules-grid {
+    grid-template-columns: 1fr;
+  }
+  .parent-core-banner {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+/* ============================================================ */
 /* [SECTION 6: 마지막 체크리스트 & 위로 카드]                  */
 /* ============================================================ */
 .checklist-box {

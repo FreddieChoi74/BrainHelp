@@ -43,6 +43,13 @@ def export_cards():
             deep_path = os.path.join(out_dir, "card_00_사회적상호작용_신경생물학5대메커니즘_심층마스터.png")
             card_deep.screenshot(path=deep_path)
             print(f"[완료] 심층 마스터 카드 저장 완료 -> {deep_path}")
+
+        # 지친 부모님을 위한 3대 황금 생존수칙 카드 캡처
+        card_parents = page.locator("#card-parents")
+        if card_parents.count() > 0:
+            parents_path = os.path.join(out_dir, "card_07_지친부모님을위한_3대황금생존수칙.png")
+            card_parents.screenshot(path=parents_path)
+            print(f"[완료] 부모님 3대 황금수칙 카드 저장 완료 -> {parents_path}")
                 
         # 치트시트 PDF 생성
         print("치트시트 PDF 생성 중...")
