@@ -36,15 +36,29 @@ def export_cards():
                 print(f"[완료] {card_names[i - 1]} 저장 완료 -> {out_path}")
             else:
                 print(f"[경고] {card_id} 요소를 찾을 수 없습니다.")
+
+        # 심층 5대 메커니즘 마스터 카드 캡처
+        card_deep = page.locator("#card-deep")
+        if card_deep.count() > 0:
+            deep_path = os.path.join(out_dir, "card_00_사회적상호작용_신경생물학5대메커니즘_심층마스터.png")
+            card_deep.screenshot(path=deep_path)
+            print(f"[완료] 심층 마스터 카드 저장 완료 -> {deep_path}")
                 
         # 치트시트 PDF 생성
         print("치트시트 PDF 생성 중...")
-        page_pdf = browser.new_page()
-        page_pdf.goto("http://localhost:8099/index.html", wait_until="networkidle")
-        time.sleep(1.0)
-        pdf_path = os.path.join(out_dir, "우리_아이_사회성_뇌과학_가이드_A4치트시트.pdf")
-        page_pdf.pdf(path=pdf_path, format="A4", print_background=True, margin={"top": "15mm", "bottom": "15mm", "left": "15mm", "right": "15mm"})
-        print(f"[완료] PDF 저장 완료 -> {pdf_path}")
+        try:
+            page_pdf = browser.new_page()
+            page_pdf.goto("http://localhost:8099/index.html", wait_until="networkidle")
+            time.sleep(1.0)
+            pdf_path = os.path.join(out_dir, "우리_아이_사회성_뇌과학_가이드_A4치트시트.pdf")
+            page_pdf.pdf(path=pdf_path, format="A4", print_background=True, margin={"top": "15mm", "bottom": "15mm", "left": "15mm", "right": "15mm"})
+            print(f"[완료] PDF 저장 완료 -> {pdf_path}")
+        except PermissionError:
+            pdf_path_alt = os.path.join(out_dir, "우리_아이_사회성_뇌과학_가이드_A4치트시트_최신.pdf")
+            page_pdf.pdf(path=pdf_path_alt, format="A4", print_background=True, margin={"top": "15mm", "bottom": "15mm", "left": "15mm", "right": "15mm"})
+            print(f"[완료] 기존 PDF 열림 상태로 대체 파일명 저장 완료 -> {pdf_path_alt}")
+        except Exception as e:
+            print(f"[알림] PDF 생성 스킵 ({e})")
         
         browser.close()
         print("\n모든 카카오톡 공유용 자료 생성이 완료되었습니다!")

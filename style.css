@@ -516,6 +516,135 @@ body {
 }
 
 /* ============================================================ */
+/* [신규 SECTION: 심층 신경생물학 5대 메커니즘 전용 스타일]       */
+/* ============================================================ */
+.deep-neuro-section {
+  background: linear-gradient(180deg, #ffffff 0%, #faf5ff 100%);
+  border: 2px solid #e9d8fd;
+}
+
+.deep-neuro-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.deep-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-md);
+  padding: 22px 24px;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.deep-card:hover {
+  border-color: #b794f4;
+  box-shadow: 0 8px 24px rgba(107, 70, 193, 0.08);
+}
+
+.deep-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #edf2f7;
+}
+
+.deep-num {
+  width: 44px;
+  height: 44px;
+  background: #6b46c1;
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 800;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.deep-title-wrap h4 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #2d3748;
+}
+
+.deep-sub {
+  font-size: 0.8rem;
+  font-family: 'Outfit', sans-serif;
+  color: #805ad5;
+  font-weight: 600;
+}
+
+.deep-body ul {
+  list-style: none;
+  font-size: 0.92rem;
+  color: #4a5568;
+}
+
+.deep-body > ul > li {
+  margin-bottom: 10px;
+  position: relative;
+  padding-left: 18px;
+  line-height: 1.65;
+}
+
+.deep-body > ul > li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: #6b46c1;
+  font-weight: 800;
+}
+
+.deep-body ul ul {
+  margin-top: 8px;
+  margin-left: 6px;
+  padding-left: 12px;
+  border-left: 2px solid #e9d8fd;
+}
+
+.deep-body ul ul li {
+  margin-bottom: 6px;
+  font-size: 0.88rem;
+}
+
+.matrix-table-wrap {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #edf2f7;
+}
+
+.deep-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  text-align: left;
+}
+
+.deep-table th {
+  background: #f7fafc;
+  color: #2d3748;
+  font-weight: 700;
+  padding: 12px 16px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.deep-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #edf2f7;
+  color: #4a5568;
+  vertical-align: top;
+}
+
+.deep-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* ============================================================ */
 /* [SECTION 3: 부모의 신호 해석 디코더 표]                     */
 /* ============================================================ */
 .decoder-instruction {

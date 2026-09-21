@@ -171,7 +171,6 @@
         <div class="cause-card" data-cause="1">
           <div class="card-num-badge">원인 01</div>
           <div class="cause-icon-box">
-            <!-- CPU 과부하 SVG -->
             <svg viewBox="0 0 100 100" class="mini-diagram-svg">
               <rect x="25" y="25" width="50" height="50" rx="8" fill="#FFF5F5" stroke="#E53E3E" stroke-width="3" />
               <line x1="35" y1="15" x2="35" y2="25" stroke="#E53E3E" stroke-width="2" />
@@ -180,7 +179,6 @@
               <line x1="35" y1="75" x2="35" y2="85" stroke="#E53E3E" stroke-width="2" />
               <line x1="50" y1="75" x2="50" y2="85" stroke="#E53E3E" stroke-width="2" />
               <line x1="65" y1="75" x2="65" y2="85" stroke="#E53E3E" stroke-width="2" />
-              <!-- CPU 내부 -->
               <text x="50" y="47" text-anchor="middle" font-size="11" font-weight="700" fill="#E53E3E">CPU 100%</text>
               <rect x="32" y="55" width="36" height="6" rx="3" fill="#FED7D7" />
               <rect x="32" y="55" width="34" height="6" rx="3" fill="#E53E3E" />
@@ -197,7 +195,6 @@
         <div class="cause-card" data-cause="2">
           <div class="card-num-badge">원인 02</div>
           <div class="cause-icon-box">
-            <!-- 편도체 경보 & ECG SVG -->
             <svg viewBox="0 0 100 100" class="mini-diagram-svg">
               <polygon points="50,15 88,80 12,80" fill="#FFF5F5" stroke="#E53E3E" stroke-width="3" />
               <text x="50" y="60" text-anchor="middle" font-size="28" font-weight="800" fill="#E53E3E">!</text>
@@ -215,15 +212,11 @@
         <div class="cause-card" data-cause="3">
           <div class="card-num-badge">원인 03</div>
           <div class="cause-icon-box">
-            <!-- 감각 필터링 실패 깔때기 SVG -->
             <svg viewBox="0 0 100 100" class="mini-diagram-svg">
-              <!-- 깔때기 -->
               <path d="M20,25 L80,25 L58,55 L58,80 L42,80 L42,55 Z" fill="#EBF8FF" stroke="#3182CE" stroke-width="2.5" />
-              <!-- 여과 없이 넘치는 자극 화살표들 -->
-              <path d="M25,12 L35,28" stroke="#E53E3E" stroke-width="2.5" marker-end="url(#arrow)" />
+              <path d="M25,12 L35,28" stroke="#E53E3E" stroke-width="2.5" />
               <path d="M50,8 L50,28" stroke="#DD6B20" stroke-width="2.5" />
               <path d="M75,12 L65,28" stroke="#E53E3E" stroke-width="2.5" />
-              <!-- 필터 터짐 경고 -->
               <circle cx="50" cy="45" r="10" fill="#FEB2B2" stroke="#E53E3E" stroke-width="1.5" />
               <text x="50" y="49" text-anchor="middle" font-size="9" font-weight="700" fill="#9B2C2C">폭발</text>
             </svg>
@@ -239,11 +232,9 @@
         <div class="cause-card" data-cause="4">
           <div class="card-num-badge">원인 04</div>
           <div class="cause-icon-box">
-            <!-- 도파민/배터리 게이지 SVG -->
             <svg viewBox="0 0 100 100" class="mini-diagram-svg">
               <rect x="25" y="25" width="50" height="55" rx="6" fill="#FEFCBF" stroke="#D69E2E" stroke-width="3" />
               <rect x="40" y="17" width="20" height="8" rx="2" fill="#D69E2E" />
-              <!-- 게이지 바닥 -->
               <rect x="30" y="60" width="40" height="15" fill="#E53E3E" rx="3" />
               <text x="50" y="50" text-anchor="middle" font-size="10" font-weight="800" fill="#744210">Dopamine</text>
               <text x="50" y="72" text-anchor="middle" font-size="10" font-weight="800" fill="#FFF">LOW</text>
@@ -260,7 +251,6 @@
         <div class="cause-card" data-cause="5">
           <div class="card-num-badge">원인 05</div>
           <div class="cause-icon-box">
-            <!-- 알고리즘 순서도 SVG -->
             <svg viewBox="0 0 100 100" class="mini-diagram-svg">
               <circle cx="30" cy="30" r="10" fill="#E2E8F0" stroke="#718096" stroke-width="2" />
               <line x1="40" y1="30" x2="60" y2="30" stroke="#718096" stroke-width="2" />
@@ -274,6 +264,156 @@
           <p class="cause-tagline">"직관 대신 계산: 눈치를 자연스럽게 체득하는 게 아니라 공식을 풀듯 계산해야 해요."</p>
           <div class="cause-detail-box">
             <p>타인의 감정을 자동으로 감지하는 <strong>거울신경세포(Mirror Neuron)</strong> 체계 대신, "A상황엔 B라고 답해야 함"이라는 순서도 공식을 머릿속으로 일일이 대입합니다.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- [신규 SECTION: 심층 신경생물학적 5대 메커니즘 분석] -->
+    <!-- ============================================================ -->
+    <section class="section-card deep-neuro-section" id="section-deep-neuro">
+      <div class="section-badge" style="background:#FAF5FF; color:#6B46C1; border-color:#D6BCFA;">PROFESSIONAL DEEP-DIVE • 신경생물학 심층 메커니즘</div>
+      <h2 class="section-title">사회적 상호작용의 신경생물학적 5대 메커니즘 심층 해부</h2>
+      <p class="section-subtitle">
+        인간은 진화적으로 사회적 동물이지만, 뇌 과학적 관점에서 사회적 교류는 <strong>막대한 포도당과 산소를 소모하는 초고비용 신경 연산</strong>입니다.<br class="pc-only" />
+        아이의 뇌 속에서 실시간으로 일어나는 5가지 핵심 신경학적 메커니즘을 심층 분석합니다.
+      </p>
+
+      <div class="deep-neuro-grid">
+        <!-- 메커니즘 1 -->
+        <div class="deep-card">
+          <div class="deep-head">
+            <span class="deep-num">01</span>
+            <div class="deep-title-wrap">
+              <h4>고비용의 신경학적 연산 (신경망 과부하)</h4>
+              <span class="deep-sub">Social Brain Network & Salience Network Switching Friction</span>
+            </div>
+          </div>
+          <div class="deep-body">
+            <ul>
+              <li><strong>사회적 뇌 네트워크(Social Brain Network)의 삼각 협력:</strong>
+                상대의 내면을 추론하는 <strong>내측 전두엽(mPFC)</strong>, 타인의 시각에서 세상을 시뮬레이션하는 <strong>측두두정접합부(TPJ)</strong>, 생체 운동성(Bio-motion)과 시선을 읽는 <strong>상측측두구(pSTS)</strong>가 동시 가동됩니다.
+              </li>
+              <li><strong>현출성 네트워크(Salience Network)의 스위칭 병목:</strong>
+                내면 성찰(DMN)과 외부 과제(CEN)를 전환하는 <strong>전측 뇌섬엽(AI)과 전대상피질(dACC)</strong>이 타인과의 대화 중 초당 수십 회 전환되며 극심한 인지 마찰(Cognitive Friction)을 유발합니다.
+              </li>
+              <li><strong>대사 에너지 고갈:</strong> 뇌는 체중의 2%이나 에너지의 20%를 소모하며, 멘탈라이징(추론) 지속 시 전두엽 글리코겐이 빠르게 소진되어 물리적 두통과 피로가 발생합니다.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 메커니즘 2 -->
+        <div class="deep-card">
+          <div class="deep-head">
+            <span class="deep-num">02</span>
+            <div class="deep-title-wrap">
+              <h4>자율신경계와 위협 탐지 시스템의 오작동</h4>
+              <span class="deep-sub">Neuroception, Polyvagal Theory & HPA-Axis Hyperarousal</span>
+            </div>
+          </div>
+          <div class="deep-body">
+            <ul>
+              <li><strong>신경수용(Neuroception)의 위험 편향:</strong>
+                대뇌피질이 이성적으로 판단하기 전(100ms 이내), 뇌간과 편도체는 타인의 낯선 표정이나 침묵을 <strong>잠재적 생물학적 위협</strong>으로 무의식 판정합니다.
+              </li>
+              <li><strong>다미주신경 이론(Polyvagal Theory)의 3단계 붕괴:</strong>
+                <ul>
+                  <li>🟢 <strong>복측 미주(Ventral Vagal):</strong> 안전감 및 사람 목소리 주파수 청취 가능 (사회적 관여 체계)</li>
+                  <li>🟡 <strong>교감신경 항진(Fight-Flight):</strong> 코르티솔·아드레날린 분비 ➔ 심박수 급증, <strong>인지적 경직(생각 마비)</strong></li>
+                  <li>🔴 <strong>배측 미주(Dorsal Vagal Shutdown):</strong> 위협 회피 불가 시 혈압·체온 급강하, <strong>말문 막힘(함구) 및 멍때림(해리 Freeze)</strong></li>
+                </ul>
+              </li>
+              <li><strong>심박변이도(HRV) 급락:</strong> 미주신경 브레이크(Vagal Brake)가 풀리며 자율신경계 조절 능력이 상실됩니다.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 메커니즘 3 -->
+        <div class="deep-card">
+          <div class="deep-head">
+            <span class="deep-num">03</span>
+            <div class="deep-title-wrap">
+              <h4>감각 처리 및 통합의 한계 (Sensory Overload)</h4>
+              <span class="deep-sub">TRN Sensory Gating Failure & Predictive Coding Breakdown</span>
+            </div>
+          </div>
+          <div class="deep-body">
+            <ul>
+              <li><strong>시상망상핵(TRN)의 감각 게이팅 결함:</strong>
+                정상 뇌는 반복 소음을 걸러내는 P50 뇌파 억제 능력이 있으나, 감각 과민 뇌는 필터링 억제가 실패하여 <strong>주변 잡음과 대화 소리가 동일한 100% 볼륨으로 직격</strong>합니다.
+              </li>
+              <li><strong>칵테일 파티 효과(Cocktail Party Effect) 붕괴:</strong>
+                청각 피질의 신호대잡음비(SNR) 분리 실패로, 여러 사람이 말하는 공간에서 상대방의 언어가 해독 불가능한 잡음으로 뭉개집니다.
+              </li>
+              <li><strong>예측 부호화(Predictive Coding) 오류:</strong>
+                과거 경험으로 감각을 압축 예측하지 못하고 사소한 불빛 깜빡임, 옷깃 감촉 하나하나를 '긴급한 새로운 정보'로 일일이 연산하여 감각 피질이 폭발합니다.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 메커니즘 4 -->
+        <div class="deep-card">
+          <div class="deep-head">
+            <span class="deep-num">04</span>
+            <div class="deep-title-wrap">
+              <h4>신경화학적 불균형과 내향/외향 성향의 차이</h4>
+              <span class="deep-sub">Dopamine/Acetylcholine Pathways & Excitatory/Inhibitory (E/I) Balance</span>
+            </div>
+          </div>
+          <div class="deep-body">
+            <div class="matrix-table-wrap">
+              <table class="deep-table">
+                <thead>
+                  <tr>
+                    <th>신경전달물질 / 경로</th>
+                    <th>생화학적 메커니즘</th>
+                    <th>사회적 상호작용 시 임상 양상</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>도파민 vs 아세틸콜린</strong></td>
+                    <td>외향인(짧은 도파민 보상 경로 선호) vs 내향인(길고 복잡한 아세틸콜린 경로, 도파민 과민)</td>
+                    <td>내향인은 적은 대화에도 도파민이 과포화되어 극심한 <strong>'사회적 숙취(Social Hangover)'</strong> 발생</td>
+                  </tr>
+                  <tr>
+                    <td><strong>GABA 결핍 & E/I 불균형</strong></td>
+                    <td>억제성 GABA 부족으로 글루타메이트(흥분)가 압도하는 흥분/억제(E/I) 불균형</td>
+                    <td>신경세포 탈분극 지속으로 사소한 시선에도 <strong>만성적 과각성 및 사회적 불안</strong> 지속</td>
+                  </tr>
+                  <tr>
+                    <td><strong>옥시토신(OXTR) & 세로토닌</strong></td>
+                    <td>옥시토신 수용체(OXTR) 메틸화 및 세로토닌 전달체 기능 저하</td>
+                    <td>유대감 형성이 생물학적으로 어렵고 사회적 배척에 뇌 통증 회로(dACC)가 과민 반응</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 메커니즘 5 -->
+        <div class="deep-card">
+          <div class="deep-head">
+            <span class="deep-num">05</span>
+            <div class="deep-title-wrap">
+              <h4>신경다양성(Neurodiversity) & 카무플라주 마스킹 번아웃</h4>
+              <span class="deep-sub">Atypical Mirror Neuron System & Compensatory Camouflaging Cost</span>
+            </div>
+          </div>
+          <div class="deep-body">
+            <ul>
+              <li><strong>거울신경세포계(MNS)의 비전형성:</strong>
+                하두정소엽(IPL)과 전운동피질(PMC)의 자동 거울링(Resonance) 대신, 대뇌피질의 '논리적 알고리즘'으로 타인의 감정을 우회 계산합니다.
+              </li>
+              <li><strong>보상적 마스킹(Compensatory Masking)의 막대한 비용:</strong>
+                "정상인처럼 보이기 위해" 눈맞춤 초단위 계산, 억양 모방, 적절한 리액션 시뮬레이션을 전두엽 실행 기능(Executive Function)으로 100% 버티는 연기 행위입니다.
+              </li>
+              <li><strong>자폐성/ADHD 신경학적 번아웃(Autistic/ADHD Burnout):</strong>
+                마스킹 에너지가 바닥나면 뇌는 스스로를 살리기 위해 <strong>선택적 함구(Selective Mutism), 감각 셧다운, 인지 스킬 퇴행(Regression)</strong>을 강제 발동합니다.
+              </li>
+            </ul>
           </div>
         </div>
       </div>
