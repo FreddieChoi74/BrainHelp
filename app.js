@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
 /* 1. 뷰 모드 관리 (통합 대시보드 / 카드뉴스 슬라이드 / 인쇄)    */
 /* ============================================================ */
 let currentSlide = 1;
-const totalSlides = 6;
+const totalSlides = 7;
 
 function initViewModes() {
   const btnDashboard = document.getElementById('btn-view-dashboard');
