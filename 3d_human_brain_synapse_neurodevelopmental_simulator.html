@@ -1,0 +1,1932 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>해부학적 3D 인간 뇌 및 뉴런 시냅스 발달 시뮬레이터</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      overflow: hidden;
+      user-select: none;
+      background-color: #030712;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .medical-glass {
+      background: rgba(11, 19, 38, 0.85);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+    }
+    .glow-cyan {
+      box-shadow: 0 0 20px -3px rgba(6, 182, 212, 0.45);
+    }
+    .glow-amber {
+      box-shadow: 0 0 20px -3px rgba(245, 158, 11, 0.45);
+    }
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.4);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(56, 189, 248, 0.35);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(56, 189, 248, 0.65);
+    }
+    @keyframes pulse-glow {
+      0% { transform: scale(0.96); opacity: 0.8; }
+      50% { transform: scale(1.18); opacity: 0.25; }
+      100% { transform: scale(0.96); opacity: 0.8; }
+    }
+    .pulse-effect {
+      animation: pulse-glow 2.4s infinite ease-in-out;
+    }
+    .tab-active {
+      background: rgba(6, 182, 212, 0.2);
+      border-color: rgba(6, 182, 212, 0.6);
+      color: #38bdf8;
+    }
+
+    /* Mobile Off-canvas Drawer Styles (< 768px) */
+    @media (max-width: 767px) {
+      #panel-left {
+        position: fixed !important;
+        top: 68px !important;
+        bottom: 72px !important;
+        left: 8px !important;
+        right: 8px !important;
+        width: auto !important;
+        max-width: none !important;
+        transform: translateY(115%);
+        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 40 !important;
+        pointer-events: none;
+      }
+      #panel-left.mobile-open {
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+      #panel-right {
+        position: fixed !important;
+        top: 68px !important;
+        bottom: 72px !important;
+        left: 8px !important;
+        right: 8px !important;
+        width: auto !important;
+        max-width: none !important;
+        transform: translateY(115%);
+        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 40 !important;
+        pointer-events: none;
+      }
+      #panel-right.mobile-open {
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+    }
+  </style>
+</head>
+<body class="w-screen h-screen relative text-slate-100 flex overflow-hidden">
+
+  <!-- 3D WebGL Canvas -->
+  <div id="canvas-container" class="absolute inset-0 w-full h-full z-0 cursor-grab active:cursor-grabbing"></div>
+
+  <!-- Top Header Bar -->
+  <header class="absolute top-3.5 left-4 right-4 z-20 flex flex-wrap items-center justify-between pointer-events-none gap-3">
+    <div class="medical-glass px-4 py-2 rounded-2xl flex items-center gap-3 pointer-events-auto shadow-2xl">
+      <div class="relative w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-600 via-indigo-600 to-sky-400 flex items-center justify-center shadow-lg flex-shrink-0">
+        <i id="app-icon" class="fa-solid fa-brain text-white text-base"></i>
+        <div class="absolute -inset-1 rounded-xl bg-cyan-400 opacity-25 blur-sm -z-10 pulse-effect"></div>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="text-xs sm:text-sm md:text-base font-bold tracking-tight text-white flex items-center gap-1.5">
+            <span>3D 뇌 해부학 & 뉴런 시냅스 발달 시뮬레이터</span>
+          </h1>
+          <span id="current-view-badge" class="hidden sm:inline-block text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+            거시 뇌 구조 모드
+          </span>
+        </div>
+        <p class="text-[10px] sm:text-[11px] text-slate-400">대뇌피질 주름 · 사회성 신경 회로 · 신경가소성 3단계 솔루션 (Regulate ➔ Relate ➔ Reason)</p>
+      </div>
+    </div>
+
+    <!-- Mode Switcher & Tools -->
+    <div class="flex items-center gap-2 pointer-events-auto flex-wrap">
+      <!-- Return to Parent Dashboard -->
+      <a href="index.html" title="부모 인포그래픽 대시보드로 복귀" class="medical-glass px-3 py-1.5 sm:py-2 rounded-xl text-emerald-300 hover:text-white hover:border-emerald-400/60 transition flex items-center gap-1.5 text-xs font-semibold shadow-lg">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span class="hidden sm:inline">부모 가이드</span>
+        <span class="sm:hidden">홈</span>
+      </a>
+
+      <!-- Dual View Switcher (Brain vs Neuron) -->
+      <div class="medical-glass p-1 rounded-2xl flex items-center gap-1 text-xs">
+        <button id="btn-mode-brain" class="px-2.5 sm:px-3 py-1.5 rounded-xl font-medium transition flex items-center gap-1.5 tab-active">
+          <i class="fa-solid fa-brain"></i>
+          <span class="hidden sm:inline">거시 뇌 해부학</span>
+          <span class="sm:hidden">뇌 구조</span>
+        </button>
+        <button id="btn-mode-neuron" class="px-2.5 sm:px-3 py-1.5 rounded-xl font-medium transition flex items-center gap-1.5 text-slate-400 hover:text-cyan-300">
+          <i class="fa-solid fa-microchip"></i>
+          <span class="hidden sm:inline">미세 뉴런 & 시냅스</span>
+          <span class="sm:hidden">뉴런/시냅스</span>
+        </button>
+      </div>
+
+      <!-- X-Ray Translucency Toggle (Brain View) -->
+      <button id="btn-xray-mode" title="뇌피질 반투명 전환" class="medical-glass px-2.5 sm:px-3 py-2 rounded-xl text-slate-300 hover:text-cyan-300 hover:border-cyan-500/50 transition flex items-center gap-1.5 text-xs">
+        <i class="fa-solid fa-eye-dropper"></i>
+        <span class="hidden md:inline">X-Ray</span>
+      </button>
+
+      <!-- Action Potential Trigger (Neuron View only) -->
+      <button id="btn-fire-action" title="활동전위 격발" class="hidden medical-glass px-3 py-2 rounded-xl text-amber-300 hover:text-amber-200 border-amber-500/40 hover:border-amber-400 transition flex items-center gap-1.5 text-xs font-semibold glow-amber">
+        <i class="fa-solid fa-bolt text-amber-400 animate-pulse"></i>
+        <span>활동전위 발화</span>
+      </button>
+
+      <!-- Reset Camera -->
+      <button id="btn-reset-view" title="카메라 위치 초기화" class="medical-glass px-2.5 sm:px-3 py-2 rounded-xl text-slate-300 hover:text-cyan-300 transition flex items-center gap-1.5 text-xs">
+        <i class="fa-solid fa-arrows-rotate"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Left Side Control Panel: Sensory Input Selector & Pipeline -->
+  <aside id="panel-left" class="absolute top-20 left-4 bottom-20 w-84 max-w-[calc(100vw-32px)] z-20 pointer-events-auto flex flex-col gap-3">
+    
+    <!-- Macro Brain Mode Controls -->
+    <div id="macro-pathway-panel" class="flex flex-col gap-3 h-full overflow-hidden">
+      <!-- Sensory & Social Scenarios Selector -->
+      <div class="medical-glass p-3 rounded-2xl flex flex-col gap-2 shadow-2xl flex-shrink-0 max-h-[46vh] overflow-y-auto">
+        <!-- Mobile Close Header -->
+        <div class="md:hidden flex items-center justify-between pb-1.5 border-b border-slate-800">
+          <span class="text-xs font-bold text-cyan-300 flex items-center gap-1.5">
+            <i class="fa-solid fa-network-wired"></i> 감각 회로 & 상황 시뮬레이션
+          </span>
+          <button id="btn-close-left" class="w-6 h-6 rounded-lg bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center text-xs">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <!-- Section 1: 4 Real-world Social Interaction Scenarios -->
+        <div class="flex items-center justify-between pb-1 border-b border-slate-800">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+            <i class="fa-solid fa-users-viewfinder"></i> 4대 사회성 위기 시나리오
+          </span>
+          <span class="text-[9px] text-amber-300 font-mono px-1.5 py-0.5 rounded bg-amber-500/20">임상 시나리오</span>
+        </div>
+
+        <div class="grid grid-cols-1 gap-1.5">
+          <!-- Scenario 1: Classroom Noise Sensory Gating Failure -->
+          <button data-pathway="social_noise" class="pathway-btn active w-full p-2 rounded-xl border border-cyan-500/50 bg-gradient-to-r from-cyan-950/70 to-slate-900 text-left transition flex items-center justify-between group">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold text-xs flex-shrink-0">
+                <i class="fa-solid fa-school"></i>
+              </div>
+              <div class="overflow-hidden">
+                <div class="text-[11px] font-bold text-white group-hover:text-cyan-300 truncate">1. 소음 교실 속 지시 불이행</div>
+                <div class="text-[9px] text-slate-400 truncate">시상 게이팅 실패 ➔ 교사 지시 유실</div>
+              </div>
+            </div>
+            <span class="text-[9px] font-mono text-cyan-300 font-semibold px-1.5 py-0.5 bg-cyan-950/60 rounded border border-cyan-800 flex-shrink-0">시상-피질</span>
+          </button>
+
+          <!-- Scenario 2: Eye Contact Fear -->
+          <button data-pathway="social_eye_contact" class="pathway-btn w-full p-2 rounded-xl border border-slate-800/80 bg-slate-900/60 text-left transition hover:border-rose-500/50 flex items-center justify-between group">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-lg bg-rose-500/20 text-rose-300 flex items-center justify-center font-bold text-xs flex-shrink-0">
+                <i class="fa-regular fa-eye-slash"></i>
+              </div>
+              <div class="overflow-hidden">
+                <div class="text-[11px] font-bold text-white group-hover:text-rose-300 truncate">2. 눈맞춤 회피와 생존 공포</div>
+                <div class="text-[9px] text-slate-400 truncate">편도체 15ms 과잉 경보 ➔ 회피/얼어붙음</div>
+              </div>
+            </div>
+            <span class="text-[9px] font-mono text-rose-400 px-1.5 py-0.5 bg-rose-950/50 rounded border border-rose-900 flex-shrink-0">15ms 경보</span>
+          </button>
+
+          <!-- Scenario 3: After-School Burnout & Meltdown -->
+          <button data-pathway="social_burnout" class="pathway-btn w-full p-2 rounded-xl border border-slate-800/80 bg-slate-900/60 text-left transition hover:border-amber-500/50 flex items-center justify-between group">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-lg bg-red-500/20 text-red-300 flex items-center justify-center font-bold text-xs flex-shrink-0">
+                <i class="fa-solid fa-house-chimney-crack"></i>
+              </div>
+              <div class="overflow-hidden">
+                <div class="text-[11px] font-bold text-white group-hover:text-amber-300 truncate">3. 방과 후 귀가 직후 멜트다운</div>
+                <div class="text-[9px] text-slate-400 truncate">억제 에너지 고갈 ➔ 전두엽 통제 붕괴</div>
+              </div>
+            </div>
+            <span class="text-[9px] font-mono text-amber-300 px-1.5 py-0.5 bg-amber-950/50 rounded border border-amber-900 flex-shrink-0">에너지 고갈</span>
+          </button>
+
+          <!-- Scenario 4: Turn-taking & Interrupting -->
+          <button data-pathway="social_turntaking" class="pathway-btn w-full p-2 rounded-xl border border-slate-800/80 bg-slate-900/60 text-left transition hover:border-emerald-500/50 flex items-center justify-between group">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-lg bg-teal-500/20 text-teal-300 flex items-center justify-center font-bold text-xs flex-shrink-0">
+                <i class="fa-solid fa-table-tennis-paddle-ball"></i>
+              </div>
+              <div class="overflow-hidden">
+                <div class="text-[11px] font-bold text-white group-hover:text-emerald-300 truncate">4. 대화 끼어들기 & 차례 놓침</div>
+                <div class="text-[9px] text-slate-400 truncate">소뇌 타이밍 지연 ➔ 충동 발화</div>
+              </div>
+            </div>
+            <span class="text-[9px] font-mono text-emerald-300 px-1.5 py-0.5 bg-emerald-950/50 rounded border border-emerald-900 flex-shrink-0">소뇌-dlPFC</span>
+          </button>
+        </div>
+
+        <!-- Section 2: Fundamental Sensory Pathways -->
+        <div class="flex items-center justify-between pt-1.5 pb-1 border-t border-slate-800 mt-1">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+            <i class="fa-solid fa-network-wired text-cyan-400"></i> 기초 감각 회로
+          </span>
+          <span class="text-[9px] text-slate-500 font-mono">Sensory</span>
+        </div>
+
+        <div class="grid grid-cols-3 gap-1">
+          <button data-pathway="visual" class="pathway-btn p-1.5 rounded-lg border border-slate-800 bg-slate-900/60 text-center transition hover:border-cyan-500/40 text-[10px] text-slate-300 truncate">
+            <i class="fa-regular fa-eye text-cyan-400 block mb-0.5"></i> 시각 (LGN)
+          </button>
+          <button data-pathway="auditory" class="pathway-btn p-1.5 rounded-lg border border-slate-800 bg-slate-900/60 text-center transition hover:border-purple-500/40 text-[10px] text-slate-300 truncate">
+            <i class="fa-solid fa-ear-listen text-purple-400 block mb-0.5"></i> 청각 (MGN)
+          </button>
+          <button data-pathway="tactile" class="pathway-btn p-1.5 rounded-lg border border-slate-800 bg-slate-900/60 text-center transition hover:border-emerald-500/40 text-[10px] text-slate-300 truncate">
+            <i class="fa-solid fa-hand-sparkles text-emerald-400 block mb-0.5"></i> 촉각 (S1)
+          </button>
+        </div>
+      </div>
+
+      <!-- Transmission Sequence Timeline -->
+      <div class="medical-glass p-3 rounded-2xl flex flex-col gap-2 shadow-2xl flex-grow overflow-hidden">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
+          <span class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+            <i class="fa-solid fa-route text-cyan-400"></i> 실시간 신경 전달 단계
+          </span>
+          <span id="current-step-status" class="text-[10px] font-mono text-cyan-400 font-semibold">1단계 진행 중</span>
+        </div>
+
+        <div id="pathway-steps-list" class="space-y-1.5 overflow-y-auto pr-1 text-xs mt-0.5">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Micro Neuron Mode Controls (Visible in Neuron Mode) -->
+    <div id="micro-neuron-panel" class="hidden flex-col gap-3 h-full">
+      <div class="medical-glass p-4 rounded-2xl flex flex-col gap-3 shadow-2xl">
+        <div class="flex items-center justify-between pb-1 border-b border-slate-800">
+          <span class="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+            <i class="fa-solid fa-dna"></i> 뉴런 해부학적 미세 부위
+          </span>
+          <span class="text-[10px] text-slate-400 font-mono">Micro-Anatomy</span>
+        </div>
+
+        <div class="grid grid-cols-1 gap-1.5 text-xs">
+          <button onclick="focusNeuronPart('soma')" class="p-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800 border border-slate-800 hover:border-cyan-500/50 text-left transition flex items-center gap-2">
+            <div class="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#06b6d4]"></div>
+            <div>
+              <div class="font-semibold text-white">신경세포체 (Soma) & 핵</div>
+              <div class="text-[10px] text-slate-400">단백질 합성 및 전기 신호 적분(Summation)</div>
+            </div>
+          </button>
+
+          <button onclick="focusNeuronPart('dendrites')" class="p-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 text-left transition flex items-center gap-2">
+            <div class="w-2.5 h-2.5 rounded-full bg-indigo-400 shadow-[0_0_8px_#818cf8]"></div>
+            <div>
+              <div class="font-semibold text-white">수상돌기 (Dendrites & Spines)</div>
+              <div class="text-[10px] text-slate-400">수천 개의 입력 신호 및 학습 수용체</div>
+            </div>
+          </button>
+
+          <button onclick="focusNeuronPart('axon')" class="p-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800 border border-slate-800 hover:border-amber-500/50 text-left transition flex items-center gap-2">
+            <div class="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_#f59e0b]"></div>
+            <div>
+              <div class="font-semibold text-white">축삭 (Axon) & 미엘린 수초</div>
+              <div class="text-[10px] text-slate-400">랑비에 결절 도약 전도(100m/s 초고속)</div>
+            </div>
+          </button>
+
+          <button onclick="focusNeuronPart('synapse')" class="p-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800 border border-slate-800 hover:border-rose-500/50 text-left transition flex items-center gap-2">
+            <div class="w-2.5 h-2.5 rounded-full bg-rose-400 shadow-[0_0_8px_#f43f5e]"></div>
+            <div>
+              <div class="font-semibold text-white">시냅스 간극 (Synaptic Cleft)</div>
+              <div class="text-[10px] text-slate-400">신경전달물질 소포체 개구 방출 (Exocytosis)</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Neurotransmitter Release Selector -->
+      <div class="medical-glass p-3.5 rounded-2xl flex flex-col gap-2.5 shadow-2xl flex-grow overflow-y-auto">
+        <div class="flex items-center justify-between pb-1 border-b border-slate-800">
+          <span class="text-xs font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
+            <i class="fa-solid fa-flask"></i> 분비 신경전달물질 선택
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 gap-1.5 text-xs">
+          <button onclick="setNeurotransmitter('dopamine')" id="nt-btn-dopamine" class="nt-btn p-2 rounded-xl bg-amber-950/40 border border-amber-500/50 text-amber-200 text-left transition">
+            <div class="font-bold flex items-center justify-between">
+              <span>도파민 (Dopamine)</span>
+              <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20">보상/동기</span>
+            </div>
+            <p class="text-[10px] text-slate-300 mt-1">사회적 호기심과 성취감을 유도. ADHD 아동의 전두엽 도파민 수용체 조절 핵심.</p>
+          </button>
+
+          <button onclick="setNeurotransmitter('gaba')" id="nt-btn-gaba" class="nt-btn p-2 rounded-xl bg-slate-900/50 border border-slate-800 text-slate-300 hover:border-emerald-500/50 text-left transition">
+            <div class="font-bold flex items-center justify-between text-emerald-400">
+              <span>가바 (GABA)</span>
+              <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">흥분 억제</span>
+            </div>
+            <p class="text-[10px] text-slate-300 mt-1">감각 과부하와 편도체의 과잉 불안 흥분을 즉각 가라앉히는 생체 브레이크.</p>
+          </button>
+
+          <button onclick="setNeurotransmitter('serotonin')" id="nt-btn-serotonin" class="nt-btn p-2 rounded-xl bg-slate-900/50 border border-slate-800 text-slate-300 hover:border-cyan-500/50 text-left transition">
+            <div class="font-bold flex items-center justify-between text-cyan-400">
+              <span>세로토닌 (Serotonin)</span>
+              <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300">정서 안정</span>
+            </div>
+            <p class="text-[10px] text-slate-300 mt-1">심리적 안전감과 충동성을 조절하며 스트레스 저항력 및 사회적 유대감 형성.</p>
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Right Side Detailed Inspector & Neuroplasticity Guide -->
+  <aside id="panel-right" class="absolute top-20 right-4 bottom-20 w-96 max-w-[calc(100vw-32px)] z-20 pointer-events-auto flex flex-col gap-3">
+    <div class="medical-glass p-4 rounded-2xl flex flex-col gap-3 shadow-2xl overflow-y-auto flex-grow">
+      
+      <!-- Mobile Close Header -->
+      <div class="md:hidden flex items-center justify-between pb-1.5 border-b border-slate-800">
+        <span class="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
+          <i class="fa-solid fa-seedling"></i> 신경학적 사회성 솔루션
+        </span>
+        <button id="btn-close-right" class="w-6 h-6 rounded-lg bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center text-xs">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Header / Region Title -->
+      <div class="flex items-start justify-between">
+        <div>
+          <span id="detail-category" class="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+            DIENCEPHALON · 감각 통합 중계국
+          </span>
+          <h2 id="detail-title" class="text-base font-bold text-white mt-1 flex items-center gap-2">
+            시상 (Thalamus)
+          </h2>
+          <div id="detail-latin" class="text-[11px] text-slate-400 font-mono">
+            Thalamus dorsalis
+          </div>
+        </div>
+        <div id="detail-color-dot" class="w-4 h-4 rounded-full bg-cyan-400 shadow-[0_0_12px_#06b6d4]"></div>
+      </div>
+
+      <div class="h-px bg-slate-800"></div>
+
+      <!-- Tab Switcher: 1) 해부/생리, 2) ASD/ADHD 취약점, 3) 3단계 신경 솔루션 -->
+      <div class="flex items-center gap-1 p-1 bg-slate-900/80 rounded-xl border border-slate-800 text-[11px]">
+        <button id="tab-btn-bio" onclick="switchDetailTab('bio')" class="flex-1 py-1.5 rounded-lg font-semibold text-slate-400 hover:text-cyan-300 transition">
+          해부 및 역할
+        </button>
+        <button id="tab-btn-asd" onclick="switchDetailTab('asd')" class="flex-1 py-1.5 rounded-lg font-semibold text-slate-400 hover:text-amber-300 transition">
+          ASD/ADHD 취약점
+        </button>
+        <button id="tab-btn-solution" onclick="switchDetailTab('solution')" class="flex-1 py-1.5 rounded-lg font-semibold text-emerald-300 bg-emerald-950/60 border border-emerald-500/40 transition">
+          3단계 신경 솔루션
+        </button>
+      </div>
+
+      <!-- TAB 1: Biological & Anatomical Roles -->
+      <div id="tab-content-bio" class="space-y-3 hidden">
+        <div class="space-y-1">
+          <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+            <i class="fa-solid fa-cube text-cyan-400"></i> 해부학적 위치 및 구조
+          </div>
+          <p id="detail-structure" class="text-xs text-slate-300 leading-relaxed bg-slate-900/60 p-2.5 rounded-xl border border-slate-800/80">
+            대뇌 기저핵 중앙에 위치한 계란형의 거대한 대칭 회백질 핵군입니다. 뇌간과 대뇌피질 사이의 필수적인 3층 중계 관문입니다.
+          </p>
+        </div>
+
+        <div class="space-y-1">
+          <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+            <i class="fa-solid fa-microscope text-indigo-400"></i> 주요 생리 기능
+          </div>
+          <p id="detail-func" class="text-xs text-slate-200 leading-relaxed bg-slate-900/60 p-2.5 rounded-xl border border-slate-800/80">
+            후각을 제외한 시각(LGN), 청각(MGN), 체성감각(VPL) 신호를 대뇌피질 각 영역으로 선별 분배하며 감각 여과(Gating)와 주의 집중을 담당합니다.
+          </p>
+        </div>
+      </div>
+
+      <!-- TAB 2: ASD/ADHD/Social Vulnerability -->
+      <div id="tab-content-asd" class="space-y-2 hidden">
+        <div class="text-[11px] font-semibold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+          <i class="fa-solid fa-triangle-exclamation"></i> 사회적 상호작용 생물학적 병목
+        </div>
+        <div id="detail-clinical" class="text-xs text-amber-100/90 leading-relaxed bg-amber-950/25 p-3 rounded-xl border border-amber-500/30 space-y-2">
+          <p><strong>감각 게이팅(Sensory Gating) 결함:</strong> 주변 소음, 옷깃의 감촉, 형광등의 깜빡임이 걸러지지 않아 대화 상대방의 말소리와 뒤섞입니다.</p>
+          <p><strong>신경 과부하 셧다운:</strong> 입력 정보량이 뇌의 임계치를 초과하면 뇌간과 편도체가 비상 모드로 전환되어 대화 중 시선을 회피하거나 멍해집니다.</p>
+        </div>
+      </div>
+
+      <!-- TAB 3: Actionable 3-Tier Neurosequential Clinical Solutions -->
+      <div id="tab-content-solution" class="space-y-2.5">
+        <div class="flex items-center justify-between pb-1 border-b border-slate-800">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+            <i class="fa-solid fa-seedling"></i> 임상 기반 3단계 솔루션
+          </div>
+          <span class="text-[9px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Regulate ➔ Relate ➔ Reason</span>
+        </div>
+        
+        <!-- 1단계: Regulate (신체·감각 안정) -->
+        <div id="detail-solution-regulate" class="bg-gradient-to-r from-emerald-950/40 to-slate-900/80 p-2.5 rounded-xl border border-emerald-500/30 text-xs space-y-1">
+          <div class="font-bold text-emerald-300 flex items-center justify-between">
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-shield-heart text-emerald-400"></i> 1단계: Regulate (감각 조절)</span>
+            <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">신체 안정</span>
+          </div>
+          <p class="text-slate-300 text-[11px] leading-relaxed"></p>
+        </div>
+
+        <!-- 2단계: Relate (정서적 연결 & 부모 언어) -->
+        <div id="detail-solution-relate" class="bg-gradient-to-r from-sky-950/40 to-slate-900/80 p-2.5 rounded-xl border border-sky-500/30 text-xs space-y-1">
+          <div class="font-bold text-sky-300 flex items-center justify-between">
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-handshake-angle text-sky-400"></i> 2단계: Relate (정서 연결)</span>
+            <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300">정서적 안전</span>
+          </div>
+          <p class="text-slate-300 text-[11px] leading-relaxed"></p>
+          <div class="mt-1 pt-1.5 border-t border-sky-900/60 text-[10px] text-sky-200 font-medium">
+            <i class="fa-solid fa-comment-dots text-sky-400 mr-1"></i><span class="parent-script italic"></span>
+          </div>
+        </div>
+
+        <!-- 3단계: Reason (인지·사회성 기술 훈련) -->
+        <div id="detail-solution-reason" class="bg-gradient-to-r from-amber-950/40 to-slate-900/80 p-2.5 rounded-xl border border-amber-500/30 text-xs space-y-1">
+          <div class="font-bold text-amber-300 flex items-center justify-between">
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-brain text-amber-400"></i> 3단계: Reason (기술 훈련)</span>
+            <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">인지·실행</span>
+          </div>
+          <p class="text-slate-300 text-[11px] leading-relaxed"></p>
+        </div>
+      </div>
+
+      <!-- Quick Anatomical Focus Grid -->
+      <div class="pt-2 border-t border-slate-800 space-y-1.5">
+        <div class="text-[11px] font-semibold text-slate-400">주요 뇌 구조 즉시 포커스:</div>
+        <div class="grid grid-cols-2 gap-1.5 text-[11px]">
+          <button onclick="focusRegion('thalamus')" class="p-1.5 rounded-lg bg-slate-800/80 hover:bg-cyan-950/60 hover:text-cyan-300 transition text-left px-2 truncate">
+            • 시상 (Thalamus)
+          </button>
+          <button onclick="focusRegion('pfc')" class="p-1.5 rounded-lg bg-slate-800/80 hover:bg-blue-950/60 hover:text-blue-300 transition text-left px-2 truncate">
+            • 전두엽 (PFC/사회성)
+          </button>
+          <button onclick="focusRegion('amygdala')" class="p-1.5 rounded-lg bg-slate-800/80 hover:bg-rose-950/60 hover:text-rose-300 transition text-left px-2 truncate">
+            • 편도체 (위협 탐지)
+          </button>
+          <button onclick="focusRegion('hippocampus')" class="p-1.5 rounded-lg bg-slate-800/80 hover:bg-amber-950/60 hover:text-amber-300 transition text-left px-2 truncate">
+            • 해마 (맥락 기억)
+          </button>
+          <button onclick="focusRegion('temporal')" class="p-1.5 rounded-lg bg-slate-800/80 hover:bg-purple-950/60 hover:text-purple-300 transition text-left px-2 truncate">
+            • 측두엽 (언어/운율)
+          </button>
+          <button onclick="focusRegion('cerebellum')" class="p-1.5 rounded-lg bg-slate-800/80 hover:bg-emerald-950/60 hover:text-emerald-300 transition text-left px-2 truncate">
+            • 소뇌 (타이밍 조율)
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- Mobile Floating Drawer Toggles (Visible on screens < 768px) -->
+  <div class="md:hidden fixed bottom-14 left-3 right-3 z-30 flex items-center justify-center gap-2 pointer-events-auto">
+    <button id="btn-mobile-toggle-left" class="flex-1 medical-glass py-2 px-2.5 rounded-xl text-xs font-semibold text-cyan-300 flex items-center justify-center gap-1.5 shadow-xl border border-cyan-500/40 active:scale-95 transition">
+      <i class="fa-solid fa-network-wired text-cyan-400"></i>
+      <span>📡 감각·상황 회로</span>
+    </button>
+    <button id="btn-mobile-toggle-right" class="flex-1 medical-glass py-2 px-2.5 rounded-xl text-xs font-semibold text-emerald-300 flex items-center justify-center gap-1.5 shadow-xl border border-emerald-500/40 active:scale-95 transition">
+      <i class="fa-solid fa-seedling text-emerald-400"></i>
+      <span>💡 3단계 솔루션</span>
+    </button>
+  </div>
+
+  <!-- Bottom Control Deck: Playback, Speed, and Status -->
+  <footer class="absolute bottom-3.5 left-4 right-4 z-20 pointer-events-none flex justify-center">
+    <div class="medical-glass px-5 py-2 rounded-2xl flex items-center gap-5 pointer-events-auto shadow-2xl border border-slate-700/60 max-w-xl w-full justify-between">
+      
+      <!-- Play/Pause -->
+      <div class="flex items-center gap-2">
+        <button id="btn-play-toggle" class="w-9 h-9 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold flex items-center justify-center transition shadow-lg shadow-cyan-500/20 active:scale-95">
+          <i class="fa-solid fa-pause" id="play-icon"></i>
+        </button>
+        <button id="btn-single-pulse" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-semibold transition flex items-center gap-1.5">
+          <i class="fa-solid fa-bolt"></i>
+          <span>단일 펄스</span>
+        </button>
+      </div>
+
+      <!-- Transmission Speed -->
+      <div class="flex items-center gap-2.5 flex-grow max-w-xs">
+        <span class="text-xs text-slate-400 flex items-center gap-1 font-mono">
+          <i class="fa-solid fa-gauge text-cyan-400"></i> 전도속도
+        </span>
+        <input id="slider-speed" type="range" min="0.2" max="2.5" step="0.1" value="1.0" class="w-full accent-cyan-400 bg-slate-700 h-1.5 rounded-lg cursor-pointer">
+        <span id="val-speed" class="text-xs font-mono text-cyan-300 w-10">1.0x</span>
+      </div>
+
+      <!-- Auto Rotate Toggle -->
+      <button id="btn-toggle-rotate" class="px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white text-xs transition flex items-center gap-1.5">
+        <i class="fa-solid fa-rotate"></i>
+        <span class="hidden sm:inline">3D 회전</span>
+      </button>
+
+    </div>
+  </footer>
+
+  <!-- Node Hover Tooltip -->
+  <div id="hover-tooltip" class="absolute pointer-events-none z-30 opacity-0 transition-opacity duration-150 px-3 py-1.5 rounded-lg bg-slate-900/95 border border-cyan-500/50 text-xs text-white shadow-2xl backdrop-blur-md">
+    <div class="font-bold text-cyan-300" id="tooltip-name">구조 명칭</div>
+    <div class="text-[10px] text-slate-300" id="tooltip-sub">기능 요약</div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       1. EXTENSIVE NEUROLOGICAL & DEVELOPMENTAL DATA DICTIONARY
+       ========================================================================== */
+    const BRAIN_REGIONS = {
+      thalamus: {
+        id: 'thalamus',
+        nameKo: '시상 (Thalamus)',
+        nameLatin: 'Thalamus dorsalis',
+        category: 'DIENCEPHALON · 감각 교통관제탑',
+        color: 0x06b6d4,
+        hex: '#06b6d4',
+        pos: new THREE.Vector3(0, 0.1, 0),
+        structure: '대뇌 기저핵 중앙에 위치한 계란형의 거대한 대칭 회백질 핵군입니다. 뇌간과 대뇌피질 사이의 3층 중계 관문입니다.',
+        func: '시각(LGN), 청각(MGN), 체성감각(VPL) 등 모든 감각 신호의 대뇌피질 분배 및 감각 게이팅(Sensory Gating)을 총괄합니다.',
+        asd_vulnerability: {
+          title: '감각 게이팅 필터 결함 및 과부하 셧다운',
+          details: '감각 필터링이 약해 배경 소음과 사람의 말소리를 분리하지 못합니다. 과도한 자극이 유입되면 뇌가 스스로를 보호하기 위해 주의를 차단(멍때림/함구)합니다.'
+        },
+        solutions: {
+          regulate: '배경 소음 차단용 노이즈 필터링 귀마개/이어폰 착용, 시각·청각 자극을 단순화한 1:1 독립 공간(진정 존)으로 이동하여 시상 입력 부하 즉각 차단.',
+          relate: '질문이나 지시 후 즉각적인 대답을 요구하지 않고, 뇌가 소리를 분리할 수 있도록 최소 5~7초의 지연 응답 시간(Processing latency)을 보장합니다.',
+          reason: '시각 카드나 손짓 단서를 음성 언어와 1:1로 일치시키는 다감각 앵커링(Multisensory Anchoring) 훈련을 적용합니다.',
+          parentScript: '지금 주변이 너무 시끄럽지? 아무 말 안 해도 돼. 천천히 숨 쉬고 있어.'
+        }
+      },
+      pfc: {
+        id: 'pfc',
+        nameKo: '전전두엽 피질 (Prefrontal Cortex / PFC)',
+        nameLatin: 'Cortex praefrontalis',
+        category: 'CORTICAL LOBE · 최고 집행 사령탑',
+        color: 0x3b82f6,
+        hex: '#3b82f6',
+        pos: new THREE.Vector3(0, 0.7, 1.8),
+        structure: '대뇌 반구의 가장 앞쪽에 위치하며 배외측(dlPFC), 안와전두(OFC), 복내측(vmPFC)으로 정교하게 세분화된 신피질입니다.',
+        func: '마음 이론(Mentalizing), 공감, 충동 억제, 작업기억(Working Memory) 및 편도체의 과잉 공포를 억제하는 브레이크 역할을 수행합니다.',
+        asd_vulnerability: {
+          title: '사회적 직관 계산 과부하 및 실행 기능 저하',
+          details: '상대의 표정, 맥락, 다음 할 말을 실시간으로 동시 연산하느라 작업기억이 쉽게 마비되어 대화 도중 말문이 막히거나 도피 충동을 느낍니다.'
+        },
+        solutions: {
+          regulate: '혈당 급강하 방지를 위한 견과류·단백질 간식 제공, 생리학적 한숨(2회 짧은 들숨 후 긴 날숨)으로 뇌 산소 포화도와 전두엽 혈류 공급 리셋.',
+          relate: '선택지를 "뭐 먹을래?" 대신 "사과 먹을래, 바나나 먹을래?"처럼 2개 이내로 좁혀 전두엽 작업기억(Working Memory)의 인지 연산 피로도를 절반으로 줄여줍니다.',
+          reason: '상황별 대화 공식(스크립트 카드) 및 만화 스트립 "생각 말풍선 채우기" 놀이를 통해 사회적 맥락 예측 회로(dlPFC-OFC)를 명시적으로 학습합니다.',
+          parentScript: '지금 생각이 너무 많아서 머리가 꽉 찼지? 딱 하나만 정해보자. A할래, B할래?'
+        }
+      },
+      amygdala: {
+        id: 'amygdala',
+        nameKo: '편도체 (Amygdala)',
+        nameLatin: 'Corpus amygdaloideum',
+        category: 'LIMBIC SYSTEM · 공포 & 위협 비상경보',
+        color: 0xf43f5e,
+        hex: '#f43f5e',
+        pos: new THREE.Vector3(0.75, -0.5, 0.5),
+        structure: '측두엽 깊숙한 내측에 위치한 아몬드 모양의 신경핵 복합체로 기저외측핵(BLA)과 중심핵(CeA)으로 구성됩니다.',
+        func: '잠재적 위협이나 낯선 사람의 접근을 12ms 이내로 초고속 감지하여 교감신경계(투쟁-도피-얼어붙음) 비상벨을 울립니다.',
+        asd_vulnerability: {
+          title: '과잉 경계(Hyper-vigilance) 및 사회적 셧다운(Freeze)',
+          details: '타인의 눈맞춤이나 예측할 수 없는 상황을 호랑이를 만난 것과 동일한 생존 위협으로 오인하여 극심한 공포와 멜트다운을 일으킵니다.'
+        },
+        solutions: {
+          regulate: '눈맞춤(Eye contact)을 절대 강요하지 않고, 시선을 같은 곳을 향하는 나란히 앉기(평행 놀이) 및 묵직한 무게 담요/포옹으로 심부 압박 고유감각 입력.',
+          relate: '아이가 공포/멜트다운 상태일 때 설득하거나 훈계하지 않고, 부모가 먼저 깊은 한숨을 쉬며 차분한 저음 톤으로 곁을 지킵니다.',
+          reason: '아이가 차분해진 후, 감정 온도계 카드(1~5단계)를 통해 "방금 내 마음의 불꽃이 4단계였구나"를 시각적으로 확인하고 진정 기술을 선택하는 메타인지 훈련.',
+          parentScript: '엄마(아빠) 눈 안 봐도 돼. 여기 네 옆에 안전하게 있을게. 넌 지금 안전해.'
+        }
+      },
+      hippocampus: {
+        id: 'hippocampus',
+        nameKo: '해마 (Hippocampus)',
+        nameLatin: 'Hippocampus proper',
+        category: 'LIMBIC SYSTEM · 맥락 & 일화기억',
+        color: 0xeab308,
+        hex: '#eab308',
+        pos: new THREE.Vector3(0.9, -0.4, -0.4),
+        structure: '해마방회 안쪽에 말려 들어간 바다해마 형상의 구조로 치아이랑(DG), CA1, CA3 영역으로 이루어져 있습니다.',
+        func: '새로운 사회적 경험을 기억으로 전환하고 "이 상황이 과거에 안전했던가?"라는 맥락(Context)을 편도체에 제공합니다.',
+        asd_vulnerability: {
+          title: '과거 실패 기억의 과잉 반추 및 예측 불안',
+          details: '한 번 겪은 사회적 배척이나 놀림의 부정적 기억이 편도체와 결합하여 새로운 사회적 모임에 진입하는 것을 완강히 거부하게 만듭니다.'
+        },
+        solutions: {
+          regulate: '예측 불확실성에서 오는 불안을 막기 위해 외출 전 일정 순서를 3단계 시각 타임라인(어디 가는지 ➔ 누구 만나는지 ➔ 언제 집에 오는지)으로 제시.',
+          relate: '과거의 사회적 실패 경험("저번에 친구가 나 안 끼워줬어")을 부정하지 않고 공감해 주며, 안전했던 성공 기억을 상기시켜 줍니다.',
+          reason: '아이가 잘 해냈던 사회적 순간들을 사진과 문장으로 기록한 "나의 성공 스토리북"을 함께 보며 해마의 긍정 맥락 기억망을 재강화합니다.',
+          parentScript: '지난번에 긴장되었지만 5분 지나니까 괜찮아졌던 거 기억나지? 오늘도 딱 10분만 있어보고 원하면 바로 나오자.'
+        }
+      },
+      temporal: {
+        id: 'temporal',
+        nameKo: '측두엽 & 청각피질 (Temporal Lobe)',
+        nameLatin: 'Lobus temporalis',
+        category: 'CORTICAL LOBE · 음성 언어 & 운율 해독',
+        color: 0xa855f7,
+        hex: '#a855f7',
+        pos: new THREE.Vector3(1.7, -0.3, 0.3),
+        structure: '대뇌 외측 하단에 위치하며 1차 청각피질(Heschl 회), 상측두구(STS), 베르니케 언어 이해 영역을 포괄합니다.',
+        func: '소리의 주파수 분석뿐만 아니라 사람 목소리의 억양, 감정 톤(운율, Prosody) 및 얼굴 표정 움직임을 연합 처리합니다.',
+        asd_vulnerability: {
+          title: '청각 정보 처리 장애(APD) 및 뉘앙스 파독 불가',
+          details: '말의 문자적 의미는 알아듣지만 말끝을 올리거나 내리는 억양의 미묘한 사회적 뉘앙스(반어법, 농담)를 읽지 못해 오해가 발생합니다.'
+        },
+        solutions: {
+          regulate: '청각 피질의 억양 분석 피로도를 줄이기 위해 한 문장에 한 가지 정보만 단문으로 짧게 끊어서 전달합니다.',
+          relate: '비유, 반어법, 비꼬는 농담을 피하고 말의 표면 의미와 의도가 100% 일치하는 투명하고 정직한 언어로 소통합니다.',
+          reason: '동일한 문장을 "기쁜 톤", "화난 톤", "슬픈 톤"으로 녹음하여 듣고 맞히는 음성 운율(Prosody) 인식 게임 및 감정 이모티콘 매칭 놀이.',
+          parentScript: '엄마 말뜻은 방을 치우라는 거야. 책 3권을 책장에 꽂아줄래?'
+        }
+      },
+      cerebellum: {
+        id: 'cerebellum',
+        nameKo: '소뇌 (Cerebellum)',
+        nameLatin: 'Cerebellum',
+        category: 'METENCEPHALON · 협응 & 상호작용 타이밍',
+        color: 0x14b8a6,
+        hex: '#14b8a6',
+        pos: new THREE.Vector3(0, -1.05, -1.5),
+        structure: '후두엽 하방에 위치하며 촘촘한 가로 주름(Folia)과 푸르키니에(Purkinje) 세포로 뇌 전체 뉴런의 50% 이상을 포함합니다.',
+        func: '신체 균형과 미세 운동 조율뿐만 아니라, 대화 시 말을 주고받는 타이밍(Turn-taking)과 제스처의 템포를 조절합니다.',
+        asd_vulnerability: {
+          title: '대화의 핑퐁 타이밍 실패 및 신체 협응 서투름',
+          details: '상대방의 말이 끝나는 시점을 예측하지 못해 말을 가로채거나 너무 늦게 대답하며, 어색한 제스처로 인해 사회적 거부감을 사기 쉽습니다.'
+        },
+        solutions: {
+          regulate: '신체 협응과 뇌간 자극을 위해 트램펄린 점핑, 밸런스 보드, 짐볼 튕기기 등 고유수용성 감각 운동으로 소뇌 타이밍 리듬을 리셋합니다.',
+          relate: '대화 중 말을 끊더라도 무례함으로 처벌하지 않고, 부모의 손바닥 신호("지금은 엄마 차례 ➔ 손바닥 넘기면 네 차례")를 통해 시각적 턴테이킹 약속을 맺습니다.',
+          reason: '탁구공 튀기기, 배드민턴 랠리, 공 던져 주고받기 등 "물리적 핑퐁 놀이"를 반복하여 대화의 교대 발화(Turn-taking) 타이밍을 체득시킵니다.',
+          parentScript: '아주 좋은 생각이야! 엄마 말이 끝나면 손을 쥐어줄게, 그때 네 생각을 들려줘.'
+        }
+      },
+      parietal: {
+        id: 'parietal',
+        nameKo: '두정엽 & 감각피질 (Parietal Lobe / S1)',
+        nameLatin: 'Lobus parietalis',
+        category: 'CORTICAL LOBE · 신체 지도 & 공간 감각',
+        color: 0x10b981,
+        hex: '#10b981',
+        pos: new THREE.Vector3(0, 1.4, -0.6),
+        structure: '중심구 뒤에 위치하며 전신 체성감각이 정밀 매핑된 1차 감각피질과 공간 인지 연합 영역으로 구성됩니다.',
+        func: '촉각, 압력, 온도, 신체 위치 감각을 지각하고 타인과의 적절한 물리적 거리(Personal space)를 유지합니다.',
+        asd_vulnerability: {
+          title: '촉각 방어(Tactile Defensiveness) 및 거리 감각 미숙',
+          details: '옷 라벨이나 가벼운 스침에도 뇌가 통증으로 인지하여 격하게 반응하거나, 반대로 타인의 몸에 너무 밀착하여 불쾌감을 유발합니다.'
+        },
+        solutions: {
+          regulate: '옷 라벨 제거, 솔기 없는 양말 착용, 가벼운 간지럼 대신 손바닥 전체로 단단하게 감싸 안는 딥 프레셔(Deep pressure) 마사지 제공.',
+          relate: '갑작스러운 스킨십이나 불시의 접근을 피하고, 다가가기 전 "지금 손잡아도 될까?"라고 항상 언어적 예고를 선행합니다.',
+          reason: '훌라후프나 바닥 테이프를 활용하여 "내 몸의 거품(개인 공간, Personal Space)" 시각화 놀이를 통해 친구와의 적정 물리적 거리(팔 한 뼘)를 훈련합니다.',
+          parentScript: '지금 안아줄까, 아니면 손만 가만히 잡아줄까? 네가 편한 방식을 골라줘.'
+        }
+      },
+      brainstem: {
+        id: 'brainstem',
+        nameKo: '뇌간 (Brainstem)',
+        nameLatin: 'Truncus encephali',
+        category: 'VITAL HIGHWAY · 생명 중추 & 신호 통로',
+        color: 0x64748b,
+        hex: '#64748b',
+        pos: new THREE.Vector3(0, -1.8, -0.3),
+        structure: '중뇌, 교뇌, 연수로 이어지는 신경 다발 기둥으로 미주신경 등 12쌍의 뇌신경 기저부입니다.',
+        func: '호흡, 심장 박동 조절 및 다미주신경(Polyvagal) 체계를 통해 사회적 참여(Social engagement) 신체 상태를 결정합니다.',
+        asd_vulnerability: {
+          title: '자율신경계 불균형 및 붕괴 반응',
+          details: '사회적 스트레스 시 배측 미주신경이 과작동하여 혈압 저하, 목소리 잠김, 무기력한 셧다운 반응이 발생합니다.'
+        },
+        solutions: {
+          regulate: '자율신경계 셧다운 시 찬물 세수(잠수 반사 유도), 따뜻한 물 한 모금 마시기(연하 반사)로 미주신경 톤을 안정화합니다.',
+          relate: '아이가 멍하니 굳어 있을 때 억지로 말을 시키거나 눈을 맞추려 하지 않고, 10분간 아무 말 없이 침묵의 물리적 온기(곁에 앉아있기)를 제공합니다.',
+          reason: '안정 후 허밍(음~~ 소리 내며 목 진동 느끼기)과 복식 호흡을 함께 진행하며 뇌간-미주신경 자율 조절력을 강화합니다.',
+          parentScript: '말 안 해도 돼. 물 한 모금 천천히 마시고 우리 5분만 조용히 쉬자.'
+        }
+      }
+    };
+
+    const PATHWAYS = {
+      // 4대 실생활 사회성 위기 시나리오
+      social_noise: {
+        title: '1. 소음 교실 속 지시 불이행',
+        color: 0x06b6d4,
+        activeNode: 'thalamus',
+        steps: [
+          { node: 'brainstem', label: '1. 교실 복합 소음 유입', desc: '연필 소리, 의자 끄는 소리, 잡담이 걸러지지 않고 뇌간으로 폭주' },
+          { node: 'thalamus', label: '2. 시상 게이팅 필터 붕괴', desc: 'GABA 억제 회로 지연으로 교사 목소리와 배경 잡음이 뒤섞임' },
+          { node: 'temporal', label: '3. 청각 피질 신호 중첩', desc: '지시 음성의 신호대잡음비(SNR) 급감으로 의미 해독 실패' },
+          { node: 'pfc', label: '4. 전두엽 지시 수신 불가', desc: '"32쪽 펴!"라는 지시어가 유실되어 멍하니 있거나 딴짓 발생' }
+        ],
+        points: [
+          new THREE.Vector3(1.6, -1.1, 0.2),
+          new THREE.Vector3(0.4, -1.4, -0.3),
+          new THREE.Vector3(0, 0.1, 0),
+          new THREE.Vector3(1.7, -0.3, 0.3),
+          new THREE.Vector3(0, 0.7, 1.8)
+        ]
+      },
+      social_eye_contact: {
+        title: '2. 눈맞춤 회피와 생존 공포',
+        color: 0xf43f5e,
+        activeNode: 'amygdala',
+        steps: [
+          { node: 'brainstem', label: '1. 정면 시선 시각 입력', desc: '상대방의 정면 눈빛이 망막을 통해 상소구/뇌간으로 초고속 유입' },
+          { node: 'amygdala', label: '2. 편도체 15ms 알람 격발', desc: '피질 판단 전, 편도체가 포식자 위협으로 오인해 교감신경 비상벨' },
+          { node: 'brainstem', label: '3. 자율신경계 얼어붙음', desc: '심박 급상승, 시선 강제 이탈, 몸이 굳는 Freeze 반응 유발' },
+          { node: 'pfc', label: '4. 전두엽 대화 회로 차단', desc: '"내 눈 쳐다봐!" 강요 시 공포 극대화로 언어 연산 마비' }
+        ],
+        points: [
+          new THREE.Vector3(0, -1.3, 1.3),
+          new THREE.Vector3(0, 0.1, 0),
+          new THREE.Vector3(0.75, -0.5, 0.5),
+          new THREE.Vector3(0, -1.8, -0.3),
+          new THREE.Vector3(0, 0.7, 1.8)
+        ]
+      },
+      social_burnout: {
+        title: '3. 방과 후 귀가 직후 멜트다운',
+        color: 0xef4444,
+        activeNode: 'pfc',
+        steps: [
+          { node: 'pfc', label: '1. 학교 6시간 전두엽 마스킹', desc: '눈치 보기와 충동 억제로 전두엽 포도당 및 신경 에너지 완전 고갈' },
+          { node: 'thalamus', label: '2. 귀가 후 감각 여과선 붕괴', desc: '작은 불빛, 부모의 인사말, 냄새에도 시상이 감각을 방어하지 못함' },
+          { node: 'amygdala', label: '3. 편도체 억제 브레이크 해제', desc: '전두엽 하향 통제가 끊기며 사소한 자극(외투 벗기 등)에 폭발' },
+          { node: 'brainstem', label: '4. 생존 투쟁-도피 멜트다운', desc: '울음, 소리 지르기, 바닥 구르기 등 신경계 과열 응급 방출 발생' }
+        ],
+        points: [
+          new THREE.Vector3(0, 0.7, 1.8),
+          new THREE.Vector3(0, 0.1, 0),
+          new THREE.Vector3(0.75, -0.5, 0.5),
+          new THREE.Vector3(0, -1.8, -0.3)
+        ]
+      },
+      social_turntaking: {
+        title: '4. 대화 끼어들기 & 차례 놓침',
+        color: 0x14b8a6,
+        activeNode: 'cerebellum',
+        steps: [
+          { node: 'temporal', label: '1. 상대방 발화 음성 수신', desc: '상대방의 말이 끝나가는 억양의 감속(Deceleration) 인식 시도' },
+          { node: 'cerebellum', label: '2. 소뇌 타이밍 연산 지연', desc: '언제 끼어들어야 할지 0.2초 단위의 예측 타이밍 모델링 오차 발생' },
+          { node: 'pfc', label: '3. 전두엽(dlPFC) 억제 지연', desc: '작업기억 과부하로 생각난 말을 즉시 뱉고 싶은 충동 억제 실패' },
+          { node: 'temporal', label: '4. 말 가로채기 발생', desc: '상대방의 말을 자르거나, 반대로 멍하니 있다가 대화 흐름을 놓침' }
+        ],
+        points: [
+          new THREE.Vector3(1.7, -0.3, 0.3),
+          new THREE.Vector3(0, -1.05, -1.5),
+          new THREE.Vector3(0, 0.7, 1.8),
+          new THREE.Vector3(1.7, -0.3, 0.3)
+        ]
+      },
+
+      // 기초 감각 회로
+      visual: {
+        title: '시각 정보 전달 회로',
+        color: 0x38bdf8,
+        activeNode: 'pfc',
+        steps: [
+          { node: 'brainstem', label: '1. 망막 수용체 & 시신경 교차', desc: '외부 시각 정보가 시신경을 타고 뇌간 상방으로 유입' },
+          { node: 'thalamus', label: '2. 시상 외측슬상체 (LGN)', desc: '빛의 명암, 색상, 형태를 선별하여 정렬' },
+          { node: 'temporal', label: '3. 후두엽 & 측두엽 안면인식', desc: '상대방의 눈빛과 표정 윤곽을 1차 해독' },
+          { node: 'pfc', label: '4. 전전두엽 인지 통합', desc: '상대방의 시선 의도를 종합하여 반응 결정' }
+        ],
+        points: [
+          new THREE.Vector3(0, -1.3, 1.3),
+          new THREE.Vector3(0, -0.2, 0.4),
+          new THREE.Vector3(0, 0.1, 0),
+          new THREE.Vector3(0, 0.25, -2.1),
+          new THREE.Vector3(1.7, -0.3, 0.3),
+          new THREE.Vector3(0, 0.7, 1.8)
+        ]
+      },
+      auditory: {
+        title: '청각 & 음성 운율 회로',
+        color: 0xa855f7,
+        activeNode: 'temporal',
+        steps: [
+          { node: 'brainstem', label: '1. 달팽이관 & 와우핵', desc: '음파 진동을 전기 펄스로 변환하여 뇌간으로 전송' },
+          { node: 'thalamus', label: '2. 시상 내측슬상체 (MGN)', desc: '배경 잡음과 사람의 음성 주파수를 여과' },
+          { node: 'temporal', label: '3. 측두엽 청각피질 & 베르니케', desc: '단어 의미와 억양의 감정 운율을 해독' },
+          { node: 'amygdala', label: '4. 편도체 위협 평가', desc: '목소리 톤의 공격성 여부를 즉시 평가' },
+          { node: 'pfc', label: '5. 전두엽 브로카 영역', desc: '상황에 적절한 대답과 어조를 계획' }
+        ],
+        points: [
+          new THREE.Vector3(1.6, -1.1, 0.2),
+          new THREE.Vector3(0.4, -1.4, -0.3),
+          new THREE.Vector3(0, 0.1, 0),
+          new THREE.Vector3(1.7, -0.3, 0.3),
+          new THREE.Vector3(0.75, -0.5, 0.5),
+          new THREE.Vector3(0, 0.7, 1.8)
+        ]
+      },
+      tactile: {
+        title: '체성감각 & 통증 급행 회로',
+        color: 0x10b981,
+        activeNode: 'parietal',
+        steps: [
+          { node: 'brainstem', label: '1. 척수 후각 & 연수', desc: '피부 감각 및 압각이 척수로 유입' },
+          { node: 'thalamus', label: '2. 시상 복측후핵 (VPL)', desc: '체성감각 지도로 신호 분배' },
+          { node: 'amygdala', label: '⚡ 편도체 급행로 (15ms)', desc: '위협적 접촉에 대한 즉각 회피/놀람 반응' },
+          { node: 'parietal', label: '3. 두정엽 체성감각피질 (S1)', desc: '접촉 부위와 강도를 명확히 식별' },
+          { node: 'pfc', label: '4. 전두엽 통제', desc: '의식적 안정 및 신체 자세 재정렬' }
+        ],
+        points: [
+          new THREE.Vector3(0, -2.4, -0.3),
+          new THREE.Vector3(0, -1.4, -0.3),
+          new THREE.Vector3(0, 0.1, 0),
+          new THREE.Vector3(0.75, -0.5, 0.5),
+          new THREE.Vector3(0, 1.4, -0.6),
+          new THREE.Vector3(0, 0.7, 1.8)
+        ]
+      }
+    };
+
+    /* ==========================================================================
+       2. THREE.JS SIMULATION ENGINE (MACRO BRAIN + MICRO NEURON)
+       ========================================================================== */
+    let scene, camera, renderer, controls;
+    let currentMode = 'brain'; // 'brain' | 'neuron'
+    let brainSceneGroup, neuronSceneGroup;
+    let corticalMesh, cerebellumMesh, brainstemMesh;
+    let anatomicalNodeMeshes = {};
+    let activeSplineMesh = null;
+    let activeSplineCurve = null;
+    let signalPulseSpheres = [];
+
+    // Micro Neuron Components
+    let actionPotentialPulses = [];
+    let synapticVesicles = [];
+    let currentNeurotransmitter = 'dopamine';
+    let isFiringActionPotential = false;
+
+    let xrayMode = false;
+    let isPlaying = true;
+    let playSpeed = 1.0;
+    let autoRotate = false;
+    let currentPathwayKey = 'social_noise';
+
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    const clock = new THREE.Clock();
+
+    function init3D() {
+      const container = document.getElementById('canvas-container');
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+
+      scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x030712, 0.04);
+
+      camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 100);
+      camera.position.set(4.2, 1.8, 5.0);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(w, h);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.3;
+      container.appendChild(renderer.domElement);
+
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.06;
+      controls.maxDistance = 14;
+      controls.minDistance = 1.5;
+      controls.target.set(0, 0.1, 0);
+
+      // Biological Lighting Setup
+      const ambient = new THREE.AmbientLight(0x0a192f, 2.4);
+      scene.add(ambient);
+
+      const light1 = new THREE.DirectionalLight(0x38bdf8, 2.2);
+      light1.position.set(5, 8, 5);
+      scene.add(light1);
+
+      const light2 = new THREE.DirectionalLight(0x818cf8, 1.8);
+      light2.position.set(-6, 2, -6);
+      scene.add(light2);
+
+      const light3 = new THREE.DirectionalLight(0x0ea5e9, 1.4);
+      light3.position.set(0, -6, 2);
+      scene.add(light3);
+
+      // Build Macro Brain Scene
+      brainSceneGroup = new THREE.Group();
+      scene.add(brainSceneGroup);
+      buildRealisticBrainAnatomy();
+      buildSubcorticalNodes();
+      setupPathway(currentPathwayKey);
+
+      // Build Micro Neuron Scene
+      neuronSceneGroup = new THREE.Group();
+      neuronSceneGroup.visible = false;
+      scene.add(neuronSceneGroup);
+      buildRealisticNeuronAndSynapse();
+
+      window.addEventListener('resize', onResize);
+      container.addEventListener('pointermove', onPointerMove);
+      container.addEventListener('click', onClickCanvas);
+
+      animate();
+    }
+
+    /* --------------------------------------------------------------------------
+       MACRO BRAIN GENERATION
+       -------------------------------------------------------------------------- */
+    function buildRealisticBrainAnatomy() {
+      // 1. High-Density Cerebral Hemispheres with Sulci & Gyri
+      const cortexGeo = new THREE.SphereGeometry(1.8, 128, 96);
+      const posAttr = cortexGeo.attributes.position;
+      const v = new THREE.Vector3();
+
+      for (let i = 0; i < posAttr.count; i++) {
+        v.fromBufferAttribute(posAttr, i);
+        const absX = Math.abs(v.x);
+
+        // Longitudinal Fissure (중심 대뇌 종열구)
+        if (absX < 0.35 && v.y > -0.2) {
+          const valley = Math.cos((absX / 0.35) * (Math.PI * 0.5));
+          v.x *= 0.65;
+          v.y -= valley * 0.28;
+        }
+
+        // Anatomical Lobes Proportions
+        if (v.z > 0.4) { v.z *= 1.18; v.y *= 0.96; } // Frontal pole
+        if (v.z < -0.3) { v.y *= 0.92; v.z *= 1.15; if (v.y < 0) v.x *= 0.88; } // Occipital
+        if (v.y < 0.2 && v.y > -0.8 && v.z > -0.5 && v.z < 0.9) { v.x *= 1.16; v.y *= 1.05; } // Temporal
+        if (v.y > 0.6) { v.y *= 1.08; } // Parietal arch
+
+        // Organic Gyri & Sulci multi-frequency noise
+        const g1 = Math.sin(v.x * 6.5) * Math.cos(v.y * 7.0) * Math.sin(v.z * 5.8);
+        const g2 = Math.cos(v.x * 12.0) * Math.sin(v.y * 13.0) * Math.cos(v.z * 11.5);
+        const g3 = Math.sin(v.x * 22.0 + v.y * 18.0) * 0.02;
+
+        const wrinkle = (g1 * 0.065 + g2 * 0.035 + g3);
+        const weight = THREE.MathUtils.smoothstep(v.y, -1.0, 0.4);
+        v.addScaledVector(v.clone().normalize(), wrinkle * weight);
+
+        posAttr.setXYZ(i, v.x, v.y, v.z);
+      }
+      cortexGeo.computeVertexNormals();
+
+      const cortexMat = new THREE.MeshPhysicalMaterial({
+        color: 0x1e3a8a,
+        emissive: 0x07153a,
+        emissiveIntensity: 0.4,
+        roughness: 0.22,
+        metalness: 0.1,
+        transmission: 0.74,
+        thickness: 1.5,
+        transparent: true,
+        opacity: 0.78,
+        ior: 1.38,
+        clearcoat: 0.4
+      });
+
+      corticalMesh = new THREE.Mesh(cortexGeo, cortexMat);
+      corticalMesh.position.set(0, 0.2, 0);
+      brainSceneGroup.add(corticalMesh);
+
+      // 2. Cerebellum with horizontal folia (소뇌)
+      const cereGeo = new THREE.SphereGeometry(0.82, 64, 48);
+      cereGeo.scale(1.2, 0.68, 0.85);
+      const cerePos = cereGeo.attributes.position;
+      const cv = new THREE.Vector3();
+
+      for (let i = 0; i < cerePos.count; i++) {
+        cv.fromBufferAttribute(cerePos, i);
+        const folia = Math.sin(cv.y * 32.0) * 0.028;
+        if (Math.abs(cv.x) < 0.18) cv.z -= 0.08;
+        cv.addScaledVector(cv.clone().normalize(), folia);
+        cerePos.setXYZ(i, cv.x, cv.y, cv.z);
+      }
+      cereGeo.computeVertexNormals();
+
+      const cereMat = new THREE.MeshPhysicalMaterial({
+        color: 0x0d9488,
+        emissive: 0x042f2e,
+        emissiveIntensity: 0.5,
+        roughness: 0.35,
+        metalness: 0.15,
+        transmission: 0.55,
+        transparent: true,
+        opacity: 0.85
+      });
+      cerebellumMesh = new THREE.Mesh(cereGeo, cereMat);
+      cerebellumMesh.position.set(0, -0.85, -1.35);
+      cerebellumMesh.rotation.x = 0.2;
+      brainSceneGroup.add(cerebellumMesh);
+
+      // 3. Brainstem (뇌간 및 척수)
+      const stemCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0, 0.2, 0),
+        new THREE.Vector3(0, -0.5, -0.1),
+        new THREE.Vector3(0, -1.1, -0.25),
+        new THREE.Vector3(0, -1.8, -0.32),
+        new THREE.Vector3(0, -2.5, -0.35)
+      ]);
+      const stemGeo = new THREE.TubeGeometry(stemCurve, 36, 0.28, 20, false);
+      const stemMat = new THREE.MeshStandardMaterial({
+        color: 0x475569,
+        emissive: 0x1e293b,
+        roughness: 0.4,
+        metalness: 0.2,
+        transparent: true,
+        opacity: 0.85
+      });
+      brainstemMesh = new THREE.Mesh(stemGeo, stemMat);
+      brainSceneGroup.add(brainstemMesh);
+    }
+
+    function buildSubcorticalNodes() {
+      const nodeGroup = new THREE.Group();
+
+      Object.keys(BRAIN_REGIONS).forEach(key => {
+        const data = BRAIN_REGIONS[key];
+        const geo = new THREE.SphereGeometry(0.16, 24, 24);
+        const mat = new THREE.MeshStandardMaterial({
+          color: data.color,
+          emissive: data.color,
+          emissiveIntensity: 0.85,
+          roughness: 0.2,
+          metalness: 0.3,
+          transparent: true,
+          opacity: 0.95
+        });
+
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.position.copy(data.pos);
+        mesh.userData = { id: key, data: data };
+
+        // Outer Bio-Resonance Ring
+        const ringGeo = new THREE.RingGeometry(0.2, 0.25, 32);
+        const ringMat = new THREE.MeshBasicMaterial({
+          color: data.color,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.6
+        });
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.rotation.x = Math.PI / 2;
+        mesh.add(ring);
+        mesh.userData.ring = ring;
+
+        nodeGroup.add(mesh);
+        anatomicalNodeMeshes[key] = mesh;
+
+        // Bilateral pairing for Amygdala & Hippocampus & Temporal
+        if (key === 'amygdala' || key === 'hippocampus' || key === 'temporal') {
+          const mirror = new THREE.Mesh(geo.clone(), mat.clone());
+          mirror.position.set(-data.pos.x, data.pos.y, data.pos.z);
+          mirror.userData = { id: key, data: data, isMirror: true };
+          nodeGroup.add(mirror);
+        }
+      });
+
+      brainSceneGroup.add(nodeGroup);
+    }
+
+    /* --------------------------------------------------------------------------
+       MICRO NEURON & SYNAPSE GENERATION
+       -------------------------------------------------------------------------- */
+    function buildRealisticNeuronAndSynapse() {
+      // 1. Soma (신경세포체 - Pyramid/Star form)
+      const somaGeo = new THREE.DodecahedronGeometry(0.9, 2);
+      const pos = somaGeo.attributes.position;
+      const sv = new THREE.Vector3();
+      for (let i = 0; i < pos.count; i++) {
+        sv.fromBufferAttribute(pos, i);
+        // Add organic micro bumps
+        const noise = Math.sin(sv.x * 6) * Math.cos(sv.y * 6) * 0.08;
+        sv.addScaledVector(sv.clone().normalize(), noise);
+        pos.setXYZ(i, sv.x, sv.y, sv.z);
+      }
+      somaGeo.computeVertexNormals();
+
+      const somaMat = new THREE.MeshPhysicalMaterial({
+        color: 0x0284c7,
+        emissive: 0x0369a1,
+        emissiveIntensity: 0.55,
+        roughness: 0.35,
+        transmission: 0.6,
+        transparent: true,
+        opacity: 0.88,
+        thickness: 0.8
+      });
+      const soma = new THREE.Mesh(somaGeo, somaMat);
+      soma.position.set(-2.5, 0.4, 0);
+      soma.userData = { neuronPart: 'soma' };
+      neuronSceneGroup.add(soma);
+
+      // Glowing Cell Nucleus (핵)
+      const nucGeo = new THREE.SphereGeometry(0.35, 24, 24);
+      const nucMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
+      const nucleus = new THREE.Mesh(nucGeo, nucMat);
+      soma.add(nucleus);
+
+      // 2. Dendrites with Dendritic Spines (수상돌기 수지상 수지)
+      const dendriteBranches = [
+        [new THREE.Vector3(0, 0.8, 0), new THREE.Vector3(-0.5, 1.8, 0.3), new THREE.Vector3(-1.0, 2.8, -0.2)],
+        [new THREE.Vector3(0, 0.8, 0), new THREE.Vector3(0.6, 1.9, -0.4), new THREE.Vector3(1.2, 2.7, 0.1)],
+        [new THREE.Vector3(-0.7, 0.2, 0), new THREE.Vector3(-1.8, 0.7, 0.6), new THREE.Vector3(-2.8, 1.2, 0.9)],
+        [new THREE.Vector3(-0.6, -0.4, 0), new THREE.Vector3(-1.7, -1.0, -0.5), new THREE.Vector3(-2.5, -1.8, -0.7)],
+        [new THREE.Vector3(0.3, 0.5, 0.6), new THREE.Vector3(0.9, 1.4, 1.3), new THREE.Vector3(1.5, 2.2, 1.8)]
+      ];
+
+      dendriteBranches.forEach(points => {
+        const offsetPts = points.map(p => p.clone().add(soma.position));
+        const curve = new THREE.CatmullRomCurve3(offsetPts);
+        const tubeGeo = new THREE.TubeGeometry(curve, 24, 0.08, 8, false);
+        const tubeMat = new THREE.MeshStandardMaterial({
+          color: 0x6366f1,
+          emissive: 0x312e81,
+          roughness: 0.4
+        });
+        const branchMesh = new THREE.Mesh(tubeGeo, tubeMat);
+        branchMesh.userData = { neuronPart: 'dendrites' };
+        neuronSceneGroup.add(branchMesh);
+
+        // Add tiny Dendritic Spines (시냅스 가시) along branch
+        for (let t = 0.25; t <= 0.95; t += 0.12) {
+          const pt = curve.getPointAt(t);
+          const spineGeo = new THREE.SphereGeometry(0.045, 8, 8);
+          const spineMat = new THREE.MeshBasicMaterial({ color: 0xa5b4fc });
+          const spine = new THREE.Mesh(spineGeo, spineMat);
+          spine.position.copy(pt).add(new THREE.Vector3(
+            (Math.random() - 0.5) * 0.15,
+            (Math.random() - 0.5) * 0.15,
+            (Math.random() - 0.5) * 0.15
+          ));
+          neuronSceneGroup.add(spine);
+        }
+      });
+
+      // 3. Axon & Myelin Sheaths with Nodes of Ranvier (축삭 및 미엘린 수초)
+      const axonPath = [
+        new THREE.Vector3(-1.6, 0.4, 0),
+        new THREE.Vector3(-0.4, 0.2, 0),
+        new THREE.Vector3(0.8, -0.1, 0),
+        new THREE.Vector3(2.0, -0.3, 0),
+        new THREE.Vector3(3.2, -0.4, 0)
+      ];
+      const axonCurve = new THREE.CatmullRomCurve3(axonPath);
+      const axonCoreGeo = new THREE.TubeGeometry(axonCurve, 32, 0.045, 8, false);
+      const axonCoreMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b });
+      const axonCoreMesh = new THREE.Mesh(axonCoreGeo, axonCoreMat);
+      axonCoreMesh.userData = { neuronPart: 'axon' };
+      neuronSceneGroup.add(axonCoreMesh);
+
+      // Myelin Sheath Cylinders (수초 마디)
+      for (let i = 0; i < 4; i++) {
+        const tCenter = 0.15 + i * 0.23;
+        const pt = axonCurve.getPointAt(tCenter);
+        const sheathGeo = new THREE.CylinderGeometry(0.12, 0.12, 0.6, 16);
+        const sheathMat = new THREE.MeshStandardMaterial({
+          color: 0xfbbf24,
+          emissive: 0x78350f,
+          roughness: 0.35,
+          metalness: 0.2
+        });
+        const sheath = new THREE.Mesh(sheathGeo, sheathMat);
+        sheath.position.copy(pt);
+        sheath.rotation.z = Math.PI / 2 + 0.1;
+        sheath.userData = { neuronPart: 'axon' };
+        neuronSceneGroup.add(sheath);
+      }
+
+      // 4. Presynaptic Bouton & Postsynaptic Membrane (시냅스 간극 & 단추)
+      const preGeo = new THREE.SphereGeometry(0.42, 24, 24);
+      preGeo.scale(1.3, 0.9, 0.9);
+      const preMat = new THREE.MeshPhysicalMaterial({
+        color: 0xf43f5e,
+        emissive: 0x881337,
+        roughness: 0.3,
+        transmission: 0.5,
+        transparent: true,
+        opacity: 0.9
+      });
+      const presynapticMesh = new THREE.Mesh(preGeo, preMat);
+      presynapticMesh.position.set(3.4, -0.4, 0);
+      presynapticMesh.userData = { neuronPart: 'synapse' };
+      neuronSceneGroup.add(presynapticMesh);
+
+      // Postsynaptic Target Dendrite Membrane
+      const postGeo = new THREE.CylinderGeometry(0.7, 0.7, 0.18, 24);
+      const postMat = new THREE.MeshStandardMaterial({
+        color: 0x10b981,
+        emissive: 0x064e3b,
+        roughness: 0.4
+      });
+      const postsynapticMesh = new THREE.Mesh(postGeo, postMat);
+      postsynapticMesh.position.set(4.6, -0.4, 0);
+      postsynapticMesh.rotation.z = Math.PI / 2;
+      postsynapticMesh.userData = { neuronPart: 'synapse' };
+      neuronSceneGroup.add(postsynapticMesh);
+
+      // Receptor Sites on Postsynaptic Membrane
+      for (let r = 0; r < 7; r++) {
+        const receptorGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.1, 8);
+        const receptorMat = new THREE.MeshBasicMaterial({ color: 0x34d399 });
+        const receptor = new THREE.Mesh(receptorGeo, receptorMat);
+        receptor.position.set(4.45, -0.4 + (Math.random() - 0.5) * 0.7, (Math.random() - 0.5) * 0.7);
+        receptor.rotation.z = Math.PI / 2;
+        neuronSceneGroup.add(receptor);
+      }
+
+      // 5. Synaptic Vesicles Pool in Presynaptic Terminal
+      for (let v = 0; v < 36; v++) {
+        const vGeo = new THREE.SphereGeometry(0.04, 8, 8);
+        const vMat = new THREE.MeshBasicMaterial({ color: 0xfbbf24 });
+        const vesicle = new THREE.Mesh(vGeo, vMat);
+        vesicle.position.set(
+          3.2 + (Math.random() - 0.5) * 0.4,
+          -0.4 + (Math.random() - 0.5) * 0.35,
+          (Math.random() - 0.5) * 0.35
+        );
+        vesicle.userData = {
+          basePos: vesicle.position.clone(),
+          driftOffset: Math.random() * Math.PI * 2
+        };
+        neuronSceneGroup.add(vesicle);
+        synapticVesicles.push(vesicle);
+      }
+    }
+
+    /* --------------------------------------------------------------------------
+       PATHWAY & SIGNAL CONTROLS
+       -------------------------------------------------------------------------- */
+    function setupPathway(pathKey) {
+      currentPathwayKey = pathKey;
+      const pathway = PATHWAYS[pathKey];
+
+      document.getElementById('current-step-status').textContent = `1 / ${pathway.steps.length} 단계 진행 중`;
+      renderPipelineSteps(pathway);
+
+      if (activeSplineMesh) {
+        brainSceneGroup.remove(activeSplineMesh);
+        activeSplineMesh.geometry.dispose();
+        activeSplineMesh.material.dispose();
+      }
+      clearPulseParticles();
+
+      activeSplineCurve = new THREE.CatmullRomCurve3(pathway.points, false, 'centripetal', 0.5);
+
+      const tubeGeo = new THREE.TubeGeometry(activeSplineCurve, 80, 0.032, 8, false);
+      const tubeMat = new THREE.MeshBasicMaterial({
+        color: pathway.color,
+        transparent: true,
+        opacity: 0.38,
+        wireframe: true
+      });
+      activeSplineMesh = new THREE.Mesh(tubeGeo, tubeMat);
+      brainSceneGroup.add(activeSplineMesh);
+
+      // Signal Pulse Packets
+      const packetCount = 26;
+      const sphereGeo = new THREE.SphereGeometry(0.065, 12, 12);
+      const sphereMat = new THREE.MeshBasicMaterial({
+        color: pathway.color,
+        transparent: true,
+        opacity: 0.95
+      });
+
+      for (let i = 0; i < packetCount; i++) {
+        const pulse = new THREE.Mesh(sphereGeo, sphereMat.clone());
+        pulse.userData = {
+          progress: i / packetCount,
+          speed: (0.16 + Math.random() * 0.04),
+          scaleBase: 0.8 + Math.random() * 0.5
+        };
+        brainSceneGroup.add(pulse);
+        signalPulseSpheres.push(pulse);
+      }
+
+      if (pathway.activeNode) {
+        selectRegion(pathway.activeNode, false);
+      }
+    }
+
+    function clearPulseParticles() {
+      signalPulseSpheres.forEach(p => {
+        brainSceneGroup.remove(p);
+        p.geometry.dispose();
+        p.material.dispose();
+      });
+      signalPulseSpheres = [];
+    }
+
+    function renderPipelineSteps(pathway) {
+      const container = document.getElementById('pathway-steps-list');
+      container.innerHTML = '';
+
+      pathway.steps.forEach((step, idx) => {
+        const item = document.createElement('div');
+        item.className = `p-2 rounded-xl transition cursor-pointer border ${idx === 0 ? 'bg-cyan-950/50 border-cyan-500/50 text-cyan-200 shadow-md' : 'bg-slate-900/40 border-slate-800/80 text-slate-400 hover:border-slate-700'}`;
+        item.onclick = () => {
+          selectRegion(step.node, true);
+          highlightStepUI(idx);
+        };
+        item.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="font-semibold text-white flex items-center gap-1.5 text-xs">
+              <span class="w-4 h-4 rounded-full bg-slate-800 text-cyan-400 flex items-center justify-center text-[10px] font-mono">${idx + 1}</span>
+              ${step.label}
+            </span>
+            <i class="fa-solid fa-crosshairs text-[10px] opacity-60"></i>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-1 pl-5.5 leading-snug">${step.desc}</p>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function highlightStepUI(index) {
+      const container = document.getElementById('pathway-steps-list');
+      const children = container.children;
+      for (let i = 0; i < children.length; i++) {
+        children[i].className = (i === index) 
+          ? 'p-2 rounded-xl transition cursor-pointer border bg-cyan-950/50 border-cyan-500/50 text-cyan-200 shadow-md'
+          : 'p-2 rounded-xl transition cursor-pointer border bg-slate-900/40 border-slate-800/80 text-slate-400 hover:border-slate-700';
+      }
+      document.getElementById('current-step-status').textContent = `${index + 1} / ${children.length} 단계 진행 중`;
+    }
+
+    function selectRegion(regionKey, smoothMove = false) {
+      const data = BRAIN_REGIONS[regionKey];
+      if (!data) return;
+
+      document.getElementById('detail-title').textContent = data.nameKo;
+      document.getElementById('detail-latin').textContent = data.nameLatin;
+      document.getElementById('detail-category').textContent = data.category;
+      document.getElementById('detail-structure').textContent = data.structure;
+      document.getElementById('detail-func').textContent = data.func;
+
+      // Clinical Card
+      const clinHtml = `
+        <div class="font-bold text-amber-300 mb-1">${data.asd_vulnerability.title}</div>
+        <p>${data.asd_vulnerability.details}</p>
+      `;
+      document.getElementById('detail-clinical').innerHTML = clinHtml;
+
+      // Solutions: 3-Tier Clinical Neurosequential Model
+      const solReg = document.getElementById('detail-solution-regulate');
+      const solRel = document.getElementById('detail-solution-relate');
+      const solRea = document.getElementById('detail-solution-reason');
+
+      if (solReg && data.solutions) {
+        solReg.querySelector('p').textContent = data.solutions.regulate || '';
+      }
+      if (solRel && data.solutions) {
+        solRel.querySelector('p').textContent = data.solutions.relate || '';
+        const pScript = solRel.querySelector('.parent-script');
+        if (pScript) {
+          pScript.textContent = data.solutions.parentScript ? `"${data.solutions.parentScript}"` : '';
+        }
+      }
+      if (solRea && data.solutions) {
+        solRea.querySelector('p').textContent = data.solutions.reason || '';
+      }
+
+      const dot = document.getElementById('detail-color-dot');
+      dot.style.backgroundColor = data.hex;
+      dot.style.boxShadow = `0 0 14px ${data.hex}`;
+
+      // Node Mesh Emphasis
+      Object.keys(anatomicalNodeMeshes).forEach(key => {
+        const mesh = anatomicalNodeMeshes[key];
+        if (key === regionKey) {
+          mesh.material.emissiveIntensity = 1.8;
+          mesh.scale.set(1.4, 1.4, 1.4);
+        } else {
+          mesh.material.emissiveIntensity = 0.8;
+          mesh.scale.set(1.0, 1.0, 1.0);
+        }
+      });
+
+      if (smoothMove && controls && currentMode === 'brain') {
+        const dest = data.pos.clone().add(new THREE.Vector3(1.8, 0.8, 2.2));
+        panCameraSmoothly(dest, data.pos);
+      }
+    }
+
+    window.focusRegion = function(key) {
+      if (currentMode !== 'brain') switchViewMode('brain');
+      selectRegion(key, true);
+    };
+
+    /* --------------------------------------------------------------------------
+       VIEW MODE SWITCHER (BRAIN <-> NEURON)
+       -------------------------------------------------------------------------- */
+    function switchViewMode(mode) {
+      currentMode = mode;
+      const isBrain = (mode === 'brain');
+
+      brainSceneGroup.visible = isBrain;
+      neuronSceneGroup.visible = !isBrain;
+
+      document.getElementById('macro-pathway-panel').classList.toggle('hidden', !isBrain);
+      document.getElementById('micro-neuron-panel').classList.toggle('hidden', isBrain);
+      document.getElementById('micro-neuron-panel').classList.toggle('flex', !isBrain);
+
+      document.getElementById('btn-xray-mode').classList.toggle('hidden', !isBrain);
+      document.getElementById('btn-fire-action').classList.toggle('hidden', isBrain);
+
+      const badge = document.getElementById('current-view-badge');
+      const icon = document.getElementById('app-icon');
+
+      if (isBrain) {
+        badge.textContent = '거시 뇌 구조 모드';
+        badge.className = 'text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40';
+        icon.className = 'fa-solid fa-brain text-white text-lg';
+        document.getElementById('btn-mode-brain').classList.add('tab-active');
+        document.getElementById('btn-mode-neuron').classList.remove('tab-active');
+        panCameraSmoothly(new THREE.Vector3(4.2, 1.8, 5.0), new THREE.Vector3(0, 0.1, 0));
+      } else {
+        badge.textContent = '미세 뉴런 & 시냅스 모드';
+        badge.className = 'text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40';
+        icon.className = 'fa-solid fa-microchip text-white text-lg';
+        document.getElementById('btn-mode-neuron').classList.add('tab-active');
+        document.getElementById('btn-mode-brain').classList.remove('tab-active');
+        panCameraSmoothly(new THREE.Vector3(2.5, 0.8, 4.8), new THREE.Vector3(1.2, -0.1, 0));
+        focusNeuronPart('soma');
+      }
+    }
+
+    window.focusNeuronPart = function(part) {
+      if (part === 'soma') {
+        panCameraSmoothly(new THREE.Vector3(-1.0, 1.2, 3.2), new THREE.Vector3(-2.5, 0.4, 0));
+        showNeuronDetail(
+          '신경세포체 (Soma) & 세포핵',
+          'Soma proper & Nucleus',
+          '단백질 생합성 및 신호 적분 중추',
+          '수상돌기들로부터 수렴된 수천 개의 시냅스 후 전위(EPSP/IPSP)를 대수적으로 합산하여 발화 여부를 결정합니다.',
+          'ADHD의 경우 도파민 신호 적분 기능이 저하되어 충동 조절 및 지속적 주의 집중 유지가 어렵습니다.',
+          '단백질 및 인지질(DHA) 섭취로 세포막 유동성을 유지하고, 시각화된 목표 설정으로 도파민 경로를 자극합니다.'
+        );
+      } else if (part === 'dendrites') {
+        panCameraSmoothly(new THREE.Vector3(-1.4, 2.8, 3.0), new THREE.Vector3(-1.5, 1.8, 0));
+        showNeuronDetail(
+          '수상돌기 및 수지상돌기 가시 (Dendritic Spines)',
+          'Dendrites & Synaptic Spines',
+          '시냅스 가소성 및 학습의 물리적 토대',
+          '수지상돌기 가시(Spines)는 새로운 기술을 배우거나 기억을 형성할 때 물리적으로 굵어지거나 새로 생성(LTP)됩니다.',
+          '자폐 스펙트럼(ASD) 아동의 경우 유전적 요인으로 시냅스 가지치기(Synaptic Pruning)가 지연되어 가시 밀도가 지나치게 높아 감각 과민이 유발됩니다.',
+          '점진적인 탈감작 놀이와 규칙적인 감각 다이어트(Sensory Diet)로 불필요한 시냅스 잡음을 정리합니다.'
+        );
+      } else if (part === 'axon') {
+        panCameraSmoothly(new THREE.Vector3(1.0, 0.8, 3.0), new THREE.Vector3(1.0, -0.1, 0));
+        showNeuronDetail(
+          '축삭 및 미엘린 수초 (Axon & Myelin Sheath)',
+          'Axon & Nodes of Ranvier',
+          '랑비에 결절 도약 전도 (Saltatory Conduction)',
+          '신경 초고속도로로서 미엘린 수초 덕분에 최대 100m/s(시속 360km)의 속도로 활동전위 펄스를 누출 없이 전달합니다.',
+          '수초화(Myelination)가 지연되면 타인의 말을 듣고 이해하여 대답하는 처리 지연(Processing Latency)이 발생합니다.',
+          '수초를 형성하는 건강한 지방산(오메가3, 불포화지방산) 공급과 충분한 수면 중 일어나는 희소돌기아교세포(Oligodendrocyte) 재생 지원.'
+        );
+      } else if (part === 'synapse') {
+        panCameraSmoothly(new THREE.Vector3(3.8, 0.4, 2.4), new THREE.Vector3(4.0, -0.4, 0));
+        showNeuronDetail(
+          '시냅스 간극 및 신경전달물질 방출 (Synapse)',
+          'Synaptic Cleft & Exocytosis',
+          '화학적 신호 변환 및 신경망 가소성 제어',
+          '20nm의 미세 간극으로 신경전달물질(도파민, GABA 등) 소포체가 개구 방출되어 시냅스 후 수용체와 결합합니다.',
+          '신경전달물질의 재흡수(Reuptake) 불균형 또는 수용체 감수성 저하로 인해 급격한 감정 기복이나 사회적 불안이 발생합니다.',
+          'GABA 촉진 마그네슘, 세로토닌 합성 트립토판 식품 섭취 및 호흡 훈련을 통한 자율신경계 시냅스 안정화.'
+        );
+      }
+    };
+
+    function showNeuronDetail(title, latin, category, func, clinical, solution) {
+      document.getElementById('detail-title').textContent = title;
+      document.getElementById('detail-latin').textContent = latin;
+      document.getElementById('detail-category').textContent = category;
+      document.getElementById('detail-structure').textContent = '미세 생체 전자현미경 레벨의 3D 단면 시뮬레이션 구조물입니다.';
+      document.getElementById('detail-func').textContent = func;
+
+      document.getElementById('detail-clinical').innerHTML = `
+        <div class="font-bold text-amber-300 mb-1">신경생물학적 취약점</div>
+        <p>${clinical}</p>
+      `;
+
+      const solReg = document.getElementById('detail-solution-regulate');
+      const solRel = document.getElementById('detail-solution-relate');
+      const solRea = document.getElementById('detail-solution-reason');
+
+      if (solReg) solReg.querySelector('p').textContent = solution;
+      if (solRel) {
+        solRel.querySelector('p').textContent = '아이의 신경 처리 지연(Latency)을 존중하고 감각 과열 시 언어적 자극을 즉각 멈춥니다.';
+        const pScript = solRel.querySelector('.parent-script');
+        if (pScript) pScript.textContent = '"지금 머릿속이 꽉 찼지? 아무 말 안 해도 돼. 천천히 숨 쉬어보자."';
+      }
+      if (solRea) solRea.querySelector('p').textContent = '세포막 안정화를 위한 수분 섭취, 항산화 영양소 및 스트레스 호르몬 코르티솔 억제.';
+
+      const dot = document.getElementById('detail-color-dot');
+      dot.style.backgroundColor = '#f59e0b';
+      dot.style.boxShadow = '0 0 14px #f59e0b';
+    }
+
+    window.setNeurotransmitter = function(type) {
+      currentNeurotransmitter = type;
+      document.querySelectorAll('.nt-btn').forEach(b => {
+        b.classList.remove('bg-amber-950/40', 'border-amber-500/50', 'bg-emerald-950/40', 'border-emerald-500/50', 'bg-cyan-950/40', 'border-cyan-500/50');
+      });
+
+      const btn = document.getElementById(`nt-btn-${type}`);
+      let colorHex = 0xf59e0b;
+      if (type === 'dopamine') {
+        btn.classList.add('bg-amber-950/40', 'border-amber-500/50');
+        colorHex = 0xf59e0b;
+      } else if (type === 'gaba') {
+        btn.classList.add('bg-emerald-950/40', 'border-emerald-500/50');
+        colorHex = 0x10b981;
+      } else if (type === 'serotonin') {
+        btn.classList.add('bg-cyan-950/40', 'border-cyan-500/50');
+        colorHex = 0x06b6d4;
+      }
+
+      synapticVesicles.forEach(v => {
+        v.material.color.setHex(colorHex);
+      });
+      triggerActionPotential();
+    };
+
+    function triggerActionPotential() {
+      if (currentMode !== 'neuron') return;
+
+      // Burst of Action Potential moving from Soma down the Axon
+      const pulseGeo = new THREE.SphereGeometry(0.18, 12, 12);
+      const pulseMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      const apMesh = new THREE.Mesh(pulseGeo, pulseMat);
+      apMesh.position.set(-2.2, 0.4, 0);
+      neuronSceneGroup.add(apMesh);
+
+      let t = 0;
+      const interval = setInterval(() => {
+        t += 0.04;
+        apMesh.position.x = -2.2 + t * 5.5;
+        apMesh.position.y = 0.4 - t * 0.7;
+        apMesh.scale.setScalar(1.0 + Math.sin(t * Math.PI) * 0.8);
+
+        if (t >= 1.0) {
+          clearInterval(interval);
+          neuronSceneGroup.remove(apMesh);
+          apMesh.geometry.dispose();
+          apMesh.material.dispose();
+          burstSynapticVesicles();
+        }
+      }, 16);
+    }
+
+    function burstSynapticVesicles() {
+      // Vesicle release across the 20nm cleft
+      let ntColor = 0xf59e0b;
+      if (currentNeurotransmitter === 'gaba') ntColor = 0x10b981;
+      if (currentNeurotransmitter === 'serotonin') ntColor = 0x06b6d4;
+
+      for (let i = 0; i < 20; i++) {
+        const dropGeo = new THREE.SphereGeometry(0.045, 8, 8);
+        const dropMat = new THREE.MeshBasicMaterial({ color: ntColor });
+        const drop = new THREE.Mesh(dropGeo, dropMat);
+        drop.position.set(3.4, -0.4 + (Math.random() - 0.5) * 0.3, (Math.random() - 0.5) * 0.3);
+        neuronSceneGroup.add(drop);
+
+        let progress = 0;
+        const driftY = (Math.random() - 0.5) * 0.4;
+        const driftZ = (Math.random() - 0.5) * 0.4;
+
+        const moveDrop = setInterval(() => {
+          progress += 0.05;
+          drop.position.x += 0.055;
+          drop.position.y += driftY * 0.03;
+          drop.position.z += driftZ * 0.03;
+
+          if (progress >= 1.0) {
+            clearInterval(moveDrop);
+            neuronSceneGroup.remove(drop);
+            drop.geometry.dispose();
+            drop.material.dispose();
+          }
+        }, 16);
+      }
+    }
+
+    /* --------------------------------------------------------------------------
+       HELPER UTILITIES & UI BINDINGS
+       -------------------------------------------------------------------------- */
+    function panCameraSmoothly(destCamPos, destLookAt) {
+      const startPos = camera.position.clone();
+      const startLook = controls.target.clone();
+      let step = 0;
+      const total = 40;
+
+      function interpolate() {
+        step++;
+        const factor = THREE.MathUtils.smoothstep(step / total, 0, 1);
+        camera.position.lerpVectors(startPos, destCamPos, factor);
+        controls.target.lerpVectors(startLook, destLookAt, factor);
+        controls.update();
+
+        if (step < total) {
+          requestAnimationFrame(interpolate);
+        }
+      }
+      interpolate();
+    }
+
+    window.switchDetailTab = function(tabKey) {
+      ['bio', 'asd', 'solution'].forEach(k => {
+        document.getElementById(`tab-content-${k}`).classList.toggle('hidden', k !== tabKey);
+        const btn = document.getElementById(`tab-btn-${k}`);
+        if (k === tabKey) {
+          btn.className = 'flex-1 py-1.5 rounded-lg font-semibold text-cyan-300 bg-cyan-950/60 border border-cyan-500/40 transition';
+        } else {
+          btn.className = 'flex-1 py-1.5 rounded-lg font-semibold text-slate-400 hover:text-white transition';
+        }
+      });
+    };
+
+    function onPointerMove(e) {
+      const container = document.getElementById('canvas-container');
+      const rect = container.getBoundingClientRect();
+      mouse.x = ((e.clientX - rect.left) / container.clientWidth) * 2 - 1;
+      mouse.y = -((e.clientY - rect.top) / container.clientHeight) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const tooltip = document.getElementById('hover-tooltip');
+
+      if (currentMode === 'brain') {
+        const nodes = Object.values(anatomicalNodeMeshes);
+        const hits = raycaster.intersectObjects(nodes, false);
+
+        if (hits.length > 0) {
+          const hitData = hits[0].object.userData.data;
+          tooltip.style.opacity = '1';
+          tooltip.style.left = `${e.clientX + 14}px`;
+          tooltip.style.top = `${e.clientY + 14}px`;
+          document.getElementById('tooltip-name').textContent = hitData.nameKo;
+          document.getElementById('tooltip-sub').textContent = hitData.category + ' · 클릭하여 발달 가이드 열기';
+          document.body.style.cursor = 'pointer';
+          return;
+        }
+      } else {
+        // Neuron view raycasting
+        const hits = raycaster.intersectObjects(neuronSceneGroup.children, true);
+        if (hits.length > 0 && hits[0].object.userData.neuronPart) {
+          const part = hits[0].object.userData.neuronPart;
+          tooltip.style.opacity = '1';
+          tooltip.style.left = `${e.clientX + 14}px`;
+          tooltip.style.top = `${e.clientY + 14}px`;
+          document.getElementById('tooltip-name').textContent = part.toUpperCase();
+          document.getElementById('tooltip-sub').textContent = '뉴런 미세 부위 분석 클릭';
+          document.body.style.cursor = 'pointer';
+          return;
+        }
+      }
+
+      tooltip.style.opacity = '0';
+      document.body.style.cursor = 'default';
+    }
+
+    function onClickCanvas() {
+      raycaster.setFromCamera(mouse, camera);
+      if (currentMode === 'brain') {
+        const nodes = Object.values(anatomicalNodeMeshes);
+        const hits = raycaster.intersectObjects(nodes, false);
+        if (hits.length > 0) {
+          selectRegion(hits[0].object.userData.id, true);
+        }
+      } else {
+        const hits = raycaster.intersectObjects(neuronSceneGroup.children, true);
+        if (hits.length > 0 && hits[0].object.userData.neuronPart) {
+          focusNeuronPart(hits[0].object.userData.neuronPart);
+        }
+      }
+    }
+
+    function onResize() {
+      const container = document.getElementById('canvas-container');
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+    }
+
+    /* --------------------------------------------------------------------------
+       MAIN ANIMATION LOOP
+       -------------------------------------------------------------------------- */
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const delta = clock.getDelta();
+      const elapsed = clock.getElapsedTime();
+
+      // Gentle Auto-Rotation
+      if (autoRotate) {
+        if (currentMode === 'brain' && brainSceneGroup) {
+          brainSceneGroup.rotation.y = elapsed * 0.12;
+        } else if (currentMode === 'neuron' && neuronSceneGroup) {
+          neuronSceneGroup.rotation.y = Math.sin(elapsed * 0.3) * 0.2;
+        }
+      }
+
+      // Brain Mode: Signal Pulses along Spline
+      if (currentMode === 'brain' && activeSplineCurve && signalPulseSpheres.length > 0 && isPlaying) {
+        const moveRate = 0.22 * playSpeed;
+        signalPulseSpheres.forEach(pulse => {
+          pulse.userData.progress += delta * moveRate * pulse.userData.speed;
+          if (pulse.userData.progress > 1.0) pulse.userData.progress = 0.0;
+          const pt = activeSplineCurve.getPointAt(pulse.userData.progress);
+          if (pt) {
+            pulse.position.copy(pt);
+            const beat = 1.0 + 0.3 * Math.sin(elapsed * 9.0 + pulse.userData.progress * 20.0);
+            pulse.scale.setScalar(pulse.userData.scaleBase * beat);
+          }
+        });
+
+        // Bio-Rings Pulsing
+        Object.values(anatomicalNodeMeshes).forEach(mesh => {
+          if (mesh.userData.ring) {
+            const scale = 1.0 + 0.22 * Math.sin(elapsed * 3.5 + mesh.position.x * 3.0);
+            mesh.userData.ring.scale.set(scale, scale, 1.0);
+            mesh.userData.ring.material.opacity = 0.35 + 0.25 * Math.sin(elapsed * 3.5);
+          }
+        });
+      }
+
+      // Neuron Mode: Jitter Synaptic Vesicles (Brownian motion)
+      if (currentMode === 'neuron' && isPlaying) {
+        synapticVesicles.forEach(v => {
+          const off = v.userData.driftOffset;
+          v.position.x = v.userData.basePos.x + Math.sin(elapsed * 2.0 + off) * 0.03;
+          v.position.y = v.userData.basePos.y + Math.cos(elapsed * 2.5 + off) * 0.03;
+          v.position.z = v.userData.basePos.z + Math.sin(elapsed * 1.8 + off) * 0.03;
+        });
+      }
+
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    /* --------------------------------------------------------------------------
+       DOM INITIALIZATION
+       -------------------------------------------------------------------------- */
+    document.addEventListener('DOMContentLoaded', () => {
+      init3D();
+
+      // View Mode Toggle Buttons
+      document.getElementById('btn-mode-brain').addEventListener('click', () => switchViewMode('brain'));
+      document.getElementById('btn-mode-neuron').addEventListener('click', () => switchViewMode('neuron'));
+
+      // Action Potential Button
+      document.getElementById('btn-fire-action').addEventListener('click', () => triggerActionPotential());
+
+      // Pathway Buttons
+      document.querySelectorAll('.pathway-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.pathway-btn').forEach(b => {
+            b.classList.remove('active', 'border-cyan-500/50', 'bg-gradient-to-r', 'from-cyan-950/70', 'to-slate-900');
+            b.classList.add('border-slate-800/80', 'bg-slate-900/60');
+          });
+          btn.classList.add('active', 'border-cyan-500/50', 'bg-gradient-to-r', 'from-cyan-950/70', 'to-slate-900');
+          btn.classList.remove('border-slate-800/80', 'bg-slate-900/60');
+          setupPathway(btn.getAttribute('data-pathway'));
+        });
+      });
+
+      // X-Ray Mode Toggle
+      const btnXray = document.getElementById('btn-xray-mode');
+      btnXray.addEventListener('click', () => {
+        xrayMode = !xrayMode;
+        if (corticalMesh) {
+          corticalMesh.material.transmission = xrayMode ? 0.94 : 0.74;
+          corticalMesh.material.opacity = xrayMode ? 0.35 : 0.78;
+        }
+        btnXray.classList.toggle('text-cyan-400', xrayMode);
+        btnXray.classList.toggle('border-cyan-500/50', xrayMode);
+      });
+
+      // Reset View Button
+      document.getElementById('btn-reset-view').addEventListener('click', () => {
+        if (currentMode === 'brain') {
+          panCameraSmoothly(new THREE.Vector3(4.2, 1.8, 5.0), new THREE.Vector3(0, 0.1, 0));
+        } else {
+          panCameraSmoothly(new THREE.Vector3(2.5, 0.8, 4.8), new THREE.Vector3(1.2, -0.1, 0));
+        }
+      });
+
+      // Play/Pause
+      const btnPlay = document.getElementById('btn-play-toggle');
+      const iconPlay = document.getElementById('play-icon');
+      btnPlay.addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        iconPlay.className = isPlaying ? 'fa-solid fa-pause' : 'fa-solid fa-play';
+      });
+
+      // Single Pulse Burst
+      document.getElementById('btn-single-pulse').addEventListener('click', () => {
+        if (currentMode === 'brain') {
+          signalPulseSpheres.forEach(p => (p.userData.progress = 0.0));
+          if (anatomicalNodeMeshes['thalamus']) {
+            anatomicalNodeMeshes['thalamus'].material.emissiveIntensity = 2.8;
+            setTimeout(() => {
+              if (anatomicalNodeMeshes['thalamus']) {
+                anatomicalNodeMeshes['thalamus'].material.emissiveIntensity = 0.85;
+              }
+            }, 350);
+          }
+        } else {
+          triggerActionPotential();
+        }
+      });
+
+      // Speed Slider
+      const speedSlider = document.getElementById('slider-speed');
+      const speedText = document.getElementById('val-speed');
+      speedSlider.addEventListener('input', e => {
+        playSpeed = parseFloat(e.target.value);
+        speedText.textContent = `${playSpeed.toFixed(1)}x`;
+      });
+
+      // Auto Rotate Toggle
+      const btnRotate = document.getElementById('btn-toggle-rotate');
+      btnRotate.addEventListener('click', () => {
+        autoRotate = !autoRotate;
+        btnRotate.classList.toggle('text-cyan-400', autoRotate);
+      });
+
+      // Mobile Drawer Toggle Event Handlers (< 768px)
+      const panelLeft = document.getElementById('panel-left');
+      const panelRight = document.getElementById('panel-right');
+      const btnMobileToggleLeft = document.getElementById('btn-mobile-toggle-left');
+      const btnMobileToggleRight = document.getElementById('btn-mobile-toggle-right');
+      const btnCloseLeft = document.getElementById('btn-close-left');
+      const btnCloseRight = document.getElementById('btn-close-right');
+
+      if (btnMobileToggleLeft && panelLeft) {
+        btnMobileToggleLeft.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const willOpen = !panelLeft.classList.contains('mobile-open');
+          panelLeft.classList.toggle('mobile-open', willOpen);
+          if (panelRight) panelRight.classList.remove('mobile-open');
+        });
+      }
+
+      if (btnMobileToggleRight && panelRight) {
+        btnMobileToggleRight.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const willOpen = !panelRight.classList.contains('mobile-open');
+          panelRight.classList.toggle('mobile-open', willOpen);
+          if (panelLeft) panelLeft.classList.remove('mobile-open');
+        });
+      }
+
+      if (btnCloseLeft && panelLeft) {
+        btnCloseLeft.addEventListener('click', (e) => {
+          e.stopPropagation();
+          panelLeft.classList.remove('mobile-open');
+        });
+      }
+
+      if (btnCloseRight && panelRight) {
+        btnCloseRight.addEventListener('click', (e) => {
+          e.stopPropagation();
+          panelRight.classList.remove('mobile-open');
+        });
+      }
+    });
+  </script>
+</body>
+</html>
