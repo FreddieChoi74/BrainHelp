@@ -140,6 +140,8 @@ body {
   font-weight: 600;
   color: var(--text-muted);
   cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
   transition: var(--transition);
 }
 
@@ -1511,6 +1513,21 @@ body.mode-slides .section-card.active-slide {
     width: 100%;
     justify-content: flex-start;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 2px 2px 8px 2px;
+    gap: 8px;
+    flex-wrap: nowrap;
+  }
+
+  .view-controls::-webkit-scrollbar {
+    display: none;
+  }
+
+  .view-btn {
+    padding: 7px 13px;
+    font-size: 0.82rem;
   }
 }
 
